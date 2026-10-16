@@ -4,6 +4,7 @@ import {
   formatIst,
   hourStartIst,
   isIndianMarketHours,
+  startOfIstDay,
   MARKET_CLOSE_MIN_IST,
   MARKET_OPEN_MIN_IST,
   toIstParts,
@@ -78,5 +79,23 @@ describe('buckets', () => {
 describe('formatIst', () => {
   it('formats in IST', () => {
     expect(formatIst(new Date('2026-10-16T04:07:30Z'))).toBe('16 Oct 2026, 09:37 IST')
+  })
+})
+
+describe('startOfIstDay', () => {
+  it('returns IST midnight of the next IST day when UTC is still the previous day', () => {
+    expect(startOfIstDay(new Date('2026-10-16T19:00:00Z')).toISOString()).toBe(
+      '2026-10-16T18:30:00.000Z',
+    )
+  })
+  it('floors a midday time to the same IST midnight', () => {
+    expect(startOfIstDay(new Date('2026-10-16T05:00:00Z')).toISOString()).toBe(
+      '2026-10-15T18:30:00.000Z',
+    )
+  })
+  it('is idempotent at exactly IST midnight', () => {
+    const m = new Date('2026-10-16T18:30:00.000Z')
+    expect(startOfIstDay(m).getTime()).toBe(m.getTime())
+    expect(startOfIstDay(new Date(m.getTime() - 1)).toISOString()).toBe('2026-10-15T18:30:00.000Z')
   })
 })

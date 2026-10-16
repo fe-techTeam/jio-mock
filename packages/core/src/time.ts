@@ -56,3 +56,8 @@ export function formatIst(d: Date): string {
   const pad = (n: number) => String(n).padStart(2, '0')
   return `${p.day} ${MONTHS[p.month - 1]} ${p.year}, ${pad(p.hour)}:${pad(p.minute)} IST`
 }
+
+/** The IST midnight at or before d. */
+export function startOfIstDay(d: Date): Date {
+  return floorTo(d, 24 * 60 * 60_000)
+}
