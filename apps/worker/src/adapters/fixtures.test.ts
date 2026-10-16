@@ -83,11 +83,15 @@ describe('ADAPTERS registry', () => {
     }
   })
 
-  it.each(SOURCE_KEYS)('%s stub rejects in live mode with NotConfiguredError', async (k) => {
-    const p = ADAPTERS[k].fetch(ctx(k, 'live'))
-    await expect(p).rejects.toBeInstanceOf(NotConfiguredError)
-    await expect(ADAPTERS[k].fetch(ctx(k, 'live'))).rejects.toThrow('live mode not built')
-  })
+  // Portal adapters are real parsers since 02-04 (see portal-adapters.test.ts).
+  it.each(SOURCE_KEYS.filter((k) => !k.startsWith('portal_')))(
+    '%s stub rejects in live mode with NotConfiguredError',
+    async (k) => {
+      const p = ADAPTERS[k].fetch(ctx(k, 'live'))
+      await expect(p).rejects.toBeInstanceOf(NotConfiguredError)
+      await expect(ADAPTERS[k].fetch(ctx(k, 'live'))).rejects.toThrow('live mode not built')
+    },
+  )
 })
 
 describe('fixture mode', () => {
@@ -110,12 +114,10 @@ describe('fixture mode', () => {
     }
   })
 
-  it.each(PORTAL_KEYS)('%s stub returns nothing in fixture mode', async (k) => {
-    await expect(ADAPTERS[k].fetch(ctx(k))).resolves.toEqual({
-      posts: [],
-      marketPoints: [],
-      costUsd: 0,
-    })
+  it.each(PORTAL_KEYS)('%s parses its HTML into 5 market points', async (k) => {
+    const res = await ADAPTERS[k].fetch(ctx(k))
+    expect(res.marketPoints).toHaveLength(5)
+    expect(res.costUsd).toBe(0)
   })
 })
 
@@ -279,7 +281,8 @@ describe('_fixture helpers', () => {
   it.each(PORTAL_KEYS)('%s portal HTML has GMP and subscription tables', (k) => {
     const html = readFixtureText(`${k}.html`)
     expect(html).toContain('Jio Platforms')
-    for (const s of ['GMP', 'QIB', 'NII', 'Retail', 'Total']) expect(html).toContain(s)
+    for (const s of ['GMP', 'QIB', 'NII', 'Total']) expect(html).toContain(s)
+    expect(html).toMatch(/Retail|RII/)
   })
 
   it('createFakeFetch answers matched routes', async () => {
