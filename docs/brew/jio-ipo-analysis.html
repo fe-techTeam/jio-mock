@@ -1,0 +1,1107 @@
+<title>jio-ipo-analysis brew</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+:root{
+  --bg:#f4f5f7; --surface:#ffffff; --surface2:#eceef2; --ink:#1b1f24; --ink2:#525a66; --ink3:#848b96;
+  --line:#d5d9e0; --wire:#8d95a1; --accent:#1d5fbf; --accent-soft:#e2ebf8;
+  --pos:#2f7d52; --neu:#9aa1ab; --neg:#b8402f; --warn:#9a5b00; --warn-soft:#fbf1df;
+  --node:#ffffff; --node-alt:#eef3fb; --scrim:rgba(27,31,36,.10);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#121417; --surface:#1a1d21; --surface2:#24282e; --ink:#e8eaee; --ink2:#a9b0ba; --ink3:#7b838e;
+    --line:#333840; --wire:#6d7581; --accent:#79a6f2; --accent-soft:#1b2a42;
+    --pos:#62c18b; --neu:#7b838e; --neg:#f0806e; --warn:#e9b25c; --warn-soft:#33270f;
+    --node:#1f2328; --node-alt:#1b2636; --scrim:rgba(0,0,0,.35);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#121417; --surface:#1a1d21; --surface2:#24282e; --ink:#e8eaee; --ink2:#a9b0ba; --ink3:#7b838e;
+  --line:#333840; --wire:#6d7581; --accent:#79a6f2; --accent-soft:#1b2a42;
+  --pos:#62c18b; --neu:#7b838e; --neg:#f0806e; --warn:#e9b25c; --warn-soft:#33270f;
+  --node:#1f2328; --node-alt:#1b2636; --scrim:rgba(0,0,0,.35);
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans","Noto Sans Devanagari","Noto Sans Gujarati",sans-serif}
+.wrap{max-width:980px;margin-inline:auto;padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px));padding-block:28px 56px}
+h1{font-size:26px;line-height:1.2;margin:0 0 6px;letter-spacing:-.01em}
+h2{font-size:20px;margin:0 0 4px;display:flex;gap:10px;align-items:baseline}
+h2 .n{font:600 13px/1 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:var(--accent)}
+h3{font-size:16px;margin:0}
+p{margin:0 0 10px}
+.mono,code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.86em;overflow-wrap:anywhere}
+.muted{color:var(--ink2)}
+.small{font-size:13px}
+.lead{font-size:17px;line-height:1.5}
+section{padding-block:30px 6px;border-top:1px solid var(--line);margin-top:26px}
+section>.intro{color:var(--ink2);margin-bottom:16px;max-width:70ch}
+.meta-line{color:var(--ink2);font-size:13px}
+.toc{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px}
+.toc a{font-size:13px;color:var(--ink2);text-decoration:none;border:1px solid var(--line);border-radius:999px;padding:3px 10px;background:var(--surface)}
+.toc a:hover{color:var(--accent);border-color:var(--accent)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 16px;min-width:0}
+.grid{display:grid;gap:12px}
+.g2{grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr))}
+.g3{grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr))}
+.grid>*{min-width:0}
+.label{font:600 11px/1.3 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;text-transform:uppercase;letter-spacing:.06em;color:var(--ink3);margin-bottom:6px}
+ul.x{list-style:none;margin:0;padding:0}
+ul.x li{position:relative;padding-left:20px;margin-bottom:6px}
+ul.x li::before,ul.x li::after{content:"";position:absolute;left:3px;top:.62em;width:9px;height:2px;background:var(--neg);transform:rotate(45deg)}
+ul.x li::after{transform:rotate(-45deg)}
+.success{border-left:4px solid var(--pos)}
+.goal h4{margin:0 0 4px;font-size:14px}
+.goal p{margin:0;font-size:14px;color:var(--ink2)}
+.tag{display:inline-block;font:600 11px/1.6 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;padding:0 7px;border-radius:5px;border:1px solid var(--line);color:var(--ink2);background:var(--surface2);white-space:nowrap}
+.tag.acc{color:var(--accent);border-color:var(--accent);background:var(--accent-soft)}
+.tag.warn{color:var(--warn);border-color:var(--warn);background:var(--warn-soft);white-space:normal}
+.tag.cut{color:var(--neg);border-color:var(--neg);background:transparent}
+/* personas */
+.persona h3{margin-bottom:4px}
+.persona .need{font-size:14px;color:var(--ink2);margin-bottom:10px}
+ol.steps{list-style:none;margin:0;padding:0;counter-reset:s}
+ol.steps li{counter-increment:s;position:relative;padding:0 0 10px 34px;font-size:14px}
+ol.steps li::before{content:counter(s);position:absolute;left:0;top:0;width:22px;height:22px;border-radius:50%;background:var(--accent-soft);color:var(--accent);font:600 12px/22px ui-monospace,Menlo,monospace;text-align:center}
+ol.steps li:not(:last-child)::after{content:"";position:absolute;left:10.5px;top:24px;bottom:2px;width:1px;background:var(--line)}
+/* wireframes */
+.screen{margin-top:26px}
+.screen-head{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:10px}
+.wf{max-width:640px;border:1.5px solid var(--wire);border-radius:10px;background:var(--surface);overflow:hidden}
+.wf-chrome{display:flex;align-items:center;gap:5px;padding:7px 10px;border-bottom:1.5px solid var(--wire);background:var(--surface2)}
+.wf-chrome i{width:8px;height:8px;border-radius:50%;border:1.5px solid var(--wire)}
+.wf-chrome span{margin-left:8px;font:11px ui-monospace,Menlo,monospace;color:var(--ink3);overflow-wrap:anywhere;min-width:0}
+.wf-body{padding:10px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.box{border:1.5px dashed var(--wire);border-radius:6px;padding:7px 9px;min-width:0}
+.box>.k{font:600 10px/1.2 ui-monospace,SFMono-Regular,Menlo,monospace;text-transform:uppercase;letter-spacing:.06em;color:var(--ink3);margin-bottom:5px}
+.box .t{font-size:13px;color:var(--ink)}
+.row{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.row>*{min-width:0}
+.chip{display:inline-block;border:1px solid var(--wire);border-radius:999px;padding:1px 8px;font-size:12px;color:var(--ink2);white-space:nowrap}
+.chip.on{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
+.seg{display:inline-flex;flex-wrap:wrap;border:1px solid var(--wire);border-radius:6px;overflow:hidden}
+.seg span{font-size:12px;padding:2px 8px;color:var(--ink2);border-right:1px solid var(--wire)}
+.seg span:last-child{border-right:0}
+.seg span.on{background:var(--accent-soft);color:var(--accent);font-weight:600}
+.btn{display:inline-block;border:1.5px solid var(--ink2);border-radius:6px;padding:3px 10px;font-size:12px;font-weight:600}
+.btn.pri{background:var(--accent);border-color:var(--accent);color:var(--surface)}
+.field{display:block;border:1px solid var(--wire);border-radius:5px;padding:4px 8px;font-size:12px;color:var(--ink3);margin-top:6px}
+.ph{display:block;height:7px;border-radius:4px;background:var(--surface2);margin-top:5px}
+.ph.w60{width:60%}.ph.w40{width:40%}.ph.w80{width:80%}
+.sbar{display:inline-flex;width:90px;height:8px;border-radius:4px;overflow:hidden;vertical-align:middle;background:var(--surface2)}
+.sbar i{display:block;height:100%}
+.sbar .p{background:var(--pos)}.sbar .u{background:var(--neu)}.sbar .g{background:var(--neg)}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:6px}
+.kpi{border:1px solid var(--wire);border-radius:5px;padding:5px 7px;font-size:12px;color:var(--ink2);min-width:0}
+.trow{display:grid;grid-template-columns:22px minmax(0,1fr) auto;gap:8px;align-items:center;border-bottom:1px dotted var(--wire);padding-block:6px}
+.trow:last-child{border-bottom:0}
+.trow .r{font:600 12px ui-monospace,Menlo,monospace;color:var(--ink3)}
+.trow .m{display:flex;flex-wrap:wrap;gap:6px;align-items:center;justify-content:flex-end;font-size:11px;color:var(--ink2);min-width:0}
+.spark{width:100%;height:56px;display:block}
+.spark .a{fill:none;stroke:var(--ink2);stroke-width:1.5}
+.spark .b{fill:none;stroke:var(--accent);stroke-width:1.5;stroke-dasharray:4 3}
+.spark .ax{stroke:var(--wire);stroke-width:1}
+.spark .sp{fill:var(--pos)}.spark .su{fill:var(--neu)}.spark .sg{fill:var(--neg)}
+.mini{width:52px;height:16px;vertical-align:middle}
+.mini polyline{fill:none;stroke:var(--ink2);stroke-width:1.5}
+.legend{font-size:11px;color:var(--ink3)}
+.tabs{display:flex;flex-wrap:wrap;border-bottom:1.5px solid var(--wire);gap:2px}
+.tabs span{font-size:12px;padding:3px 10px;border:1.5px solid var(--wire);border-bottom:0;border-radius:5px 5px 0 0;color:var(--ink2)}
+.tabs span.on{color:var(--accent);border-color:var(--accent)}
+.toggle{display:inline-block;width:26px;height:14px;border-radius:7px;border:1.5px solid var(--wire);position:relative;vertical-align:middle}
+.toggle::after{content:"";position:absolute;left:2px;top:2px;width:7px;height:7px;border-radius:50%;background:var(--wire)}
+.meterbar{display:block;height:7px;border-radius:4px;background:var(--surface2);margin-top:4px;overflow:hidden}
+.meterbar i{display:block;height:100%;width:55%;background:var(--wire)}
+.lock{border-style:dotted;background:repeating-linear-gradient(45deg,transparent 0 6px,var(--surface2) 6px 8px)}
+.sheet{display:grid;grid-template-columns:44px minmax(0,1fr)}
+.sheet .scrim{background:var(--scrim);border-right:1.5px solid var(--wire)}
+.matrix{display:inline-grid;grid-template-columns:repeat(3,22px);gap:2px;vertical-align:middle}
+.matrix i{width:22px;height:22px;border:1px solid var(--wire);border-radius:3px}
+.matrix i.d{background:var(--accent-soft);border-color:var(--accent)}
+.rr{max-width:640px;display:flex;flex-direction:column;gap:8px}
+.rr-item{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);border:1.5px solid var(--wire);border-radius:8px;overflow:hidden;background:var(--surface)}
+.rr-item>div{padding:8px 10px;min-width:0;font-size:13px}
+.rr-item>div:first-child{border-right:1.5px dashed var(--wire);background:var(--surface2)}
+.rr-item .k{font:600 10px/1.2 ui-monospace,Menlo,monospace;text-transform:uppercase;letter-spacing:.06em;color:var(--ink3);margin-bottom:4px}
+.verb{font:700 11px ui-monospace,Menlo,monospace;color:var(--accent);margin-right:6px}
+@media (max-width:520px){.rr-item{grid-template-columns:minmax(0,1fr)}.rr-item>div:first-child{border-right:0;border-bottom:1.5px dashed var(--wire)}}
+.meta{max-width:640px;margin-top:10px;display:grid;gap:8px}
+.meta>*{min-width:0}
+.meta .purpose{font-size:14px}
+.delivers{display:flex;flex-wrap:wrap;gap:5px}
+.states{display:grid;gap:4px;font-size:13px}
+.states div{display:grid;grid-template-columns:86px minmax(0,1fr);gap:8px}
+.states b{font:600 11px/1.9 ui-monospace,Menlo,monospace;color:var(--ink3);text-transform:uppercase}
+/* diagrams */
+.scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;max-width:100%}
+.diagram{display:block;width:100%;height:auto}
+.dia-nav{min-width:640px}
+.dia-data{min-width:680px}
+.dia-arch{min-width:700px}
+.dia text{fill:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.dia .nm{font-size:13px;font-weight:600}
+.dia .sub{font-size:10.5px;fill:var(--ink2)}
+.dia .lbl{font-size:10.5px;fill:var(--ink2);paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round}
+.dia .node{fill:var(--node);stroke:var(--wire);stroke-width:1.5}
+.dia .node.alt{fill:var(--node-alt);stroke:var(--accent)}
+.dia .node.ext{fill:none;stroke-dasharray:5 4}
+.dia .grp{fill:none;stroke:var(--wire);stroke-width:1.2;stroke-dasharray:6 4}
+.dia .grplbl{font-size:11px;font-weight:600;fill:var(--ink2)}
+.dia .edge{fill:none;stroke:var(--ink2);stroke-width:1.4}
+.dia .edge.poll{stroke:var(--accent);stroke-dasharray:4 3}
+.dia .ah{fill:var(--ink2)}
+.dia .ahp{fill:var(--accent)}
+.dia .badge{fill:var(--accent)}
+.dia .badgetxt{fill:var(--surface);font-size:11px;font-weight:700}
+.navkey{margin:10px 0 0;padding:0;list-style:none;display:grid;gap:6px;font-size:13.5px}
+.navkey li{display:grid;grid-template-columns:24px minmax(0,1fr);gap:8px;align-items:start}
+.navkey .num{width:20px;height:20px;border-radius:50%;background:var(--accent);color:var(--surface);font:700 11px/20px system-ui,sans-serif;text-align:center}
+/* data cards */
+.ent h3{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:14px;margin-bottom:6px}
+.fields{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px}
+.fields span{font:11.5px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace;background:var(--surface2);border-radius:4px;padding:0 6px;overflow-wrap:anywhere;min-width:0;max-width:100%}
+.rel{font-size:13px;color:var(--ink2);border-top:1px dotted var(--line);padding-top:6px}
+/* tables */
+table{border-collapse:collapse;width:100%;font-size:13.5px;font-variant-numeric:tabular-nums}
+th,td{text-align:left;vertical-align:top;padding:8px 10px;border-bottom:1px solid var(--line)}
+th{font:600 11px/1.3 ui-monospace,SFMono-Regular,Menlo,monospace;text-transform:uppercase;letter-spacing:.05em;color:var(--ink3);background:var(--surface2)}
+.tbl{background:var(--surface);border:1px solid var(--line);border-radius:10px;overflow-x:auto}
+.tbl table{min-width:560px}
+.tbl tr:last-child td{border-bottom:0}
+td.num{white-space:nowrap;color:var(--ink3)}
+.meter{display:inline-block;width:46px;height:7px;border-radius:4px;vertical-align:middle;margin-right:6px;background:linear-gradient(90deg,var(--accent) calc(var(--v) * 20%),var(--surface2) 0)}
+.meter.eff{background:linear-gradient(90deg,var(--ink2) calc(var(--v) * 20%),var(--surface2) 0)}
+tr.cutrow td{color:var(--ink2)}
+tr.divider td{background:var(--surface2);font:600 11px ui-monospace,Menlo,monospace;text-transform:uppercase;letter-spacing:.05em;color:var(--ink3);padding-block:5px}
+/* plan */
+.phases{display:grid;gap:12px;margin-top:6px;grid-template-columns:repeat(4,minmax(0,1fr))}
+.phase{position:relative;padding-top:24px;min-width:0}
+.phase::before{content:"";position:absolute;left:0;right:-12px;top:8px;height:2px;background:var(--line)}
+.phase:last-child::before{right:0}
+.phase::after{content:attr(data-n);position:absolute;left:0;top:0;width:18px;height:18px;border-radius:50%;background:var(--accent);color:var(--surface);font:700 10px/18px system-ui,sans-serif;text-align:center;box-shadow:0 0 0 3px var(--bg)}
+.phase .card{height:100%}
+.phase h3{font-size:15px;margin-bottom:2px}
+.phase .sub{font:600 11px ui-monospace,Menlo,monospace;text-transform:uppercase;color:var(--ink3);margin:10px 0 4px;letter-spacing:.05em}
+.phase ul{margin:0;padding-left:16px;font-size:13px}
+.phase li{margin-bottom:4px}
+@media (max-width:900px){
+  .phases{grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:minmax(260px,82%);overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:8px}
+  .phase{scroll-snap-align:start}
+}
+/* challenge */
+.challenge{border:2px solid var(--warn);border-radius:12px;background:var(--surface);padding:16px 18px}
+.challenge h3{color:var(--warn);font-size:17px;margin-bottom:12px}
+.challenge ol,.challenge ul{margin:0;padding-left:20px;font-size:14px}
+.challenge li{margin-bottom:6px}
+.challenge li ul,.challenge li ol{margin-top:6px}
+.kw{overflow-wrap:anywhere}
+details{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 16px}
+summary{cursor:pointer;font-weight:600}
+details ul{margin:12px 0 0;padding-left:18px;font-size:14px}
+details li{margin-bottom:8px}
+footer{margin-top:34px;padding-top:16px;border-top:1px solid var(--line);font-size:13px;color:var(--ink2)}
+</style>
+
+<div class="wrap">
+
+<header>
+  <div class="label">Design brief · 2026-10-16</div>
+  <h1>jio-ipo-analysis brew</h1>
+  <p class="meta-line">Source: brew-idea run <span class="mono">wf_256792fe-795</span> (revision 1; supersedes run <span class="mono">wf_753a00f0-e16</span>)</p>
+  <nav class="toc" aria-label="Sections">
+    <a href="#overview">1 Overview</a><a href="#who">2 Who uses it</a><a href="#screens">3 Screens</a><a href="#nav">4 How screens connect</a><a href="#data">5 Data</a><a href="#arch">6 Architecture</a><a href="#stack">7 Stack</a><a href="#plan">8 Plan</a><a href="#decisions">9 Decisions</a><a href="#challenge">10 Challenge these</a><a href="#why">11 Why</a>
+  </nav>
+</header>
+
+<!-- 1 OVERVIEW -->
+<section id="overview">
+  <h2><span class="n">01</span>Overview</h2>
+  <p class="lead" style="margin-top:12px">A private Next.js + shadcn dashboard, refreshed every few minutes, that shows the Ambani family and Jio's strategy team which talking points the public is raising about the Jio Platforms IPO and Mukesh, Akash and Isha Ambani, how sentiment on each is moving, and the real posts behind every number.</p>
+  <div class="card" style="margin-block:14px">
+    <div class="label">Vision</div>
+    <p style="margin:0;font-size:14px">A private, always-on Next.js + shadcn dashboard that shows the Ambani family and Jio's strategy team which talking points the public is raising about the Jio Platforms IPO and Mukesh, Akash and Isha Ambani. For each one it shows how sentiment is moving, with the real posts behind every number, refreshed every few minutes from social, news and IPO-portal sources.</p>
+  </div>
+
+  <div class="label" style="margin-top:18px">Goals</div>
+  <div class="grid g2">
+    <div class="card goal"><h4>Every talking point, one self-updating screen</h4><p>The strategy team sees every active talking point about the Jio IPO and the three Ambanis on one screen that updates itself. Each one shows its positive/neutral/negative split, its volume, and its trend over the last 24h compared with the 24h before.</p></div>
+    <div class="card goal"><h4>Every number leads to real posts</h4><p>Every number can be clicked through to the real posts behind it, with source links and reach. A wrong label can be corrected in one click, and the stated accuracy figure comes only from a 200-post gold set.</p></div>
+    <div class="card goal"><h4>'Real time' shown honestly</h4><p>For each source the dashboard shows its polling interval, its last successful fetch, whether it is sampled or fully searched, and its spend, so nobody mistakes minutes-old data for live data.</p></div>
+    <div class="card goal"><h4>Topic views now, people later (maybe)</h4><p>Posts are stored with author references kept in a separate table. Topic-level views ship now, and person-level views can be added later if the legal review allows them.</p></div>
+  </div>
+
+  <div class="grid g2" style="margin-top:12px">
+    <div class="card">
+      <div class="label">Not doing</div>
+      <ul class="x small">
+        <li>IPO phase selector and calendar-tuned polling. The system runs continuously before, during and after the IPO; the only time-based rule is faster portal polling during NSE market hours.</li>
+        <li>Spike and negative-shift alerts (email, Slack, WhatsApp). No alerts of any kind in v1; listed as a later item.</li>
+        <li>Hard daily spend kill-switch and degrade-to-sampling at cap. Spend is tracked but never limits cadence or sources.</li>
+        <li>SSO allowlist, MFA, viewer roles and screenshot watermarking. v1 has one login.</li>
+        <li>Compliance sign-off as a hard gate before any data is stored</li>
+        <li>Forking or copying influfinder code or stack</li>
+        <li>Headline 'organic estimate' percentage</li>
+        <li>'Who is driving this' named-author list and author-type weighting</li>
+        <li>Per-individual author profiles and dossiers</li>
+        <li>Reply drafting or strategy suggestions. We supply the stats; the strategy team frames the replies.</li>
+        <li>WebSocket/SSE streaming and X filtered stream</li>
+        <li>Historical backfill beyond 7 days</li>
+        <li>Bespoke scrapers per brokerage (Emkay, Centrum, Groww)</li>
+        <li>Auto-discovered clustering as the primary topic view</li>
+        <li>Custom report builder and export suite</li>
+        <li>Custom-trained or fine-tuned sentiment models</li>
+        <li>Per-post sentiment scores to two decimals</li>
+      </ul>
+    </div>
+    <div class="card success">
+      <div class="label">Success looks like</div>
+      <p style="font-size:14px">The strategy team settles a reply decision by opening a talking point's evidence drawer and quoting the real posts in it.</p>
+      <p style="font-size:14px;margin:0">At that moment every source on the Sources page shows a successful fetch within twice its configured interval.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 2 WHO USES IT -->
+<section id="who">
+  <h2><span class="n">02</span>Who uses it</h2>
+  <p class="intro">Three people, each with one end-to-end path through the product.</p>
+  <div class="grid g3">
+    <div class="card persona">
+      <h3>Strategy team lead</h3>
+      <div class="muted small" style="margin-bottom:6px">Jio strategy / comms</div>
+      <p class="need">Each morning and through the day, know which talking points are growing or turning negative, for which Ambani or for Jio, and get the exact public wording to frame a reply around.</p>
+      <ol class="steps">
+        <li>Sign in on the login page</li>
+        <li>Scan the executive brief: talking points ranked by 24h volume, each with a sentiment bar and trend arrow</li>
+        <li>Set the entity filter to 'Isha' and the lane toggle to 'Social'</li>
+        <li>See that 'Governance and regulation' is 40% more negative than the prior 24h, with a low suspected-coordinated count</li>
+        <li>Click the negative segment of the bar, which opens the evidence drawer sorted by reach</li>
+        <li>Read the top posts, open two originals, and relabel one sarcastic post from negative to neutral</li>
+        <li>Switch the lane to 'Media and analyst' to compare the press framing, then take the wording to the reply meeting</li>
+      </ol>
+    </div>
+    <div class="card persona">
+      <h3>Family principal</h3>
+      <div class="muted small" style="margin-bottom:6px">Mukesh, Akash or Isha Ambani</div>
+      <p class="need">A two-minute read on a laptop or iPad of what the public is saying about the IPO and about them personally, which they can trust because they can see the source posts.</p>
+      <ol class="steps">
+        <li>Open the dashboard (already signed in on the shared account)</li>
+        <li>Read the KPI row: 24h volume, headline sentiment split, change against the prior 24h</li>
+        <li>Glance at the market-context strip: latest GMP and subscription multiples, each with a freshness badge and an 'unofficial' tag</li>
+        <li>Tap the entity filter on their own name</li>
+        <li>Tap the top talking point to open topic detail and read its two-line summary and 7-day timeline</li>
+        <li>Tap a count to see three real posts behind it</li>
+      </ol>
+    </div>
+    <div class="card persona">
+      <h3>Our analyst / operator</h3>
+      <div class="muted small" style="margin-bottom:6px">The 'intelligent partner' team</div>
+      <p class="need">Keep the data fresh, relevant and honestly labelled, so the numbers the family sees can be defended.</p>
+      <ol class="steps">
+        <li>Open the Sources page and see that the Apify LinkedIn actor is marked stale after three failed runs</li>
+        <li>Expand the row to read the last error, then adjust the actor's cadence or input and save</li>
+        <li>Enter the X tier and bearer token in the X config card once access is granted; X switches from 'Apify fallback' to 'Full search'</li>
+        <li>On Settings &gt; Keywords, add a newly trending hashtag and check its match count against the last 24h before saving</li>
+        <li>On Settings &gt; Topics, promote an Emerging cluster to a named talking point</li>
+        <li>On the Accuracy page, label the next 20 gold-set posts and check accuracy per language</li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<!-- 3 SCREENS -->
+<section id="screens">
+  <h2><span class="n">03</span>Screens</h2>
+  <p class="intro">Eight surfaces, each drawn top to bottom as rough boxes. Grey bars and placeholder shapes stand in for real data. Tags like <span class="mono">#14</span> point to rows in the Decisions table.</p>
+
+  <!-- Login -->
+  <article class="screen">
+    <div class="screen-head"><h3>Login</h3><span class="tag">page</span></div>
+    <div class="wf">
+      <div class="wf-chrome"><i></i><i></i><i></i><span>/login</span></div>
+      <div class="wf-body">
+        <div class="box"><div class="k">header</div><div class="row"><b class="t">Product name</b><span class="chip">Private</span></div></div>
+        <div class="box"><div class="k">card</div><span class="field">username</span><span class="field">password</span><div style="margin-top:8px"><span class="btn pri">Sign in</span></div></div>
+        <div class="box"><div class="k">footer</div><div class="t muted">Access is logged</div></div>
+      </div>
+    </div>
+    <div class="meta">
+      <div class="purpose">The single private entry point. One shared account with a server-side session, and every attempt is logged.</div>
+      <div class="delivers"><span class="tag acc">#2 Single login + audit log</span></div>
+      <div class="states">
+        <div><b>Loading</b><span>Spinner on the button.</span></div>
+        <div><b>Error</b><span>Wrong credentials show an inline error.</span></div>
+        <div><b>Locked</b><span>After 5 failures the account locks for 15 minutes with a message.</span></div>
+        <div><b>Expired</b><span>An expired session redirects here with 'Session expired'.</span></div>
+      </div>
+    </div>
+  </article>
+
+  <!-- Executive brief -->
+  <article class="screen">
+    <div class="screen-head"><h3>Executive brief</h3><span class="tag">screen</span><span class="tag acc">home /</span></div>
+    <div class="wf">
+      <div class="wf-chrome"><i></i><i></i><i></i><span>/</span></div>
+      <div class="wf-body">
+        <div class="box"><div class="k">header</div><div class="row"><b class="t">Title</b><span class="chip on">Data 4-18 min old</span><span class="chip">Sources</span><span class="chip">Settings</span><span class="chip">Accuracy</span><span class="chip" style="margin-left:auto">sign out</span></div></div>
+        <div class="box"><div class="k">filter bar · stored in the URL</div><div class="row"><span class="seg"><span class="on">All</span><span>Mukesh</span><span>Akash</span><span>Isha</span><span>Jio</span></span><span class="seg"><span class="on">All</span><span>Social</span><span>Media and analyst</span></span></div></div>
+        <div class="box"><div class="k">KPI row</div>
+          <div class="kpis">
+            <div class="kpi">Items, last 24h<span class="ph w60"></span></div>
+            <div class="kpi">Reach-weighted sentiment<br><span class="sbar"><i class="p" style="width:40%"></i><i class="u" style="width:35%"></i><i class="g" style="width:25%"></i></span></div>
+            <div class="kpi">Change vs prior 24h<span class="ph w40"></span></div>
+            <div class="kpi">Low-confidence share<span class="ph w40"></span></div>
+            <div class="kpi">Suspected-coordinated<span class="ph w40"></span></div>
+          </div>
+        </div>
+        <div class="box"><div class="k">market strip</div>
+          <div class="kpis">
+            <div class="kpi">GMP (INR)<div class="row" style="margin-top:4px"><span class="chip">source</span><span class="chip">freshness</span><span class="tag warn">unofficial</span></div></div>
+            <div class="kpi">Subscription x: retail / NII / QIB / total<div class="row" style="margin-top:4px"><span class="chip">source</span><span class="chip">freshness</span><span class="tag warn">unofficial</span></div></div>
+          </div>
+        </div>
+        <div class="box"><div class="k">talking points · active topics ranked by 24h volume</div>
+          <div class="trow"><span class="r">1</span><div><div class="t"><b>Topic name</b></div><div class="small muted">two-line summary</div></div><div class="m"><span>volume ↑</span><span class="sbar"><i class="p" style="width:30%"></i><i class="u" style="width:30%"></i><i class="g" style="width:40%"></i></span><span>low-conf %</span><span>susp. coord.</span><svg class="mini" viewBox="0 0 52 16" aria-hidden="true"><polyline points="0,12 10,10 20,11 30,6 40,7 52,3"/></svg></div></div>
+          <div class="trow"><span class="r">2</span><div><span class="ph w80"></span><span class="ph w40"></span></div><div class="m"><span class="sbar"><i class="p" style="width:50%"></i><i class="u" style="width:30%"></i><i class="g" style="width:20%"></i></span><svg class="mini" viewBox="0 0 52 16" aria-hidden="true"><polyline points="0,8 10,9 20,6 30,8 40,5 52,6"/></svg></div></div>
+          <div class="trow"><span class="r">3</span><div><span class="ph w60"></span><span class="ph w40"></span></div><div class="m"><span class="small muted">Not enough data (n=12)</span></div></div>
+        </div>
+        <div class="box"><div class="k">bottom group</div><div class="row"><span class="chip">Emerging candidates →</span><span class="chip">Unclassified count →</span></div></div>
+        <div class="box"><div class="k">footer</div><div class="t muted">'Instagram and LinkedIn are sampled, not representative' · gold-set accuracy figure</div></div>
+      </div>
+    </div>
+    <div class="meta">
+      <div class="purpose">The one screen the family and strategy team read: active talking points, sentiment, volume, 24h trend and market context. It refreshes itself every 30 seconds from precomputed rollups.</div>
+      <div class="delivers"><span class="tag acc">#14 Executive brief</span><span class="tag acc">#9 15-min rollups + 30 s polling</span><span class="tag acc">#10 Entity filter</span><span class="tag acc">#18 Reach-weighted sentiment + lanes</span><span class="tag acc">#19 Suspected-coordination flags</span><span class="tag acc">#11 Market-context strip</span><span class="tag acc">#4 Evidence drawer</span><span class="tag acc">#6 Seeded 10-topic taxonomy</span></div>
+      <div class="states">
+        <div><b>Empty</b><span>'Collecting: first numbers appear after the first fetch cycle (about 15 min)'.</span></div>
+        <div><b>Loading</b><span>Skeleton rows.</span></div>
+        <div><b>Small n</b><span>A topic with fewer than 30 items shows 'Not enough data (n=12)' instead of a split.</span></div>
+        <div><b>Error</b><span>If a poll fails, the last good data stays under an amber banner: 'Could not refresh, showing data as of HH:MM IST'.</span></div>
+      </div>
+    </div>
+  </article>
+
+  <!-- Topic detail -->
+  <article class="screen">
+    <div class="screen-head"><h3>Topic detail</h3><span class="tag">page</span><span class="tag">/topics/[slug]</span></div>
+    <div class="wf">
+      <div class="wf-chrome"><i></i><i></i><i></i><span>/topics/[slug]</span></div>
+      <div class="wf-body">
+        <div class="box"><div class="k">header</div><div class="row"><span class="chip">← back to brief</span><b class="t">Topic name</b></div><div class="small muted" style="margin-top:4px">Two-line summary · generated at HH:MM</div></div>
+        <div class="box"><div class="k">filter bar · carried over from the brief</div><div class="row"><span class="seg"><span class="on">All</span><span>Mukesh</span><span>Akash</span><span>Isha</span><span>Jio</span></span><span class="seg"><span class="on">All</span><span>Social</span><span>Media and analyst</span></span></div></div>
+        <div class="box"><div class="k">timeline · 7 days, hourly</div>
+          <svg class="spark" viewBox="0 0 300 56" preserveAspectRatio="none" aria-hidden="true"><line class="ax" x1="0" y1="54" x2="300" y2="54"/>
+            <rect class="sp" x="10" y="38" width="14" height="8"/><rect class="su" x="10" y="46" width="14" height="8"/>
+            <rect class="sp" x="50" y="30" width="14" height="10"/><rect class="su" x="50" y="40" width="14" height="8"/><rect class="sg" x="50" y="48" width="14" height="6"/>
+            <rect class="sp" x="90" y="34" width="14" height="8"/><rect class="su" x="90" y="42" width="14" height="6"/><rect class="sg" x="90" y="48" width="14" height="6"/>
+            <rect class="sp" x="130" y="22" width="14" height="10"/><rect class="su" x="130" y="32" width="14" height="10"/><rect class="sg" x="130" y="42" width="14" height="12"/>
+            <rect class="sp" x="170" y="26" width="14" height="8"/><rect class="su" x="170" y="34" width="14" height="10"/><rect class="sg" x="170" y="44" width="14" height="10"/>
+            <rect class="sp" x="210" y="16" width="14" height="12"/><rect class="su" x="210" y="28" width="14" height="12"/><rect class="sg" x="210" y="40" width="14" height="14"/>
+            <rect class="sp" x="250" y="20" width="14" height="10"/><rect class="su" x="250" y="30" width="14" height="12"/><rect class="sg" x="250" y="42" width="14" height="12"/>
+            <polyline class="b" points="17,30 57,26 97,28 137,18 177,20 217,12 257,14"/></svg>
+          <div class="row legend">stacked volume by sentiment · dashed: GMP and subscription (second axis) <span class="chip">freshness</span></div>
+        </div>
+        <div class="box"><div class="k">by-source table</div>
+          <div class="row" style="font-size:11px"><span class="chip">source</span><span class="chip">items 24h</span><span class="chip">sentiment split</span><span class="chip">coverage: sampled / full search</span></div>
+          <div class="trow"><span></span><span class="ph w60"></span><span class="sbar"><i class="p" style="width:40%"></i><i class="u" style="width:30%"></i><i class="g" style="width:30%"></i></span></div>
+          <div class="trow"><span></span><span class="ph w40"></span><span class="sbar"><i class="p" style="width:25%"></i><i class="u" style="width:45%"></i><i class="g" style="width:30%"></i></span></div>
+        </div>
+        <div class="box"><div class="k">entity breakdown · mentions</div>
+          <div class="trow"><span></span><span class="small">Mukesh</span><span class="sbar"><i class="p" style="width:40%"></i><i class="u" style="width:30%"></i><i class="g" style="width:30%"></i></span></div>
+          <div class="trow"><span></span><span class="small">Akash</span><span class="sbar"><i class="p" style="width:30%"></i><i class="u" style="width:40%"></i><i class="g" style="width:30%"></i></span></div>
+          <div class="trow"><span></span><span class="small">Isha</span><span class="sbar"><i class="p" style="width:35%"></i><i class="u" style="width:35%"></i><i class="g" style="width:30%"></i></span></div>
+          <div class="trow"><span></span><span class="small">Jio</span><span class="sbar"><i class="p" style="width:25%"></i><i class="u" style="width:35%"></i><i class="g" style="width:40%"></i></span></div>
+        </div>
+        <div class="box"><div class="k">coordination panel</div><div class="row"><span class="chip">near-duplicate clusters</span><span class="chip">burst buckets</span><span class="chip">top-author share</span></div><div class="small muted" style="margin-top:4px">each labelled 'suspected' and linked to its posts</div></div>
+        <div class="box"><div class="k">top posts</div><div class="t">10 highest-reach posts in the last 24h, opening in the evidence drawer</div><span class="ph w80"></span><span class="ph w60"></span></div>
+      </div>
+    </div>
+    <div class="meta">
+      <div class="purpose">One talking point in depth: how its volume and sentiment moved over 7 days next to GMP and subscription, which sources and Ambanis it involves, and whether it looks coordinated.</div>
+      <div class="delivers"><span class="tag acc">#14 Executive brief</span><span class="tag acc">#11 Market-context strip</span><span class="tag acc">#10 Entity filter</span><span class="tag acc">#18 Reach-weighted sentiment + lanes</span><span class="tag acc">#19 Suspected-coordination flags</span><span class="tag acc">#4 Evidence drawer</span></div>
+      <div class="states">
+        <div><b>Unknown</b><span>Unknown slug gives a 404 with a link back to the brief.</span></div>
+        <div><b>Loading</b><span>Chart skeleton.</span></div>
+        <div><b>Dormant</b><span>No items in 24h shows 'Dormant: last item HH:MM DD Mon' and still shows the 7-day chart.</span></div>
+        <div><b>Error</b><span>The last good data stays with a retry banner.</span></div>
+      </div>
+    </div>
+  </article>
+
+  <!-- Evidence drawer -->
+  <article class="screen">
+    <div class="screen-head"><h3>Evidence drawer</h3><span class="tag">side sheet</span></div>
+    <div class="wf sheet">
+      <div class="scrim" aria-hidden="true"></div>
+      <div class="wf-body">
+        <div class="box"><div class="k">header</div><div class="t"><b>Valuation, Negative, Last 24h, Social, Isha</b></div><div class="small muted">item count</div></div>
+        <div class="box"><div class="k">controls</div><div class="row"><span class="seg"><span class="on">reach</span><span>newest</span></span><span class="toggle"></span><span class="small">suspected-coordinated only</span></div></div>
+        <div class="box"><div class="k">list · post card</div>
+          <div class="card" style="padding:8px 10px">
+            <div class="row small"><span class="chip">source icon</span><span class="muted">time (IST)</span><span class="muted">'X user'</span><span class="chip">reach</span><span class="tag">confidence</span><span class="tag warn">suspected coordinated</span></div>
+            <div class="small" style="margin-top:5px">Original text</div>
+            <div class="small muted">One-line English gloss (non-English posts)</div>
+            <div class="row" style="margin-top:6px"><span class="chip">Open original ↗</span></div>
+            <div class="box" style="margin-top:8px"><div class="k">per card · relabel</div><div class="row"><span class="seg"><span>Positive</span><span>Neutral</span><span>Negative</span></span><span class="chip">topic ▾</span><span class="chip">entities ▾</span></div></div>
+          </div>
+          <div class="small muted" style="margin-top:6px">Author name shown only for media outlets and public figures; otherwise 'X user', 'Reddit user' and so on.</div>
+        </div>
+        <div class="box"><div class="k">footer</div><span class="btn">Load more</span></div>
+      </div>
+    </div>
+    <div class="meta">
+      <div class="purpose">A shadcn Sheet that opens from any number. It lists the real posts behind that number and is where labels are corrected.</div>
+      <div class="delivers"><span class="tag acc">#4 Evidence drawer</span><span class="tag acc">#16 Gold set + relabel</span><span class="tag acc">#5 Author data separate</span><span class="tag acc">#15 Two-stage classification</span></div>
+      <div class="states">
+        <div><b>Empty</b><span>'No posts match this slice'.</span></div>
+        <div><b>Loading</b><span>Card skeletons.</span></div>
+        <div><b>Error</b><span>Inline retry.</span></div>
+        <div><b>Relabel</b><span>Applies at once, shows an Undo toast for 10 seconds, and reverts with an error toast if the save fails.</span></div>
+      </div>
+    </div>
+  </article>
+
+  <!-- Sources -->
+  <article class="screen">
+    <div class="screen-head"><h3>Sources</h3><span class="tag">page</span><span class="tag">/sources</span></div>
+    <div class="wf">
+      <div class="wf-chrome"><i></i><i></i><i></i><span>/sources</span></div>
+      <div class="wf-body">
+        <div class="box"><div class="k">header</div><div class="row"><span class="chip">← back to brief</span><span class="chip on">overall freshness</span><span class="chip">spend today</span><span class="chip">spend last 7 days</span></div></div>
+        <div class="box"><div class="k">sources table</div>
+          <div class="row" style="font-size:11px"><span class="chip">name</span><span class="chip">lane</span><span class="chip">status: ok / stale / circuit open</span><span class="chip">last success</span><span class="chip">next run</span><span class="chip">interval min (editable)</span><span class="chip">market-hours interval (portals)</span><span class="chip">items 24h</span><span class="chip">spend today</span><span class="chip">coverage label</span></div>
+          <div class="trow"><span class="r">▸</span><span class="ph w80"></span><span class="field" style="margin:0">5</span></div>
+          <div class="trow"><span class="r">▾</span><span class="ph w60"></span><span class="field" style="margin:0">30</span></div>
+          <div class="box" style="margin-top:6px"><div class="k">row expand · last 10 runs</div><div class="row"><span class="chip">duration</span><span class="chip">new items</span><span class="chip">cost</span><span class="chip">error message</span></div></div>
+        </div>
+        <div class="kpis">
+          <div class="box"><div class="k">X config card</div><span class="field">tier ▾</span><span class="field">bearer token (write-only)</span><span class="field">rate limits</span><div class="row" style="margin-top:6px"><span class="seg"><span>Official API</span><span class="on">Apify fallback</span></span></div></div>
+          <div class="box"><div class="k">quota card</div><div class="t">YouTube units used today / 10,000</div><span class="meterbar"><i></i></span></div>
+        </div>
+      </div>
+    </div>
+    <div class="meta">
+      <div class="purpose">The honest 'real time' panel. It shows and edits each source's polling interval, and shows freshness, health, items, spend and whether the source is sampled. X credentials are filled in here.</div>
+      <div class="delivers"><span class="tag acc">#3 Per-source cadence + spend panel</span><span class="tag acc">#7 X adapter + Apify fallback</span><span class="tag acc">#12 Apify Instagram + LinkedIn (sampled)</span><span class="tag acc">#17 Source adapter interface + Tier-1</span></div>
+      <div class="states">
+        <div><b>Never run</b><span>'Waiting for first run'.</span></div>
+        <div><b>No creds</b><span>'Not configured' (X shows 'Apify fallback').</span></div>
+        <div><b>Circuit</b><span>An open circuit shows a red badge with the last error.</span></div>
+        <div><b>Error</b><span>Invalid saves show inline validation; a failed page load shows a retry.</span></div>
+      </div>
+    </div>
+  </article>
+
+  <!-- Settings -->
+  <article class="screen">
+    <div class="screen-head"><h3>Settings</h3><span class="tag">page</span><span class="tag">/settings</span></div>
+    <div class="wf">
+      <div class="wf-chrome"><i></i><i></i><i></i><span>/settings</span></div>
+      <div class="wf-body">
+        <div class="box"><div class="k">header</div><div class="row"><span class="chip">← back to brief</span></div></div>
+        <div class="tabs"><span class="on">Keywords and entities</span><span>Topics</span><span>Access and retention</span></div>
+        <div class="box"><div class="k">tab · Keywords and entities</div>
+          <div class="small muted">Chip lists:</div>
+          <div class="row" style="margin-top:4px"><span class="chip">IPO terms</span><span class="chip">hashtags</span><span class="chip">entities + aliases (Latin, Devanagari, Gujarati)</span><span class="chip">co-occurrence terms</span><span class="chip">negative terms</span><span class="chip">+ add</span></div>
+          <div class="row" style="margin-top:6px"><span class="btn">Test against last 24h</span><span class="small muted">count</span><span class="btn pri">Save (new config version)</span></div>
+        </div>
+        <div class="box"><div class="k">tab · Topics</div>
+          <div class="t">10 seeded topics with description and example phrases (editable)</div>
+          <div class="t" style="margin-top:4px">Emerging candidates with sample posts</div>
+          <div class="row" style="margin-top:4px"><span class="btn pri">Promote</span><span class="btn">Merge into</span><span class="btn">Dismiss</span></div>
+          <div class="small muted" style="margin-top:4px">Unclassified count</div>
+        </div>
+        <div class="box"><div class="k">tab · Access and retention</div>
+          <div class="row" style="font-size:11px"><span class="chip">time</span><span class="chip">action</span><span class="chip">IP</span><span class="chip">detail</span></div>
+          <div class="t" style="margin-top:4px">Retention days: raw posts · authors</div>
+          <div class="box lock" style="margin-top:6px"><div class="t">Person-level views: Off, pending legal review <span class="small muted">(cannot be changed from the UI)</span></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="meta">
+      <div class="purpose">The operator's controls: tracked keywords, hashtags and entity aliases, the topic taxonomy with Emerging promotion, retention, and the access/audit log.</div>
+      <div class="delivers"><span class="tag acc">#1 Keyword + entity config</span><span class="tag acc">#6 Seeded 10-topic taxonomy</span><span class="tag acc">#2 Single login + audit log</span><span class="tag acc">#5 Author data separate</span><span class="tag acc">#8 Parallel legal review</span></div>
+      <div class="states">
+        <div><b>Loading</b><span>Tab skeletons.</span></div>
+        <div><b>Conflict</b><span>'Config changed since you opened it, reload'.</span></div>
+        <div><b>Error</b><span>Save error appears inline and keeps the unsaved edits.</span></div>
+        <div><b>Empty</b><span>No Emerging candidates shows 'Nothing new outside the 10 topics'.</span></div>
+      </div>
+    </div>
+  </article>
+
+  <!-- Accuracy -->
+  <article class="screen">
+    <div class="screen-head"><h3>Accuracy</h3><span class="tag">page</span><span class="tag">/accuracy</span></div>
+    <div class="wf">
+      <div class="wf-chrome"><i></i><i></i><i></i><span>/accuracy</span></div>
+      <div class="wf-body">
+        <div class="box"><div class="k">header</div><div class="row"><span class="chip">← back to brief</span><span class="chip">sentiment accuracy</span><span class="chip">topic accuracy</span><span class="chip">prompt version + date</span></div></div>
+        <div class="box"><div class="k">breakdown</div>
+          <div class="kpis">
+            <div class="kpi">EN<span class="ph w60"></span></div><div class="kpi">Hinglish<span class="ph w60"></span></div><div class="kpi">Hindi<span class="ph w60"></span></div><div class="kpi">Gujarati<span class="ph w60"></span></div>
+          </div>
+          <div class="row" style="margin-top:8px"><span class="matrix" aria-label="3 by 3 confusion matrix"><i class="d"></i><i></i><i></i><i></i><i class="d"></i><i></i><i></i><i></i><i class="d"></i></span><span class="small">3x3 sentiment confusion matrix</span><span class="chip">sarcasm subset</span></div>
+        </div>
+        <div class="box"><div class="k">labelling queue · one post at a time</div>
+          <span class="ph w80"></span><span class="ph w60"></span>
+          <div class="row" style="margin-top:6px"><span class="seg"><span>Positive</span><span>Neutral</span><span>Negative</span></span><span class="chip">topic</span><span class="chip">entity</span><span class="btn">Skip</span><span class="small muted" style="margin-left:auto">n / 200</span></div>
+        </div>
+        <div class="box"><div class="k">corrections</div><div class="row"><span class="chip">dashboard relabels: count</span><span class="chip">used as few-shot examples: count</span></div></div>
+      </div>
+    </div>
+    <div class="meta">
+      <div class="purpose">Measures how often the classifier is right on Hinglish, Hindi, Gujarati and English posts, using a 200-post gold set, and shows how dashboard corrections feed back into the prompt.</div>
+      <div class="delivers"><span class="tag acc">#16 Gold set + accuracy figure</span><span class="tag acc">#15 Two-stage classification</span></div>
+      <div class="states">
+        <div><b>Not ready</b><span>Until 200 posts are labelled: 'Not measured yet: n of 200 labelled' and no figure.</span></div>
+        <div><b>Loading</b><span>Skeletons.</span></div>
+        <div><b>Error</b><span>Retry.</span></div>
+        <div><b>Done</b><span>'Gold set complete' with a Re-score button after a prompt change.</span></div>
+      </div>
+    </div>
+  </article>
+
+  <!-- API -->
+  <article class="screen">
+    <div class="screen-head"><h3>Dashboard API</h3><span class="tag">endpoint</span><span class="tag">/api/*</span></div>
+    <div class="rr">
+      <div class="rr-item"><div><div class="k">request</div><span class="verb">GET</span><code>/api/brief?entity=&amp;lane=</code></div><div><div class="k">response</div>KPIs, ranked topics, market strip and freshness. Cached 15 s.</div></div>
+      <div class="rr-item"><div><div class="k">request</div><span class="verb">GET</span><code>/api/topics/:slug/timeline?entity=&amp;lane=</code></div><div><div class="k">response</div>7-day hourly series plus market series</div></div>
+      <div class="rr-item"><div><div class="k">request</div><span class="verb">GET</span><code>/api/evidence?topic=&amp;sentiment=&amp;entity=&amp;lane=&amp;window=&amp;cursor=</code></div><div><div class="k">response</div>Post cards, with no author handles except media and public figures</div></div>
+      <div class="rr-item"><div><div class="k">request</div><span class="verb">POST</span><code>/api/labels</code></div><div><div class="k">response</div>Writes a correction or gold label</div></div>
+      <div class="rr-item"><div><div class="k">request</div><span class="verb">GET/PATCH</span><code>/api/config</code><br><span class="verb">GET/PATCH</span><code>/api/sources</code></div><div><div class="k">response</div>Read, or write a new config version</div></div>
+      <div class="small muted">Every response carries an <span class="mono">as_of</span> timestamp and a stale flag per source. No bulk or CSV route.</div>
+    </div>
+    <div class="meta">
+      <div class="purpose">Session-protected route handlers the UI polls and writes to. Reads come from rollups with short caching so 30-second polling stays cheap.</div>
+      <div class="delivers"><span class="tag acc">#9 15-min rollups + 30 s polling</span><span class="tag acc">#4 Evidence drawer</span><span class="tag acc">#2 Single login + audit log</span><span class="tag acc">#3 Per-source cadence + spend panel</span></div>
+      <div class="states">
+        <div><b>401</b><span>Without a session.</span></div>
+        <div><b>400</b><span>Bad filters.</span></div>
+        <div><b>503</b><span>On a database error; the client keeps its last data.</span></div>
+      </div>
+    </div>
+  </article>
+</section>
+
+<!-- 4 NAV MAP -->
+<section id="nav">
+  <h2><span class="n">04</span>How screens connect</h2>
+  <p class="intro">Arrows show how people move between surfaces. Blue dashed lines are the pages polling the API in the background. Numbers match the list below.</p>
+  <div class="card" style="padding:10px">
+    <div class="scroll">
+      <svg class="diagram dia dia-nav" viewBox="0 0 800 490" role="img" aria-label="Navigation map between screens">
+        <defs>
+          <marker id="nah" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path class="ah" d="M0,0 L8,4 L0,8 z"/></marker>
+          <marker id="nahp" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path class="ahp" d="M0,0 L8,4 L0,8 z"/></marker>
+        </defs>
+        <!-- polling (11) -->
+        <path class="edge poll" d="M380,196 L436,196" marker-end="url(#nahp)"/>
+        <path class="edge poll" d="M515,92 L515,166" marker-end="url(#nahp)"/>
+        <path class="edge poll" d="M515,300 L515,226" marker-end="url(#nahp)"/>
+        <path class="edge poll" d="M650,92 L586,166" marker-end="url(#nahp)"/>
+        <!-- navigation -->
+        <path class="edge" d="M170,196 L226,196" marker-end="url(#nah)"/>
+        <path class="edge" d="M330,170 L436,62" marker-end="url(#nah)"/>
+        <path class="edge" d="M305,170 L305,14 L705,14 L705,36" marker-end="url(#nah)"/>
+        <path class="edge" d="M590,66 L626,66" marker-end="url(#nah)"/>
+        <path class="edge" d="M440,86 L354,168" marker-end="url(#nah)"/>
+        <path class="edge" d="M370,222 L436,298" marker-end="url(#nah)"/>
+        <path class="edge" d="M250,222 L152,298" marker-end="url(#nah)"/>
+        <path class="edge" d="M320,222 L320,446 L174,446" marker-end="url(#nah)"/>
+        <path class="edge" d="M705,92 L705,166" marker-end="url(#nah)"/>
+        <path class="edge" d="M170,326 L288,226" marker-end="url(#nah)"/>
+        <path class="edge" d="M95,92 L95,166" marker-end="url(#nah)"/>
+        <!-- nodes -->
+        <rect class="node ext" x="20" y="40" width="150" height="52" rx="8"/><text class="nm" x="95" y="63" text-anchor="middle">Any page</text><text class="sub" x="95" y="80" text-anchor="middle">sign out / expiry</text>
+        <rect class="node" x="20" y="170" width="150" height="52" rx="8"/><text class="nm" x="95" y="193" text-anchor="middle">Login</text><text class="sub" x="95" y="210" text-anchor="middle">page</text>
+        <rect class="node" x="20" y="300" width="150" height="52" rx="8"/><text class="nm" x="95" y="323" text-anchor="middle">Settings</text><text class="sub" x="95" y="340" text-anchor="middle">/settings</text>
+        <rect class="node" x="20" y="420" width="150" height="52" rx="8"/><text class="nm" x="95" y="443" text-anchor="middle">Accuracy</text><text class="sub" x="95" y="460" text-anchor="middle">/accuracy</text>
+        <rect class="node alt" x="230" y="170" width="150" height="52" rx="8"/><text class="nm" x="305" y="193" text-anchor="middle">Executive brief</text><text class="sub" x="305" y="210" text-anchor="middle">home /</text>
+        <rect class="node" x="440" y="40" width="150" height="52" rx="8"/><text class="nm" x="515" y="63" text-anchor="middle">Topic detail</text><text class="sub" x="515" y="80" text-anchor="middle">/topics/[slug]</text>
+        <rect class="node alt" x="440" y="170" width="150" height="52" rx="8"/><text class="nm" x="515" y="193" text-anchor="middle">Dashboard API</text><text class="sub" x="515" y="210" text-anchor="middle">/api/*</text>
+        <rect class="node" x="440" y="300" width="150" height="52" rx="8"/><text class="nm" x="515" y="323" text-anchor="middle">Sources</text><text class="sub" x="515" y="340" text-anchor="middle">/sources</text>
+        <rect class="node" x="630" y="40" width="150" height="52" rx="8"/><text class="nm" x="705" y="63" text-anchor="middle">Evidence drawer</text><text class="sub" x="705" y="80" text-anchor="middle">side sheet</text>
+        <rect class="node ext" x="630" y="170" width="150" height="52" rx="8"/><text class="nm" x="705" y="193" text-anchor="middle">Original post</text><text class="sub" x="705" y="210" text-anchor="middle">source platform, new tab</text>
+        <!-- badges -->
+        <g><circle class="badge" cx="198" cy="196" r="10"/><text class="badgetxt" x="198" y="200" text-anchor="middle">1</text></g>
+        <g><circle class="badge" cx="410" cy="89" r="10"/><text class="badgetxt" x="410" y="93" text-anchor="middle">2</text></g>
+        <g><circle class="badge" cx="505" cy="14" r="10"/><text class="badgetxt" x="505" y="18" text-anchor="middle">3</text></g>
+        <g><circle class="badge" cx="608" cy="66" r="10"/><text class="badgetxt" x="608" y="70" text-anchor="middle">4</text></g>
+        <g><circle class="badge" cx="375" cy="148" r="10"/><text class="badgetxt" x="375" y="152" text-anchor="middle">5</text></g>
+        <g><circle class="badge" cx="403" cy="260" r="10"/><text class="badgetxt" x="403" y="264" text-anchor="middle">6</text></g>
+        <g><circle class="badge" cx="215" cy="249" r="10"/><text class="badgetxt" x="215" y="253" text-anchor="middle">7</text></g>
+        <g><circle class="badge" cx="247" cy="446" r="10"/><text class="badgetxt" x="247" y="450" text-anchor="middle">8</text></g>
+        <g><circle class="badge" cx="705" cy="129" r="10"/><text class="badgetxt" x="705" y="133" text-anchor="middle">9</text></g>
+        <g><circle class="badge" cx="250" cy="259" r="10"/><text class="badgetxt" x="250" y="263" text-anchor="middle">10</text></g>
+        <g><circle class="badge" cx="515" cy="129" r="10"/><text class="badgetxt" x="515" y="133" text-anchor="middle">11</text></g>
+        <g><circle class="badge" cx="95" cy="129" r="10"/><text class="badgetxt" x="95" y="133" text-anchor="middle">12</text></g>
+      </svg>
+    </div>
+    <ol class="navkey">
+      <li><span class="num">1</span><span><b>Login → Executive brief</b>: sign in</span></li>
+      <li><span class="num">2</span><span><b>Brief → Topic detail</b>: click a talking point row</span></li>
+      <li><span class="num">3</span><span><b>Brief → Evidence drawer</b>: click any KPI, sentiment bar segment, low-confidence %, coordination count or Emerging/Unclassified count</span></li>
+      <li><span class="num">4</span><span><b>Topic detail → Evidence drawer</b>: click a timeline bucket, by-source cell, entity count, coordination item or top post</span></li>
+      <li><span class="num">5</span><span><b>Topic detail → Brief</b>: back link (filters kept in the URL)</span></li>
+      <li><span class="num">6</span><span><b>Brief → Sources</b>: click the freshness pill or the Sources link in the header</span></li>
+      <li><span class="num">7</span><span><b>Brief → Settings</b>: Settings link in the header</span></li>
+      <li><span class="num">8</span><span><b>Brief → Accuracy</b>: click the accuracy figure in the footer or the header link</span></li>
+      <li><span class="num">9</span><span><b>Evidence drawer → Original post</b>: Open original (new tab)</span></li>
+      <li><span class="num">10</span><span><b>Settings → Brief</b>: promote an Emerging topic; it appears as a new row on the next poll</span></li>
+      <li><span class="num">11</span><span><b>Brief, Topic detail, Evidence drawer, Sources → Dashboard API</b>: TanStack Query polling every 30 seconds, plus writes on relabel or save</span></li>
+      <li><span class="num">12</span><span><b>Any page → Login</b>: sign out or session expiry</span></li>
+    </ol>
+  </div>
+</section>
+
+<!-- 5 DATA -->
+<section id="data">
+  <h2><span class="n">05</span>Data</h2>
+  <p class="intro">What gets stored and how the pieces link. Each post is stored once; author details sit in their own walled-off table; the screens read small 15-minute summaries.</p>
+  <div class="card" style="padding:10px">
+    <div class="scroll">
+      <svg class="diagram dia dia-data" viewBox="0 0 880 400" role="img" aria-label="Entity relationship diagram">
+        <defs><marker id="dah" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path class="ah" d="M0,0 L8,4 L0,8 z"/></marker></defs>
+        <path class="edge" d="M250,58 L184,58" marker-end="url(#dah)"/>
+        <path class="edge" d="M410,58 L706,58" marker-end="url(#dah)"/>
+        <path class="edge" d="M330,86 L330,166" marker-end="url(#dah)"/>
+        <path class="edge" d="M410,198 L476,198" marker-end="url(#dah)"/>
+        <path class="edge" d="M560,226 L560,306" marker-end="url(#dah)"/>
+        <path class="edge" d="M262,86 L232,116 L232,338 L476,338" marker-end="url(#dah)"/>
+        <path class="edge" d="M790,86 L790,166" marker-end="url(#dah)"/>
+        <path class="edge" d="M790,306 L790,230" marker-end="url(#dah)"/>
+        <text class="lbl" x="217" y="50" text-anchor="middle">author_id</text>
+        <text class="lbl" x="560" y="50" text-anchor="middle">source_key → Config.sources</text>
+        <text class="lbl" x="338" y="130">has many</text>
+        <text class="lbl" x="443" y="190" text-anchor="middle">belongs to</text>
+        <text class="lbl" x="568" y="270">has many</text>
+        <text class="lbl" x="354" y="330" text-anchor="middle">rolled up into</text>
+        <text class="lbl" x="798" y="122">each save logs</text>
+        <text class="lbl" x="798" y="136">config_change</text>
+        <text class="lbl" x="798" y="262">freshness from</text>
+        <text class="lbl" x="798" y="276">fetch_run rows</text>
+        <rect class="node" x="20" y="30" width="160" height="56" rx="8"/><text class="nm" x="100" y="53" text-anchor="middle">Author</text><text class="sub" x="100" y="71" text-anchor="middle">isolated table</text>
+        <rect class="node alt" x="250" y="30" width="160" height="56" rx="8"/><text class="nm" x="330" y="53" text-anchor="middle">Post</text><text class="sub" x="330" y="71" text-anchor="middle">unique (source_key, external_id)</text>
+        <rect class="node" x="710" y="30" width="160" height="56" rx="8"/><text class="nm" x="790" y="53" text-anchor="middle">Config</text><text class="sub" x="790" y="71" text-anchor="middle">versioned</text>
+        <rect class="node" x="250" y="170" width="160" height="56" rx="8"/><text class="nm" x="330" y="193" text-anchor="middle">Classification</text><text class="sub" x="330" y="211" text-anchor="middle">model / correction / gold</text>
+        <rect class="node" x="480" y="170" width="160" height="56" rx="8"/><text class="nm" x="560" y="193" text-anchor="middle">Topic</text><text class="sub" x="560" y="211" text-anchor="middle">seed / emerging / unclassified</text>
+        <rect class="node" x="710" y="170" width="160" height="56" rx="8"/><text class="nm" x="790" y="193" text-anchor="middle">EventLog</text><text class="sub" x="790" y="211" text-anchor="middle">append-only</text>
+        <rect class="node alt" x="480" y="310" width="160" height="56" rx="8"/><text class="nm" x="560" y="333" text-anchor="middle">TopicStat15m</text><text class="sub" x="560" y="351" text-anchor="middle">read by brief + timeline</text>
+        <rect class="node" x="710" y="310" width="160" height="56" rx="8"/><text class="nm" x="790" y="333" text-anchor="middle">MarketPoint</text><text class="sub" x="790" y="351" text-anchor="middle">written by portal adapters</text>
+      </svg>
+    </div>
+  </div>
+  <div class="grid g2" style="margin-top:12px">
+    <div class="card ent"><h3>Post</h3>
+      <div class="fields"><span>id</span><span>source_key</span><span>external_id (unique with source_key)</span><span>url</span><span>author_id (FK)</span><span>lane (social / media)</span><span>text</span><span>lang (en / hinglish / hi / gu / other)</span><span>published_at</span><span>fetched_at</span><span>reach_raw jsonb (followers, views, likes, upvotes, comments)</span><span>reach_score (0-1, normalized per source)</span><span>content_hash</span><span>embedding vector</span><span>near_dup_cluster_id</span><span>matched_terms[]</span><span>raw_json</span></div>
+      <div class="rel">Belongs to Author; has many Classification rows; source_key refers to an entry in Config.sources; rolled up into TopicStat15m.</div>
+    </div>
+    <div class="card ent"><h3>Author <span class="tag">isolated</span></h3>
+      <div class="fields"><span>id</span><span>platform</span><span>platform_user_id</span><span>handle</span><span>display_name</span><span>followers</span><span>kind (media_outlet / public_figure / other)</span><span>first_seen_at</span><span>last_seen_at</span><span>delete_after</span></div>
+      <div class="rel">Has many Posts. Never joined into UI or API output except when kind is media_outlet or public_figure; used only in aggregate by the author-concentration flag.</div>
+    </div>
+    <div class="card ent"><h3>Classification</h3>
+      <div class="fields"><span>id</span><span>post_id</span><span>origin (model / correction / gold)</span><span>topic_id</span><span>sentiment (positive / neutral / negative)</span><span>entities[] (mukesh / akash / isha / jio)</span><span>confidence (high / low)</span><span>gloss_en</span><span>model</span><span>prompt_version</span><span>created_at</span></div>
+      <div class="rel">Belongs to Post and Topic. The effective label is the latest correction or gold row, otherwise the latest model row. Accuracy is computed only from gold rows compared with model rows; correction rows become few-shot examples.</div>
+    </div>
+    <div class="card ent"><h3>Topic</h3>
+      <div class="fields"><span>id</span><span>slug</span><span>name</span><span>kind (seed / emerging / unclassified)</span><span>description</span><span>example_phrases[]</span><span>summary_2line</span><span>summary_at</span><span>status (active / dormant / dismissed)</span><span>promoted_at</span></div>
+      <div class="rel">Has many Classification rows; has many TopicStat15m rows; an emerging topic can be promoted to seed or merged into another topic.</div>
+    </div>
+    <div class="card ent"><h3>TopicStat15m</h3>
+      <div class="fields"><span>bucket_start (15-min, IST)</span><span>topic_id</span><span>entity (all / mukesh / akash / isha / jio)</span><span>lane (all / social / media)</span><span>items</span><span>pos / neu / neg counts</span><span>low_conf count</span><span>reach_pos / reach_neu / reach_neg</span><span>suspected_coordinated count</span><span>burst_flag</span><span>top5_author_share</span></div>
+      <div class="rel">Primary key (bucket_start, topic_id, entity, lane). Derived from Post and the effective Classification; read by /api/brief and the timeline. 24h figures are the sum of 96 buckets.</div>
+    </div>
+    <div class="card ent"><h3>MarketPoint</h3>
+      <div class="fields"><span>id</span><span>series (gmp_inr / sub_retail_x / sub_nii_x / sub_qib_x / sub_total_x)</span><span>value</span><span>observed_at</span><span>source_key</span><span>source_url</span><span>fetched_at</span></div>
+      <div class="rel">Written by IPO portal adapters; plotted on the brief strip and the topic timeline; freshness comes from the EventLog fetch runs for its source.</div>
+    </div>
+    <div class="card ent"><h3>Config <span class="tag">versioned</span></h3>
+      <div class="fields"><span>version</span><span>saved_at</span><span>terms jsonb (ipo_terms, hashtags, entities with aliases, cooccurrence_terms, negative_terms)</span><span>sources jsonb (per key: enabled, lane, interval_min, market_hours_interval_min, coverage_label, x_tier, rate_limits, creds_ref)</span><span>retention_days</span><span>min_items_for_split (30)</span><span>person_level_views (false, locked)</span></div>
+      <div class="rel">The latest version is read by the worker every scheduler tick. Each save adds a row and a config_change EventLog entry. Secrets are referenced by creds_ref, stored encrypted, never returned by the API.</div>
+    </div>
+    <div class="card ent"><h3>EventLog</h3>
+      <div class="fields"><span>id</span><span>at</span><span>kind (fetch_run / login / login_failed / view / relabel / config_change / promote_topic)</span><span>source_key</span><span>status</span><span>items_new</span><span>cost_usd</span><span>duration_ms</span><span>error</span><span>ip</span><span>detail jsonb</span></div>
+      <div class="rel">Append-only. Source freshness, health and spend are derived from fetch_run rows; the Settings access log reads the other kinds.</div>
+    </div>
+  </div>
+</section>
+
+<!-- 6 ARCHITECTURE -->
+<section id="arch">
+  <h2><span class="n">06</span>Architecture</h2>
+  <p class="intro">Three hosted pieces, all in Mumbai: the website on Vercel, an always-on background worker on Fly.io that collects and labels posts, and one Postgres database on Supabase that both share.</p>
+  <div class="card" style="padding:10px">
+    <div class="scroll">
+      <svg class="diagram dia dia-arch" viewBox="0 0 900 520" role="img" aria-label="System architecture">
+        <defs><marker id="aah" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path class="ah" d="M0,0 L8,4 L0,8 z"/></marker></defs>
+        <!-- browser -->
+        <rect class="node" x="20" y="60" width="170" height="104" rx="8"/>
+        <text class="nm" x="32" y="82">Browser client</text>
+        <text class="sub" x="32" y="100">laptop and iPad, responsive</text>
+        <text class="sub" x="32" y="115">TanStack Query polls /api</text>
+        <text class="sub" x="32" y="130">every 30 s, keeps last good</text>
+        <text class="sub" x="32" y="145">data; drawer + charts render here</text>
+        <!-- vercel -->
+        <rect class="grp" x="220" y="20" width="300" height="170" rx="12"/>
+        <text class="grplbl" x="234" y="40">Vercel · Mumbai (bom1)</text>
+        <rect class="node alt" x="240" y="52" width="260" height="122" rx="8"/>
+        <text class="nm" x="252" y="74">Next.js web app</text>
+        <text class="sub" x="252" y="92">App Router · shadcn/ui</text>
+        <text class="sub" x="252" y="107">7 UI surfaces + /api route handlers</text>
+        <text class="sub" x="252" y="122">server-side session check on every route</text>
+        <text class="sub" x="252" y="137">reads with 15 s caching; writes labels</text>
+        <text class="sub" x="252" y="152">and config versions; logs access</text>
+        <!-- supabase -->
+        <rect class="grp" x="580" y="20" width="300" height="170" rx="12"/>
+        <text class="grplbl" x="594" y="40">Supabase · AWS ap-south-1 Mumbai</text>
+        <rect class="node alt" x="600" y="52" width="260" height="122" rx="8"/>
+        <text class="nm" x="612" y="74">Postgres 16 + pgvector</text>
+        <text class="sub" x="612" y="92">the single store: posts, authors,</text>
+        <text class="sub" x="612" y="107">classifications, topics, 15-min rollups,</text>
+        <text class="sub" x="612" y="122">market points, config versions,</text>
+        <text class="sub" x="612" y="137">event log, pg-boss job tables</text>
+        <!-- fly -->
+        <rect class="grp" x="220" y="230" width="460" height="280" rx="12"/>
+        <text class="grplbl" x="234" y="250">Fly.io · Mumbai · long-running Node.js 22 container</text>
+        <rect class="node" x="240" y="262" width="205" height="112" rx="8"/>
+        <text class="nm" x="251" y="282">Scheduler + ingest</text>
+        <text class="sub" x="251" y="299">reads Config every minute,</text>
+        <text class="sub" x="251" y="314">enqueues fetches when due</text>
+        <text class="sub" x="251" y="329">portals faster 09:15-15:30 IST</text>
+        <text class="sub" x="251" y="344">circuit breakers · dedupe</text>
+        <text class="sub" x="251" y="359">records fetch_run with cost</text>
+        <rect class="node" x="460" y="262" width="205" height="112" rx="8"/>
+        <text class="nm" x="471" y="282">Source adapters</text>
+        <text class="sub" x="471" y="299">fetch(since, cursor)</text>
+        <text class="sub" x="471" y="314">→ NormalizedPost[]</text>
+        <text class="sub" x="471" y="329">X (Apify X when no token),</text>
+        <text class="sub" x="471" y="344">YouTube, Reddit, RSS, web search,</text>
+        <text class="sub" x="471" y="359">Apify IG + LinkedIn, portal parsers</text>
+        <rect class="node" x="240" y="384" width="205" height="112" rx="8"/>
+        <text class="nm" x="251" y="404">Rollup + trust job</text>
+        <text class="sub" x="251" y="421">every minute: 15-min buckets</text>
+        <text class="sub" x="251" y="436">reach weighting, suspected-</text>
+        <text class="sub" x="251" y="451">coordination counts</text>
+        <text class="sub" x="251" y="466">summaries every 30 min; Emerging</text>
+        <text class="sub" x="251" y="481">clusters; nightly retention purge</text>
+        <rect class="node" x="460" y="384" width="205" height="112" rx="8"/>
+        <text class="nm" x="471" y="404">Classification stage</text>
+        <text class="sub" x="471" y="421">pg-boss job, every minute</text>
+        <text class="sub" x="471" y="436">triage: script, keywords, negative</text>
+        <text class="sub" x="471" y="451">terms, relevance, near-duplicates</text>
+        <text class="sub" x="471" y="466">then 20-50 posts per LLM call</text>
+        <text class="sub" x="471" y="481">low confidence → Unclassified</text>
+        <!-- external -->
+        <rect class="node ext" x="720" y="262" width="160" height="234" rx="8"/>
+        <text class="nm" x="732" y="284">External providers</text>
+        <text class="sub" x="732" y="304">X API</text>
+        <text class="sub" x="732" y="320">YouTube Data API v3</text>
+        <text class="sub" x="732" y="336">Reddit API</text>
+        <text class="sub" x="732" y="352">Apify platform</text>
+        <text class="sub" x="732" y="368">web-search API</text>
+        <text class="sub" x="732" y="384">publisher RSS feeds</text>
+        <text class="sub" x="732" y="400">IPO portal web pages</text>
+        <text class="sub" x="732" y="430">LLM + multilingual</text>
+        <text class="sub" x="732" y="446">embedding provider</text>
+        <!-- arrows -->
+        <path class="edge" d="M190,112 L236,112" marker-end="url(#aah)"/>
+        <path class="edge" d="M500,112 L596,112" marker-start="url(#aah)" marker-end="url(#aah)"/>
+        <path class="edge" d="M640,230 L700,178" marker-start="url(#aah)" marker-end="url(#aah)"/>
+        <path class="edge" d="M665,318 L716,318" marker-end="url(#aah)"/>
+        <path class="edge" d="M665,440 L716,440" marker-end="url(#aah)"/>
+        <text class="lbl" x="213" y="104" text-anchor="middle">/api</text>
+        <text class="lbl" x="548" y="104" text-anchor="middle">read / write</text>
+        <text class="lbl" x="700" y="214">jobs, posts,</text>
+        <text class="lbl" x="700" y="228">rollups, events</text>
+        <text class="lbl" x="690" y="310" text-anchor="middle">fetch</text>
+        <text class="lbl" x="690" y="432" text-anchor="middle">LLM</text>
+      </svg>
+    </div>
+  </div>
+  <div class="tbl" style="margin-top:12px">
+    <table>
+      <thead><tr><th>Part</th><th>Runs on</th><th>Role</th></tr></thead>
+      <tbody>
+        <tr><td><b>Next.js web app</b> (App Router, shadcn/ui)</td><td>Vercel, Mumbai region (bom1)</td><td>Serves the 7 UI surfaces and the /api route handlers. Checks the server-side session on every route, reads rollups and evidence from Postgres with 15-second caching, writes labels and config versions, and logs access to EventLog.</td></tr>
+        <tr><td><b>Browser client</b></td><td>The executives' and operators' browsers (laptop and iPad, responsive)</td><td>TanStack Query polls /api every 30 seconds and keeps the last good data on error. The shadcn Sheet evidence drawer and charts render on the client.</td></tr>
+        <tr><td><b>Postgres 16 + pgvector</b></td><td>Managed Postgres (Supabase), AWS ap-south-1 Mumbai</td><td>The single store for posts, authors, classifications, topics, 15-minute rollups, market points, config versions, the event log and the pg-boss job tables.</td></tr>
+        <tr><td><b>Scheduler and ingest worker</b></td><td>Long-running Node.js 22 container on Fly.io, Mumbai region</td><td>Reads the latest Config every minute and enqueues each source's fetch when due (portals use the faster market-hours interval 09:15-15:30 IST, Mon-Fri). Runs adapters behind per-source circuit breakers, dedupes on (source_key, external_id), upserts Author and Post rows, and records fetch_run events with cost.</td></tr>
+        <tr><td><b>Source adapters</b></td><td>Inside the worker</td><td>Each implements fetch(since, cursor) and returns NormalizedPost[]: X API v2 recent search (Apify X actor when the token is blank or rate-limited), YouTube Data API v3, Reddit OAuth, Google News and publisher RSS, web-search API (including site:instagram.com and site:linkedin.com), Apify Instagram and LinkedIn actors (sampled), and the Chittorgarh, InvestorGain and IPOWatch parsers, which also write MarketPoint rows.</td></tr>
+        <tr><td><b>Classification stage</b></td><td>Inside the worker; pg-boss job draining every minute</td><td>Triage first (script detection, keyword and co-occurrence match, negative-term drop, embedding relevance, near-duplicate clustering), then batches of 20-50 posts to a small LLM returning topic, sentiment, entities, confidence and an English gloss as schema-validated JSON, cached by content hash. Scraped text is wrapped as untrusted data; low-confidence posts go to Unclassified.</td></tr>
+        <tr><td><b>Rollup and trust job</b></td><td>Inside the worker, every minute</td><td>Recomputes the current and previous 15-minute buckets for every topic, entity and lane, with reach weighting and suspected-coordination counts. Refreshes each active topic's two-line summary every 30 minutes, clusters Unclassified posts into Emerging candidates, and runs the retention purge nightly.</td></tr>
+        <tr><td><b>External providers</b></td><td>Third-party APIs</td><td>X API, YouTube Data API v3, Reddit API, the Apify platform, a web-search API, publisher RSS feeds, the IPO portal web pages, and the LLM and multilingual embedding provider.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- 7 STACK -->
+<section id="stack">
+  <h2><span class="n">07</span>Stack</h2>
+  <p class="intro">Each tool and the reason it was picked. The stack is chosen fresh; influfinder is reference only.</p>
+  <div class="tbl">
+    <table>
+      <thead><tr><th>Choice</th><th>Reason</th></tr></thead>
+      <tbody>
+        <tr><td><b>Next.js 15 (App Router) + TypeScript</b></td><td>Required by the brief. Server components and route handlers keep every database query and the session check on the server.</td></tr>
+        <tr><td><b>shadcn/ui + Tailwind CSS + shadcn Charts (Recharts)</b></td><td>Required by the brief. Charts, Sheet, Table, Tabs and Toggle come from one component set, so the screen is quick to build and consistent.</td></tr>
+        <tr><td><b>TanStack Query</b> with a 30-second refetch interval</td><td>Gives minute-scale 'real time' without streaming infrastructure, and keeps stale data on screen when a poll fails.</td></tr>
+        <tr><td><b>PostgreSQL 16 + pgvector on Supabase</b> (Mumbai)</td><td>Relational tables handle dedupe, joins and rollups, and vectors for near-duplicates and Emerging clustering live in the same store. The India region suits a DPDP-sensitive dataset.</td></tr>
+        <tr><td><b>Drizzle ORM</b> in a pnpm monorepo (apps/web, apps/worker, packages/db)</td><td>One typed schema shared by the web app and the worker, with plain SQL available for the rollup queries.</td></tr>
+        <tr><td><b>pg-boss</b> job queue on the same Postgres</td><td>Scheduled and retryable fetch and classify jobs with no Redis or extra service to run.</td></tr>
+        <tr><td><b>Node.js 22 worker on Fly.io</b> (Mumbai)</td><td>Apify actor runs and batched LLM calls take minutes, which exceeds serverless time limits. One always-on container also keeps the scheduling logic simple.</td></tr>
+        <tr><td><b>Better Auth</b> with email and password, one seeded user, database sessions</td><td>Meets the one-login requirement with server-side sessions, and has a roles plugin if viewer roles are added later.</td></tr>
+        <tr><td><b>Small fast LLM</b> with JSON-schema output (Claude Haiku class) plus a hosted multilingual embedding model</td><td>Handles Hinglish, Hindi and Gujarati topic, sentiment and entity tagging cheaply in batches, with no training data needed. Multilingual embeddings support relevance triage and near-duplicate detection.</td></tr>
+        <tr><td><b>apify-client, googleapis, rss-parser, cheerio</b>, plain fetch for X and Reddit</td><td>Thin official or standard clients, one per adapter, which keeps each source a small replaceable plugin.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- 8 PLAN -->
+<section id="plan">
+  <h2><span class="n">08</span>Plan</h2>
+  <p class="intro">Four phases in order. Each builds on the one before: data first, then labelling, then the dashboard, then the safeguards against noise and manipulation.</p>
+  <div class="phases">
+    <div class="phase" data-n="1"><div class="card">
+      <h3>Foundation: schema, worker, config and access</h3>
+      <div class="sub">Goal</div><p class="small">A deployed, logged-in shell where a standalone worker pulls Tier-1 sources on a configured cadence into one normalized Postgres store, driven by the editable keyword config.</p>
+      <div class="sub">Features</div><ul><li>#13 Normalized schema + standalone worker</li><li>#1 Keyword + entity config with seed list</li><li>#17 Source adapter interface + Tier-1 adapters</li><li>#5 Author data in a separate table</li><li>#2 Single login + audit log</li><li>#8 Parallel legal review</li></ul>
+      <div class="sub">Risks</div><ul><li>API keys and accounts (YouTube, Reddit, web-search API, Apify) do not exist yet. Provisioning is the likeliest schedule blocker.</li><li>Bare 'jio' is a common Hindi word ('live'), so loose keywords will flood the store with noise until co-occurrence rules are tuned.</li><li>IPO portal and publisher terms of service may forbid scraping, and the legal review may shorten retention or narrow sources after data is already stored.</li><li>YouTube's 10,000-unit daily quota caps search.list to roughly one query every 15 minutes unless a quota increase is granted.</li></ul>
+    </div></div>
+    <div class="phase" data-n="2"><div class="card">
+      <h3>Full coverage and classification</h3>
+      <div class="sub">Goal</div><p class="small">Every named source flows in, including X, Instagram and LinkedIn, and each item is tagged with topic, sentiment, mentioned entity and confidence, with accuracy measured against a gold set.</p>
+      <div class="sub">Features</div><ul><li>#7 X adapter + Apify fallback</li><li>#12 Apify Instagram + LinkedIn (sampled)</li><li>#6 Seeded 10-topic taxonomy</li><li>#15 Two-stage classification</li><li>#16 Gold set + relabel + accuracy figure</li></ul>
+      <div class="sub">Risks</div><ul><li>Apify actors for Instagram, LinkedIn and X break or change output without notice. Circuit breakers must turn a failure into a stale label rather than a pipeline crash.</li><li>Hinglish, Hindi, Gujarati and sarcasm accuracy may be poor, and the gold set needs someone with context to label 200 posts.</li><li>Prompt-injection text in scraped posts could skew labels, so all scraped text is untrusted input.</li><li>X results stay thin through the Apify fallback until the X tier is decided.</li></ul>
+    </div></div>
+    <div class="phase" data-n="3"><div class="card">
+      <h3>Executive dashboard</h3>
+      <div class="sub">Goal</div><p class="small">The one-screen brief the family reads: active talking points, sentiment, 24h trend, entity filter and market context, every number clickable to evidence, and honest freshness per source.</p>
+      <div class="sub">Features</div><ul><li>#9 15-min rollups + 30 s polling</li><li>#14 Executive brief</li><li>#4 Evidence drawer</li><li>#10 Entity filter</li><li>#3 Per-source cadence + spend panel</li><li>#11 Market-context strip</li></ul>
+      <div class="sub">Risks</div><ul><li>Small sample sizes early on make percentages look authoritative. The 30-item minimum before showing a split must hold.</li><li>The family may expect second-level live data. The freshness panel has to make clear that 'real time' means minutes.</li><li>GMP numbers are unofficial grey-market figures, so a stale or wrong value beside sentiment may be read as fact.</li></ul>
+    </div></div>
+    <div class="phase" data-n="4"><div class="card">
+      <h3>Trust layer</h3>
+      <div class="sub">Goal</div><p class="small">Stop noise and manipulation from being read as public opinion, by weighting by reach, separating media from social, and flagging suspected coordination.</p>
+      <div class="sub">Features</div><ul><li>#18 Reach-weighted sentiment + lane toggle</li><li>#19 Suspected-coordination flags</li></ul>
+      <div class="sub">Risks</div><ul><li>Coordination heuristics can falsely tag genuine outrage as astroturf. Labels must say 'suspected' and link to evidence.</li><li>Reach metrics differ by platform (followers, views, upvotes) and need per-source normalization, which will be rough at first.</li><li>Person-level features stay off until the legal review answers, and that may never happen within the project's life.</li></ul>
+    </div></div>
+  </div>
+</section>
+
+<!-- 9 DECISIONS -->
+<section id="decisions">
+  <h2><span class="n">09</span>Decisions</h2>
+  <p class="intro">All 36 features considered, in the judge's ranked order: 19 to build, 17 cut. Impact and effort are scored 1 to 5. <span class="tag warn">not checked online</span> marks rows that rest on one of the market angle's 4 unverified claims.</p>
+  <div class="tbl">
+    <table>
+      <thead><tr><th>#</th><th>Feature</th><th>Decision</th><th>Impact</th><th>Effort</th></tr></thead>
+      <tbody>
+        <tr><td class="num">1</td><td>Editable tracked-keyword and entity config with seed list (EN, Hindi, Gujarati)</td><td><span class="tag acc">add</span></td><td class="num"><span class="meter" style="--v:5"></span>5</td><td class="num"><span class="meter eff" style="--v:1"></span>1</td></tr>
+        <tr><td class="num">2</td><td>Single-login access with audit log and no author-level export</td><td><span class="tag acc">add</span></td><td class="num"><span class="meter" style="--v:4"></span>4</td><td class="num"><span class="meter eff" style="--v:1"></span>1</td></tr>
+        <tr><td class="num">3</td><td>Per-source cadence config with freshness, blind-spot and spend panel</td><td><span class="tag acc">add</span></td><td class="num"><span class="meter" style="--v:5"></span>5</td><td class="num"><span class="meter eff" style="--v:2"></span>2</td></tr>
+        <tr><td class="num">4</td><td>Click-through evidence drawer behind every number</td><td><span class="tag acc">add</span></td><td class="num"><span class="meter" style="--v:5"></span>5</td><td class="num"><span class="meter eff" style="--v:2"></span>2</td></tr>
+        <tr><td class="num">5</td><td>Author data in a separate table, topic-only views by default</td><td><span class="tag acc">add</span></td><td class="num"><span class="meter" style="--v:5"></span>5</td><td class="num"><span class="meter eff" style="--v:2"></span>2</td></tr>
+        <tr><td class="num">6</td><td>Seeded 10-topic taxonomy with Emerging and Unclassified buckets <span class="tag warn">market-2, topic list vs real chatter: not checked online</span></td><td><span class="tag acc">add</span></td><td class="num"><span class="meter" style="--v:5"></span>5</td><td class="num"><span class="meter eff" style="--v:2"></span>2</td></tr>
+        <tr><td class="num">7</td><td>X adapter with config-driven tier and credentials, Apify fallback</td><td><span class="tag acc">add</span></td><td class="num"><span class="meter" style="--v:5"></span>5</td><td class="num"><span class="meter eff" style="--v:2"></span>2</td></tr>
+        <tr><td class="num">8</td><td>Legal and compliance review run in parallel, gating person-level views</td><td><span class="tag acc">add</span></td><td class="num"><span class="meter" style="--v:5"></span>5</td><td class="num"><span class="meter eff" style="--v:2"></span>2</td></tr>
+        <tr><td class="num">9</td><td>Precomputed 15-minute rollups with client polling every 30 seconds</td><td><span class="tag acc">add</span></td><td class="num"><span class="meter" style="--v:4"></span>4</td><td class="num"><span class="meter eff" style="--v:2"></span>2</td></tr>
+        <tr><td class="num">10</td><td>Entity filter for Mukesh, Akash, Isha and Jio on mentions, not authors</td><td><span class="tag acc">add</span></td><td class="num"><span class="meter" style="--v:4"></span>4</td><td class="num"><span class="meter eff" style="--v:2"></span>2</td></tr>
+        <tr><td class="num">11</td><td>Market-context strip: GMP and subscription series on the sentiment timeline <span class="tag warn">market-5, value of GMP context: not checked online</span></td><td><span class="tag acc">add</span></td><td class="num"><span class="meter" style="--v:4"></span>4</td><td class="num"><span class="meter eff" style="--v:2"></span>2</td></tr>
+        <tr><td class="num">12</td><td>Apify Instagram and LinkedIn adapters labelled 'sampled'</td><td><span class="tag acc">add</span></td><td class="num"><span class="meter" style="--v:4"></span>4</td><td class="num"><span class="meter eff" style="--v:2"></span>2</td></tr>
+        <tr><td class="num">13</td><td>Normalized Postgres schema and standalone ingest worker</td><td><span class="tag acc">add</span></td><td class="num"><span class="meter" style="--v:5"></span>5</td><td class="num"><span class="meter eff" style="--v:3"></span>3</td></tr>
+        <tr><td class="num">14</td><td>One-screen executive brief: active talking points, sentiment split, volume, 24h trend</td><td><span class="tag acc">add</span></td><td class="num"><span class="meter" style="--v:5"></span>5</td><td class="num"><span class="meter eff" style="--v:3"></span>3</td></tr>
+        <tr><td class="num">15</td><td>Two-stage classification: triage then batched LLM topic, sentiment and entity tagging</td><td><span class="tag acc">add</span></td><td class="num"><span class="meter" style="--v:5"></span>5</td><td class="num"><span class="meter eff" style="--v:3"></span>3</td></tr>
+        <tr><td class="num">16</td><td>Gold set of 200 labelled posts, one-click relabel and accuracy figure <span class="tag warn">market-6, competitor Hinglish handling: not checked online</span></td><td><span class="tag acc">add</span></td><td class="num"><span class="meter" style="--v:5"></span>5</td><td class="num"><span class="meter eff" style="--v:3"></span>3</td></tr>
+        <tr><td class="num">17</td><td>Source adapter interface with Tier-1 adapters (YouTube, Reddit, news RSS, web search, IPO portals)</td><td><span class="tag acc">add</span></td><td class="num"><span class="meter" style="--v:4"></span>4</td><td class="num"><span class="meter eff" style="--v:3"></span>3</td></tr>
+        <tr><td class="num">18</td><td>Reach-weighted sentiment with a media and analyst lane toggle <span class="tag warn">market-4, manipulation premise: not checked online</span></td><td><span class="tag acc">add</span></td><td class="num"><span class="meter" style="--v:4"></span>4</td><td class="num"><span class="meter eff" style="--v:3"></span>3</td></tr>
+        <tr><td class="num">19</td><td>Suspected-coordination flags (near-duplicates, bursts, author concentration) <span class="tag warn">market-4, IPO manipulation: not checked online</span></td><td><span class="tag acc">add</span></td><td class="num"><span class="meter" style="--v:4"></span>4</td><td class="num"><span class="meter eff" style="--v:3"></span>3</td></tr>
+        <tr class="divider"><td colspan="5">Cut</td></tr>
+        <tr class="cutrow"><td class="num">20</td><td>IPO phase selector and calendar-tuned polling</td><td><span class="tag cut">cut</span></td><td class="num"><span class="meter" style="--v:5"></span>5</td><td class="num"><span class="meter eff" style="--v:2"></span>2</td></tr>
+        <tr class="cutrow"><td class="num">21</td><td>Spike and negative-shift alerts (email, Slack, WhatsApp)</td><td><span class="tag cut">cut</span></td><td class="num"><span class="meter" style="--v:4"></span>4</td><td class="num"><span class="meter eff" style="--v:2"></span>2</td></tr>
+        <tr class="cutrow"><td class="num">22</td><td>Hard daily spend kill-switch and degrade-to-sampling at cap</td><td><span class="tag cut">cut</span></td><td class="num"><span class="meter" style="--v:3"></span>3</td><td class="num"><span class="meter eff" style="--v:2"></span>2</td></tr>
+        <tr class="cutrow"><td class="num">23</td><td>SSO allowlist, MFA, viewer roles and screenshot watermarking</td><td><span class="tag cut">cut</span></td><td class="num"><span class="meter" style="--v:3"></span>3</td><td class="num"><span class="meter eff" style="--v:2"></span>2</td></tr>
+        <tr class="cutrow"><td class="num">24</td><td>Compliance sign-off as a hard gate before any data is stored</td><td><span class="tag cut">cut</span></td><td class="num"><span class="meter" style="--v:4"></span>4</td><td class="num"><span class="meter eff" style="--v:2"></span>2</td></tr>
+        <tr class="cutrow"><td class="num">25</td><td>Forking or copying influfinder code or stack</td><td><span class="tag cut">cut</span></td><td class="num"><span class="meter" style="--v:2"></span>2</td><td class="num"><span class="meter eff" style="--v:2"></span>2</td></tr>
+        <tr class="cutrow"><td class="num">26</td><td>Headline 'organic estimate' percentage</td><td><span class="tag cut">cut</span></td><td class="num"><span class="meter" style="--v:3"></span>3</td><td class="num"><span class="meter eff" style="--v:3"></span>3</td></tr>
+        <tr class="cutrow"><td class="num">27</td><td>'Who is driving this' named-author list and author-type weighting</td><td><span class="tag cut">cut</span></td><td class="num"><span class="meter" style="--v:3"></span>3</td><td class="num"><span class="meter eff" style="--v:3"></span>3</td></tr>
+        <tr class="cutrow"><td class="num">28</td><td>Per-individual author profiles and dossiers</td><td><span class="tag cut">cut</span></td><td class="num"><span class="meter" style="--v:2"></span>2</td><td class="num"><span class="meter eff" style="--v:3"></span>3</td></tr>
+        <tr class="cutrow"><td class="num">29</td><td>Reply drafting or strategy suggestions</td><td><span class="tag cut">cut</span></td><td class="num"><span class="meter" style="--v:3"></span>3</td><td class="num"><span class="meter eff" style="--v:4"></span>4</td></tr>
+        <tr class="cutrow"><td class="num">30</td><td>WebSocket/SSE streaming and X filtered stream</td><td><span class="tag cut">cut</span></td><td class="num"><span class="meter" style="--v:2"></span>2</td><td class="num"><span class="meter eff" style="--v:3"></span>3</td></tr>
+        <tr class="cutrow"><td class="num">31</td><td>Historical backfill beyond 7 days</td><td><span class="tag cut">cut</span></td><td class="num"><span class="meter" style="--v:2"></span>2</td><td class="num"><span class="meter eff" style="--v:3"></span>3</td></tr>
+        <tr class="cutrow"><td class="num">32</td><td>Bespoke scrapers per brokerage (Emkay, Centrum, Groww)</td><td><span class="tag cut">cut</span></td><td class="num"><span class="meter" style="--v:2"></span>2</td><td class="num"><span class="meter eff" style="--v:3"></span>3</td></tr>
+        <tr class="cutrow"><td class="num">33</td><td>Auto-discovered clustering as the primary topic view</td><td><span class="tag cut">cut</span></td><td class="num"><span class="meter" style="--v:2"></span>2</td><td class="num"><span class="meter eff" style="--v:3"></span>3</td></tr>
+        <tr class="cutrow"><td class="num">34</td><td>Custom report builder and export suite</td><td><span class="tag cut">cut</span></td><td class="num"><span class="meter" style="--v:1"></span>1</td><td class="num"><span class="meter eff" style="--v:3"></span>3</td></tr>
+        <tr class="cutrow"><td class="num">35</td><td>Custom-trained or fine-tuned sentiment models</td><td><span class="tag cut">cut</span></td><td class="num"><span class="meter" style="--v:2"></span>2</td><td class="num"><span class="meter eff" style="--v:4"></span>4</td></tr>
+        <tr class="cutrow"><td class="num">36</td><td>Per-post sentiment scores to two decimals</td><td><span class="tag cut">cut</span></td><td class="num"><span class="meter" style="--v:1"></span>1</td><td class="num"><span class="meter eff" style="--v:1"></span>1</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3 style="margin:22px 0 10px">Cut, and why</h3>
+  <div class="tbl">
+    <table>
+      <thead><tr><th>Feature</th><th>Why</th></tr></thead>
+      <tbody>
+        <tr><td><b>IPO phase selector and calendar-tuned polling</b></td><td>Developer feedback 2: the system runs continuously with no dependence on IPO dates. Only portal polling speeds up during NSE market hours.</td></tr>
+        <tr><td><b>Spike and negative-shift alerts (email, Slack, WhatsApp)</b></td><td>Developer feedback 3: no email or alerts in v1. Floors, cooldowns and delivery channels are removed and listed as a later item.</td></tr>
+        <tr><td><b>Hard daily spend kill-switch and degrade-to-sampling at cap</b></td><td>Developer feedback 5: assume a high budget. Spend is tracked per source but never throttles cadence or sources.</td></tr>
+        <tr><td><b>SSO allowlist, MFA, viewer roles and screenshot watermarking</b></td><td>Developer feedback 6: a single login for now. Author data stays in its own table so roles can be added later.</td></tr>
+        <tr><td><b>Compliance sign-off as a hard gate before any data is stored</b></td><td>Engineering and market showed a blocking gate stalls the build. The review runs in parallel and gates only person-level views and retention.</td></tr>
+        <tr><td><b>Forking or copying influfinder code or stack</b></td><td>Developer feedback 8: reference only. A different project, so the stack is chosen fresh.</td></tr>
+        <tr><td><b>Headline 'organic estimate' percentage</b></td><td>Product's attack: an unvalidated derived number would be read as fact. Only 'suspected coordinated' counts are shown.</td></tr>
+        <tr><td><b>'Who is driving this' named-author list and author-type weighting</b></td><td>Skeptic and market flagged named high-reach authors as profiling. Product flagged author-type classification as infeasible in days. Reach-only weighting ships.</td></tr>
+        <tr><td><b>Per-individual author profiles and dossiers</b></td><td>Every angle cut it for privacy and DPDP risk. Author rows are retained so it can be reconsidered after legal review.</td></tr>
+        <tr><td><b>Reply drafting or strategy suggestions</b></td><td>Not requested. We supply stats, and IPO-context replies carry compliance risk.</td></tr>
+        <tr><td><b>WebSocket/SSE streaming and X filtered stream</b></td><td>Polling sources make streaming pointless, and the filtered stream is enterprise-tier.</td></tr>
+        <tr><td><b>Historical backfill beyond 7 days</b></td><td>Not requested, and longer than any dashboard window. A one-off 7-day backfill seeds the trend chart.</td></tr>
+        <tr><td><b>Bespoke scrapers per brokerage (Emkay, Centrum, Groww)</b></td><td>Low volume. Covered through news RSS and web search unless a gap appears.</td></tr>
+        <tr><td><b>Auto-discovered clustering as the primary topic view</b></td><td>Unstable names erode trust. Clustering feeds only the Emerging bucket.</td></tr>
+        <tr><td><b>Custom report builder and export suite</b></td><td>One account, small audience. The dashboard is the report, and author-level export is banned.</td></tr>
+        <tr><td><b>Custom-trained or fine-tuned sentiment models</b></td><td>No labelled corpus exists. A prompted LLM with gold-set evaluation and few-shot corrections is used instead.</td></tr>
+        <tr><td><b>Per-post sentiment scores to two decimals</b></td><td>False precision on an unvalidated model. Three buckets plus confidence are shown instead.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- 10 CHALLENGE -->
+<section id="challenge">
+  <h2><span class="n">10</span>Open questions and assumptions</h2>
+  <div class="challenge" style="margin-top:12px">
+    <h3>Challenge these before approving</h3>
+    <div class="label">Open questions</div>
+    <ol>
+      <li>Which X API access will be bought (pay-per-use, or a legacy tier if still available), and when will the credentials be supplied? Until then X runs only through the Apify fallback.</li>
+      <li>Is a 2-15 minute refresh (depending on source) acceptable to the family as 'real time', or do they expect faster for specific sources?</li>
+      <li>Which LLM provider and model may receive this content? Is there a data-residency requirement (India region hosting) for posts and author data?</li>
+      <li>Who is the legal or compliance contact, and what retention periods and person-level rules will they set (SEBI publicity and UPSI, DPDP)?</li>
+      <li>Who holds the single login, and does anyone outside the strategy team (for example our own analysts) need access?</li>
+      <li>Who on the client or our side will hand-label the 200-post gold set, and do they read Hindi and Gujarati?</li>
+      <li>Should Anant Ambani, Nita Ambani or Reliance Industries leadership be tracked as entities too, or only Mukesh, Akash and Isha?</li>
+      <li>Are other Indian languages (Marathi, Tamil, Telugu, Bengali) needed beyond English, Hinglish, Hindi and Gujarati?</li>
+      <li>May GMP and subscription figures scraped from Chittorgarh, InvestorGain and IPOWatch be shown on the dashboard, given they are unofficial and the portals' terms are unchecked?</li>
+      <li>Which Apify actors and account should be used for Instagram, LinkedIn and X? Is there an existing Apify org to bill?</li>
+      <li>Should we apply for a YouTube Data API quota increase above 10,000 units per day?</li>
+      <li>What should the 'later' alerts item look like when it is revisited (channel, recipients, thresholds)?</li>
+    </ol>
+
+    <div class="label" style="margin-top:18px">Assumptions</div>
+    <ul class="kw">
+      <li>Stack, chosen fresh: TypeScript throughout, Next.js App Router with shadcn/ui, Recharts and TanStack Query for the dashboard (on Vercel or a Node host). Postgres with pgvector (Supabase or Neon) through Drizzle ORM. A standalone Node worker on Railway or Fly running pg-boss schedules on the same Postgres, so there is no Redis. Auth.js credentials provider for the single login.</li>
+      <li>Classification uses a small, fast LLM (Claude Haiku-class) with structured JSON output, batched 20-50 items per call and cached by content hash. Embeddings are used for relevance triage, near-duplicate detection and Emerging-bucket clustering.</li>
+      <li>Cadence, with budget not limiting: X API recent search every 2 min (Apify X fallback every 10 min); Reddit every 5 min; Google News and publisher RSS (Mint, ETMarkets, Moneycontrol, Business Standard, Economic Times, Financial Express) every 5 min; web-search API including site:instagram.com, site:linkedin.com, Groww, Emkay and Centrum queries every 15 min; YouTube search.list every 15 min and commentThreads.list on tracked videos every 15 min, within the 10,000-unit quota; Apify Instagram every 30 min; Apify LinkedIn every 30 min; IPO and GMP portals every 10 min during NSE market hours (09:15-15:30 IST, weekdays) and every 60 min otherwise. All values live in a config table.</li>
+      <li>Resolved taxonomy size: exactly 10 seeded topics plus Emerging and Unclassified. The ten: (1) Valuation and price band; (2) GMP and grey market; (3) Subscription and demand (QIB, NII, retail); (4) Allotment and retail access, including the RIL shareholder quota; (5) Listing expectations and listing gains; (6) Ambani family, succession and leadership (Mukesh, Akash, Isha roles); (7) Governance, promoter control and related-party concerns; (8) Telecom business: tariffs, 5G, subscribers, ARPU; (9) Digital, AI and growth story (partnerships, cloud, platforms); (10) Customer experience and service complaints.</li>
+      <li>Resolved windows: rollups in 15-minute buckets. The trend arrow compares the last 24h with the previous 24h. The timeline chart shows the last 7 days in hourly points. A topic is 'active' with at least 20 items in the last 24h. A sentiment split is shown only at 30 or more items in the window. All values are configurable.</li>
+      <li>Retention is not keyed to any IPO date: raw_json payloads are kept 30 days, normalized post text and author rows 90 days, and rollups and market_series indefinitely. All are configurable pending the legal review.</li>
+      <li>Seed entities: 'Jio Platforms', 'Jio Platforms Ltd', 'JPL', 'Jio Platforms IPO', 'Reliance Jio', 'Reliance Jio Infocomm', 'RJIL', 'Jio IPO', 'Reliance Industries', 'RIL', 'Mukesh Ambani', 'Mukesh bhai', 'Akash Ambani', 'Akash M Ambani', 'Isha Ambani', 'Isha Ambani Piramal', 'Ambani family'. We assume Jio Platforms Ltd is the issuer, Reliance Jio Infocomm its telecom subsidiary and brand, and RIL the parent (to verify against the RHP).</li>
+      <li>Seed Hindi (Devanagari): <span lang="hi">'जियो आईपीओ', 'जियो प्लेटफॉर्म्स', 'रिलायंस जियो', 'मुकेश अंबानी', 'आकाश अंबानी', 'ईशा अंबानी', 'अंबानी', 'आईपीओ', 'ग्रे मार्केट प्रीमियम', 'जीएमपी', 'अलॉटमेंट', 'लिस्टिंग', 'प्राइस बैंड'</span>. Seed Gujarati: <span lang="gu">'જિયો આઈપીઓ', 'રિલાયન્સ જિયો', 'જિયો પ્લેટફોર્મ્સ', 'મુકેશ અંબાણી', 'આકાશ અંબાણી', 'ઈશા અંબાણી', 'અંબાણી', 'આઈપીઓ', 'ગ્રે માર્કેટ', 'એલોટમેન્ટ', 'લિસ્ટિંગ'</span>. Hinglish phrases: 'Jio IPO lagau', 'Jio IPO apply karu', 'allotment mila', 'GMP kitna', 'listing gain kitna'.</li>
+      <li>Seed hashtags: #JioIPO, #JioPlatformsIPO, #RelianceJioIPO, #JioIPO2026, #JioGMP, #JioListing, #JioAllotment, #RelianceIPO, #RIL, #Ambani, #MukeshAmbani, #AkashAmbani, #IshaAmbani. Seed IPO terms, used only together with a Jio or Ambani entity: GMP, grey market premium, kostak, subject to sauda, price band, lot size, allotment, allotment status, subscription status, subscribed times, QIB, NII, HNI, retail quota, shareholder quota, anchor investors, OFS, offer for sale, DRHP, RHP, valuation, listing price, listing gain, listing day, apply or avoid.</li>
+      <li>Negative keywords and matching rules: bare 'jio' or <span lang="hi">'जियो'</span> alone does not match because it means 'live' in Hindi; it must appear with IPO, Platforms, Reliance, an Ambani name or an IPO term. 'Jio Financial Services', 'JFS', 'JioStar' and 'JioHotstar' are excluded unless the item also mentions the IPO.</li>
+      <li>The dashboard is analytics only. The strategy team writes all replies outside the tool.</li>
+      <li>Mukesh, Akash, Isha and Jio filters work on the entity mentioned in the content. Authors are never ranked or listed in v1, except media outlets and public figures shown by name in the evidence drawer.</li>
+      <li>Instagram and LinkedIn data from Apify is sampled and is labelled 'sampled, not representative' wherever its numbers appear.</li>
+      <li>IPO dates, price band and listing details are not used anywhere in the system. The secondary-source dates from the market angle are context only.</li>
+      <li>Polling intervals (the brief's 'every x mins'), all editable in Config:
+        <ul>
+          <li>X recent search: every 5 min once credentials are set. Until then the Apify X actor runs every 15 min.</li>
+          <li>Reddit and news RSS: every 5 min.</li>
+          <li>Web-search API: every 15 min.</li>
+          <li>YouTube: one combined OR search every 20 min (72 runs x 100 units = 7,200 units), plus comment polling on the top 20 tracked videos every 20 min (about 1,440 units), staying under the 10,000-unit daily quota.</li>
+          <li>Apify Instagram and LinkedIn: every 30 min.</li>
+          <li>IPO portals: every 5 min during NSE hours (09:15-15:30 IST, Mon-Fri) and every 60 min otherwise.</li>
+        </ul>
+        End-to-end, data is about 5-35 minutes old depending on the source.</li>
+      <li>One trend and lookback rule everywhere: the trend arrow and the % change compare the last 24h with the prior 24h. The timeline and the longest window are 7 days, at 15-minute buckets shown hourly. On first run each adapter fetches back as far as its API allows, up to 7 days.</li>
+      <li>A talking point is 'active' when it has at least 10 items in the last 24h. Its sentiment split is shown only when it has at least 30 items in the selected slice.</li>
+      <li>Taxonomy size is 10 seeded topics plus the Emerging and Unclassified buckets. The seeded topics are:
+        <ol>
+          <li>Valuation and price band</li>
+          <li>GMP and listing gains</li>
+          <li>Subscription and allotment (including any RIL shareholder quota)</li>
+          <li>Tariffs, network and customer experience</li>
+          <li>Financials, debt and growth (ARPU, 5G capex, profitability)</li>
+          <li>Ambani family, leadership and succession</li>
+          <li>Governance, disclosures and regulation (SEBI, related-party)</li>
+          <li>Competition and the telecom market (Airtel, Vi, satellite)</li>
+          <li>AI, 5G and tech ambitions</li>
+          <li>Strategic investors and stake sales (Meta, Google, PE, OFS)</li>
+        </ol>
+        All of them are editable.</li>
+      <li>Seed keyword list, IPO and company terms (EN), all editable in Config: 'Jio IPO', 'Jio Platforms IPO', 'Reliance Jio IPO', 'JPL IPO', 'Jio Platforms', 'Jio Platforms Ltd', 'Reliance Jio', 'Reliance Jio Infocomm', 'RJIL', 'Jio listing', 'Jio listing date', 'Jio listing gains', 'Jio GMP', 'Jio grey market premium', 'Jio kostak', 'Jio subject to sauda', 'Jio allotment', 'Jio allotment status', 'Jio subscription status', 'Jio price band', 'Jio lot size', 'Jio DRHP', 'Jio RHP', 'Jio anchor investors', 'Jio valuation', 'Jio OFS', 'Jio share price', 'Jio shareholder quota'.</li>
+      <li>Seed hashtags: #JioIPO, #JioPlatformsIPO, #RelianceJioIPO, #JioIPOGMP, #JioGMP, #JioListing, #JioIPOAllotment, #JioPlatforms, #RelianceJio. Generic tags (#IPO, #IPOAlert, #GMP, #StockMarketIndia, #RIL, #Reliance) count only when they co-occur with Jio or a named entity.</li>
+      <li>Seed entity aliases:
+        <ul>
+          <li>Mukesh Ambani: 'Mukesh Ambani', 'Mukesh D. Ambani', 'Mukeshbhai', <span lang="hi">'मुकेश अंबानी'</span>, <span lang="gu">'મુકેશ અંબાણી'</span>.</li>
+          <li>Akash Ambani: 'Akash Ambani', 'Akash M. Ambani', <span lang="hi">'आकाश अंबानी'</span>, <span lang="gu">'આકાશ અંબાણી'</span>.</li>
+          <li>Isha Ambani: 'Isha Ambani', 'Isha Ambani Piramal', 'Isha Piramal', <span lang="hi">'ईशा अंबानी'</span>, <span lang="gu">'ઈશા અંબાણી'</span>.</li>
+          <li>Jio (company): 'Jio Platforms', 'Reliance Jio', <span lang="hi">'जियो प्लेटफॉर्म्स', 'रिलायंस जियो'</span>, <span lang="gu">'જિયો પ્લેટફોર્મ્સ', 'રિલાયન્સ જિયો'</span>.</li>
+        </ul>
+        The surname alone ('Ambani', <span lang="hi">'अंबानी'</span>, <span lang="gu">'અંબાણી'</span>) counts only together with an IPO term or Jio.</li>
+      <li>Seed Hindi, Hinglish and Gujarati IPO terms: <span lang="hi">'जियो आईपीओ', 'जियो का आईपीओ', 'जियो आईपीओ जीएमपी', 'आईपीओ अलॉटमेंट', 'लिस्टिंग', 'ग्रे मार्केट प्रीमियम'</span>, 'jio ka ipo', 'jio ipo lena chahiye', 'jio ipo allotment kab', <span lang="gu">'જિયો આઈપીઓ', 'જિયો IPO', 'આઈપીઓ એલોટમેન્ટ', 'લિસ્ટિંગ'</span>.<br>
+        Co-occurrence terms that make bare 'Jio', <span lang="hi">'जियो'</span>, <span lang="gu">'જિયો'</span> or 'Reliance' relevant: IPO, <span lang="hi">आईपीओ</span>, <span lang="gu">આઈપીઓ</span>, GMP, grey market, listing, allotment, subscription, subscribed, price band, DRHP, RHP, anchor, QIB, NII, HNI, retail quota, lot size, kostak, sauda.</li>
+      <li>Seed negative terms, dropped at triage: 'Jio Financial Services', 'JFSL', 'Jio Finance', 'Jio BlackRock', 'JioStar', 'JioHotstar', 'JioCinema', 'JioSaavn', and Hindi phrases where 'jio' means 'live' ('jio aur jeene do', 'khul ke jio', <span lang="hi">'जियो और जीने दो'</span>) when no co-occurrence term is present.</li>
+      <li>Reddit coverage is keyword search plus a watch on r/IndianStockMarket, r/IndiaInvestments, r/StockMarketIndia, r/IndianStreetBets, r/india and r/mumbai. News RSS covers Google News query feeds plus Mint, ETMarkets, Moneycontrol and Business Standard feeds. Groww, Emkay and Centrum commentary comes through news RSS and the web-search API.</li>
+      <li>Lanes are assigned by source:
+        <ul>
+          <li>Media and analyst: news RSS, web-search results from publisher and brokerage domains, IPO portal commentary, and YouTube videos from a configured list of news channels.</li>
+          <li>Social: X, Reddit, Instagram, LinkedIn, and other YouTube videos and comments.</li>
+        </ul>
+        The brief defaults to the 'All' lane.</li>
+      <li>Reach-weighted sentiment is calculated as follows:
+        <ul>
+          <li>Each post's reach_score = log10(1 + its main platform metric: followers for X and LinkedIn, views for YouTube, upvotes for Reddit, likes for Instagram), scaled to that source's 95th percentile.</li>
+          <li>Media posts get a fixed outlet weight from config.</li>
+          <li>Raw counts are always shown beside the weighted figure.</li>
+        </ul></li>
+      <li>Suspected-coordination thresholds, all configurable:
+        <ul>
+          <li>Near-duplicates: embedding cosine of at least 0.95 across 5 or more distinct authors within 60 minutes.</li>
+          <li>Bursts: a 15-minute bucket above 4x the trailing 24h median.</li>
+          <li>Author concentration: the top 5 authors account for more than 40% of a topic's 24h posts.</li>
+        </ul>
+        All three are shown only as 'suspected' counts.</li>
+      <li>Low confidence means the LLM reports low confidence or the post fails schema validation. Such posts go to Unclassified and are counted in the low-confidence share. The LLM also returns a one-line English gloss so executives can read Hindi and Gujarati posts.</li>
+      <li>Topic summaries (two lines) are generated by the LLM from the top-reach posts every 30 minutes and show their generated-at time.</li>
+      <li>Our analyst team labels the 200-post gold set: a mix of English, Hinglish, Hindi and Gujarati, including sarcasm. The accuracy figure stays hidden until all 200 are labelled. The 20 most recent corrections are used as few-shot examples.</li>
+      <li>The single account is shared by the family and the strategy team. It locks for 15 minutes after 5 failed attempts. Sessions expire after 7 days of inactivity.</li>
+      <li>Default retention is 90 days for raw posts and author rows, configurable in Settings and not tied to any IPO date. Rollups and market points are kept indefinitely. Counsel's parallel review may shorten retention and decides whether person-level views are ever enabled; until then the flag stays off and locked.</li>
+      <li>The X API tier, bearer token and rate limits are unknown and are entered on the Sources page later. Apify accounts are assumed to exist and are used for Instagram, LinkedIn and the X fallback. Budget is assumed high: spend is tracked per source and never throttles anything.</li>
+      <li>API keys and accounts (Google Cloud for YouTube, Reddit OAuth app, web-search API, Apify, LLM and embedding provider) are assumed to be provisioned in the first days. A YouTube quota increase is requested but not relied on.</li>
+      <li>The IPO portals' and publishers' terms of service are checked before their scrapers are enabled. GMP and subscription values are shown with an 'unofficial' tag and their source link, and are never presented as official exchange data.</li>
+      <li>Hosting is Vercel (bom1), Fly.io (Mumbai) and Supabase (ap-south-1), chosen for India-region data. All times are shown in IST. The UI is responsive down to iPad and phone width for the family.</li>
+      <li>The Jio IPO's own details (dates, price band, listing) are not needed by the system and are not hard-coded anywhere.</li>
+      <li>Alerts and notifications, viewer roles and person-level views are all deferred to later versions.</li>
+      <li>All four angles returned proposals and all were rebutted; no missing or silent angles.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- 11 WHY -->
+<section id="why">
+  <h2><span class="n">11</span>Why these choices</h2>
+  <p class="intro">Four angles argued the design. Market claims marked unverified were not checked online.</p>
+  <details>
+    <summary>One line per angle</summary>
+    <ul>
+      <li><b>Product</b>: put a one-screen executive brief with click-through evidence at the centre, on a seeded taxonomy with an Emerging bucket; its rebuttal stopped a headline 'organic estimate' number and author-type weighting, leaving 'suspected' coordination flags and reach-only weighting.</li>
+      <li><b>Engineering</b>: argued for one Postgres store, a standalone ingest worker with per-source cadence from quota maths, two-stage LLM classification, and client polling over precomputed rollups instead of streaming; that is the architecture the judge adopted.</li>
+      <li><b>Skeptic</b>: pushed for compliance review, topic-only defaults with isolated author data, a measured gold set and coordination flags; rebuttals turned its hard 'sign-off before storing data' gate into a review run in parallel that gates person-level views only.</li>
+      <li><b>Market</b>: proposed IPO-calendar phasing, alerts and reach and credibility weighting, and supplied the GMP and subscription market context; calendar phasing and alerts were cut on developer feedback. <span class="tag warn">4 of its claims: not checked online</span></li>
+    </ul>
+  </details>
+</section>
+
+<footer>
+  <div><b>Run</b>: angles present: product, engineering, skeptic, market · unverified market claims: 4 (market angle used web search) · revisions: 1.</div>
+  <div style="margin-top:4px">Last feedback: LinkedIn in scope via Apify; no IPO-date dependence (always on); no email/alerts for now; X adapter with tier and credentials in config later, Apify confirmed; budget assumed high, kill-switch dropped; single login; judge picks the seed keyword list; influ-finder is reference only (no fork, stack chosen fresh); resolve the taxonomy-size and lookback contradictions.</div>
+  <div style="margin-top:10px"><b>Revision log</b></div>
+  <div>2026-10-16 · First render from run <span class="mono">wf_753a00f0-e16</span>.</div>
+  <div>2026-10-16 · Re-rendered from scratch against revision 1 (run <span class="mono">wf_256792fe-795</span>): new vision, surfaces, data, architecture, stack, plan and decisions.</div>
+</footer>
+
+</div>
