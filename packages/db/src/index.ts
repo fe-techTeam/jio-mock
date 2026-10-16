@@ -28,3 +28,4 @@ export {
 } from './queries/posts'
 export { insertMarketPoints, type InsertMarketPointsResult } from './queries/market'
 export { seedBase, type SeedResult } from './seed'
+export * from './seed-demo'
