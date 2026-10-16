@@ -1,0 +1,33 @@
+{
+  "_synthetic": true,
+  "actor": "apidojo/tweet-scraper",
+  "items": [
+    { "id": "2001", "url": "https://twitter.com/retail_rohan/status/2001", "text": "Jio IPO GMP kitna chal raha hai?", "createdAt": "Wed Oct 14 10:00:00 +0000 2026",
+      "author": { "id": "u2", "userName": "retail_rohan", "name": "Rohan", "followers": 310, "isVerified": false },
+      "likeCount": 4, "retweetCount": 0, "replyCount": 1, "quoteCount": 0, "viewCount": 220 },
+    { "id_str": "2002", "twitterUrl": "https://x.com/dalal_street_dev/status/2002", "fullText": "Jio Platforms IPO allotment date announced", "createdAt": "2026-10-15T08:30:00.000Z",
+      "author": { "id": "u5", "userName": "dalal_street_dev", "name": "Dev", "followers": 1800, "isBlueVerified": true },
+      "likeCount": 31, "retweetCount": 6, "replyCount": 2, "quoteCount": 1, "viewCount": 4100 },
+    { "id": "2003", "url": "https://twitter.com/ET_Markets/status/2003", "text": "Reliance Jio IPO: what investors should know", "createdAt": "2026-10-15T09:00:00.000Z",
+      "author": { "id": "u6", "userName": "ET_Markets", "name": "ET Markets", "followers": 2400000, "isBlueVerified": true },
+      "likeCount": 120, "retweetCount": 40, "replyCount": 12, "quoteCount": 9, "viewCount": 88000 },
+    { "id": "2004", "url": "https://x.com/bigtrader/status/2004", "text": "Mukesh Ambani says Jio listing is on track", "createdAt": "2026-10-15T11:00:00.000Z",
+      "author": { "id": "u7", "userName": "bigtrader", "name": "Big Trader", "followers": 450000, "isVerified": true },
+      "likeCount": 900, "retweetCount": 210, "replyCount": 80, "quoteCount": 33, "viewCount": 700000 },
+    { "id": "2005", "text": "જિયો આઈપીઓ એલોટમેન્ટ ક્યારે?", "createdAt": "2026-10-15T12:00:00.000Z",
+      "author": { "id": "u8", "userName": "gujju_investor", "name": "Gujju", "followers": 90, "isVerified": false },
+      "likeCount": 2, "retweetCount": 0, "replyCount": 0, "quoteCount": 0, "viewCount": 40 },
+    { "id": 2006, "url": "https://twitter.com/ipo_watcher/status/2006", "text": "jio ka ipo lena chahiye ya nahi", "createdAt": "2026-10-15T13:00:00.000Z",
+      "author": { "id": 9009, "userName": "ipo_watcher", "name": "IPO Watcher", "followers": 5200, "isVerified": false },
+      "likeCount": 15, "retweetCount": 1, "replyCount": 4, "quoteCount": 0, "viewCount": 900 },
+    { "id": "2007", "url": "https://x.com/i/status/2007", "text": "Anonymous take: Jio IPO valuation looks stretched", "createdAt": "2026-10-15T14:00:00.000Z", "likeCount": 1 },
+    { "id": "2008", "url": "https://twitter.com/akash_fan/status/2008", "text": "Akash Ambani at the Jio event", "createdAt": "2026-10-15T15:00:00.000Z",
+      "author": { "id": "u10", "userName": "akash_fan", "followers": 70, "isVerified": false } },
+    { "id": "2009", "url": "https://twitter.com/old_user/status/2009", "text": "Old Jio IPO rumour", "createdAt": "2026-10-10T10:00:00.000Z",
+      "author": { "id": "u11", "userName": "old_user", "followers": 10 } },
+    { "id": "2010", "url": "https://twitter.com/old_user/status/2010", "text": "Another old Jio post", "createdAt": "Mon Oct 12 10:00:00 +0000 2026",
+      "author": { "id": "u11", "userName": "old_user", "followers": 10 } },
+    { "id": "2011", "url": "https://twitter.com/x/status/2011", "createdAt": "2026-10-15T10:00:00.000Z" },
+    { "text": "no id here", "createdAt": "2026-10-15T10:00:00.000Z" }
+  ]
+}
