@@ -9,6 +9,7 @@ import { formatRunTable, main, runOnce } from './index'
 vi.stubGlobal('fetch', createFakeFetch([]))
 
 const NON_PORTAL = SOURCE_KEYS.filter((k) => !k.startsWith('portal_'))
+const PORTAL = SOURCE_KEYS.filter((k) => k.startsWith('portal_'))
 
 let db: Db
 let sql: ReturnType<typeof connectTestDb>['sql']
@@ -41,14 +42,16 @@ const fetchRunCount = async () =>
   (await db.select().from(schema.eventLog).where(eq(schema.eventLog.kind, 'fetch_run'))).length
 
 describe('runOnce', () => {
-  it('fills posts from the 8 non-portal fixtures and logs 11 fetch_runs; a rerun inserts nothing', async () => {
+  it('fills posts from all 11 fixtures (portals add media-lane news links) and logs 11 fetch_runs; a rerun inserts nothing', async () => {
     const first = await runOnce({ db, env: { SOURCES_MODE: 'fixture' } })
     expect(first.map((o) => o.sourceKey)).toEqual([...SOURCE_KEYS])
     expect(first.every((o) => o.status === 'ok' && o.mode === 'fixture')).toBe(true)
 
     const counts = await postCountsBySource()
-    expect(Object.keys(counts).sort()).toEqual([...NON_PORTAL].sort())
+    expect(Object.keys(counts).sort()).toEqual([...SOURCE_KEYS].sort())
     for (const k of NON_PORTAL) expect(counts[k], k).toBeGreaterThanOrEqual(10)
+    // PLAN-02-04: each portal fixture yields at least 2 Jio IPO news links as media-lane posts.
+    for (const k of PORTAL) expect(counts[k], k).toBeGreaterThanOrEqual(2)
     expect(await fetchRunCount()).toBe(11)
 
     const fixtureFlags = await db.select({ f: schema.posts.isFixture }).from(schema.posts)
