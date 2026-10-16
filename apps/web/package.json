@@ -9,11 +9,15 @@
     "start": "next start -p 3100",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "e2e": "playwright test"
+    "e2e": "playwright test",
+    "seed:user": "node --env-file-if-exists=../../.env --import tsx scripts/seed-user.ts"
   },
   "dependencies": {
+    "@jio/core": "workspace:^",
+    "@jio/db": "workspace:^",
     "@next/env": "15.5.28",
     "@radix-ui/react-slot": "^1.5.0",
+    "better-auth": "^1.3",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-react": "^1.58.0",
@@ -35,6 +39,7 @@
     "@vitejs/plugin-react": "^4",
     "jsdom": "^30.1.3",
     "tailwindcss": "^4",
+    "tsx": "^4",
     "typescript": "^5",
     "vite-tsconfig-paths": "^5",
     "vitest": "^2.1"
