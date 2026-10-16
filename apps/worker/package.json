@@ -16,9 +16,12 @@
   "dependencies": {
     "@jio/core": "workspace:*",
     "@jio/db": "workspace:*",
+    "apify-client": "^2",
+    "cheerio": "^1",
     "pg-boss": "^10",
     "pino": "^9",
-    "zod": "^3"
+    "rss-parser": "^3",
+    "zod": "^3.25.76"
   },
   "devDependencies": {
     "@types/node": "^22",
