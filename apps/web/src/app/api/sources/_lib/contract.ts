@@ -90,7 +90,7 @@ export type RunRow = {
   error: string | null
 }
 
-const int = z.number().int()
+const int = z.number()
 
 export const SourcePatch = z
   .object({
@@ -102,7 +102,7 @@ export const SourcePatch = z
 
 export const SourcesPatch = z
   .object({
-    baseVersion: int.min(0),
+    baseVersion: z.number().int().min(0),
     sources: z.record(z.string(), SourcePatch).optional(),
     x: z
       .object({
@@ -116,5 +116,5 @@ export const SourcesPatch = z
   .strict()
 export type SourcesPatch = z.infer<typeof SourcesPatch>
 
-export type FieldError = { path: string; message: string }
-export type ApiFieldErrors = { error: string; issues?: FieldError[] }
+export type FieldIssue = { path: (string | number)[]; code: string; message: string }
+export type ApiFieldErrors = { error: string; issues?: FieldIssue[] }
