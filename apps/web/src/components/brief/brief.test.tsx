@@ -7,11 +7,14 @@ import { getBrief, queryKeys } from '@/lib/api'
 import { decodeSlice } from '@/components/evidence/slice'
 import {
   makeTestClient,
+  nav,
   renderWithClient,
   replacedParams,
   resetNav,
 } from '@/components/shell/test-utils'
+import { FilterBar } from '@/components/shell/filter-bar'
 import { BriefView } from './brief-view'
+import { LaneToggle } from './lane-toggle'
 import { MarketStrip } from './market-strip'
 import { SentimentBar } from './sentiment-bar'
 import { Sparkline } from './sparkline'
@@ -82,6 +85,7 @@ const brief = (over: Partial<BriefResponse> = {}): BriefResponse => ({
       trend: 'new',
       deltaPct: null,
       summary2line: null,
+      reach: null,
     }),
     topic({ slug: 'ambani-family', name: 'Ambani family, succession and leadership', items: 35 }),
   ],
@@ -180,7 +184,15 @@ describe('BriefView', () => {
   it('shows the KPI split as percentages, or Not enough data', async () => {
     getBriefMock.mockResolvedValue(
       brief({
-        kpis: { ...brief().kpis, items24h: 20, pos: 5, neu: 5, neg: 10, splitShown: false },
+        kpis: {
+          ...brief().kpis,
+          items24h: 20,
+          pos: 5,
+          neu: 5,
+          neg: 10,
+          splitShown: false,
+          reach: null,
+        },
       }),
     )
     renderWithClient(<BriefView />)
@@ -221,6 +233,50 @@ describe('BriefView', () => {
     renderWithClient(<BriefView />)
     await userEvent.click(await screen.findByRole('button', { name: 'Retry' }))
     expect(await screen.findByRole('link', { name: 'Valuation and price band' })).toBeVisible()
+  })
+})
+
+describe('reach-weighted headline and lane toggle', () => {
+  it('the KPI headline is the reach-weighted split with the raw split and n beside it', async () => {
+    getBriefMock.mockResolvedValue(brief())
+    renderWithClient(<BriefView />)
+    const kpis = await screen.findByRole('region', { name: 'Key figures' })
+    expect(within(kpis).getByText('Reach-weighted')).toBeInTheDocument()
+    expect(within(kpis).getByText('Raw 33 / 42 / 25, n = 120')).toBeInTheDocument()
+    await userEvent.click(
+      within(kpis).getByRole('button', { name: 'Reach-weighted Positive 45%, open evidence' }),
+    )
+    expect(decodeSlice(replacedParams().get('evidence'))).toMatchObject({ sentiment: 'positive' })
+  })
+
+  it('each topic row shows its reach-weighted split, or Not enough data', async () => {
+    getBriefMock.mockResolvedValue(brief())
+    renderWithClient(<BriefView />)
+    const big = (await screen.findByRole('link', { name: 'Valuation and price band' })).closest(
+      'tr',
+    )!
+    expect(within(big).getByText('30 / 30 / 40')).toBeInTheDocument()
+    const small = screen.getByRole('link', { name: 'GMP and grey market' }).closest('tr')!
+    expect(within(small).queryByText(/ \/ /)).toBeNull()
+  })
+
+  it('the filter bar carries the lane toggle and keeps entity and evidence', async () => {
+    resetNav('entity=isha&evidence=window%3D24h')
+    render(<FilterBar />)
+    const lane = screen.getByRole('radiogroup', { name: 'Lane' })
+    await userEvent.click(within(lane).getByRole('radio', { name: 'Media and analyst' }))
+    const p = replacedParams()
+    expect(p.get('lane')).toBe('media')
+    expect(p.get('entity')).toBe('isha')
+    expect(p.get('evidence')).toBe('window=24h')
+  })
+
+  it('LaneToggle reflects the URL and All removes the lane param', async () => {
+    resetNav('lane=social&entity=jio', '/topics/gmp')
+    render(<LaneToggle />)
+    expect(screen.getByRole('radio', { name: 'Social' })).toHaveAttribute('aria-checked', 'true')
+    await userEvent.click(screen.getByRole('radio', { name: 'All' }))
+    expect(nav.replace).toHaveBeenLastCalledWith('/topics/gmp?entity=jio', { scroll: false })
   })
 })
 

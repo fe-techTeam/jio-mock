@@ -3,9 +3,8 @@
 import type { BriefKpis, Trend } from '@jio/core'
 import type { ReactNode } from 'react'
 import type { EvidenceSliceInput } from '@/components/evidence/slice'
-import { formatCount, pctSplit } from '@/components/shell/format'
-import { cn } from '@/lib/utils'
-import { NotEnoughData, SENTIMENT_STYLE } from './sentiment-bar'
+import { formatCount } from '@/components/shell/format'
+import { ReachSplitView } from './reach-split'
 import { TrendArrow } from './trend-arrow'
 
 /** Same rule as the API's topic trend (10% threshold; no prior items -> 'new'). */
@@ -34,7 +33,6 @@ export function KpiRow({
   kpis: BriefKpis
   onOpen: (slice: EvidenceSliceInput) => void
 }) {
-  const pct = pctSplit(kpis)
   const change = kpiTrend(kpis.items24h, kpis.itemsPrev24h)
   return (
     <section
@@ -53,35 +51,13 @@ export function KpiRow({
       </Kpi>
 
       <Kpi label="Sentiment">
-        {kpis.splitShown ? (
-          <div className="flex flex-wrap gap-x-3 gap-y-1">
-            {(
-              [
-                ['positive', 'pos'],
-                ['neutral', 'neu'],
-                ['negative', 'neg'],
-              ] as const
-            ).map(([s, k]) => (
-              <button
-                key={s}
-                type="button"
-                aria-label={`${SENTIMENT_STYLE[s].label} ${pct[k]}% (n=${kpis[k]})`}
-                onClick={() => onOpen({ sentiment: s })}
-                className={cn(
-                  'rounded-sm text-lg font-semibold tabular-nums underline-offset-4 outline-none hover:underline focus-visible:ring-2 focus-visible:ring-ring',
-                  SENTIMENT_STYLE[s].text,
-                )}
-              >
-                {pct[k]}%<span className="sr-only"> {SENTIMENT_STYLE[s].label}</span>
-                <span aria-hidden className="ml-0.5 text-xs font-normal text-muted-foreground">
-                  {SENTIMENT_STYLE[s].label.slice(0, 3).toLowerCase()}
-                </span>
-              </button>
-            ))}
-          </div>
-        ) : (
-          <NotEnoughData n={kpis.items24h} />
-        )}
+        {/* Reach-weighted headline (06-01) with the raw count split and n beside it. */}
+        <ReachSplitView
+          reach={kpis.splitShown ? kpis.reach : null}
+          raw={kpis.splitShown ? kpis : null}
+          n={kpis.items24h}
+          onOpen={(sentiment) => onOpen({ sentiment })}
+        />
       </Kpi>
 
       <Kpi label="Change vs prior 24h">

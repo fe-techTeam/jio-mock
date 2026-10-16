@@ -13,6 +13,7 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import type { Filters } from '@/lib/api'
+import { formatSplit } from './reach-split'
 import { SentimentBar } from './sentiment-bar'
 import { Sparkline } from './sparkline'
 import { TrendArrow } from './trend-arrow'
@@ -46,12 +47,15 @@ export function TopicsTable({
     )
   }
   return (
-    <Table className="min-w-[760px]">
+    <Table className="min-w-[860px]">
       <TableHeader>
         <TableRow>
           <TableHead>Talking point</TableHead>
           <TableHead className="text-right">Volume 24h</TableHead>
           <TableHead>Sentiment</TableHead>
+          <TableHead title="Positive / neutral / negative %, each post weighted by its normalized reach">
+            Reach-weighted
+          </TableHead>
           <TableHead className="text-right">Low conf.</TableHead>
           <TableHead className="text-right">Suspected coord.</TableHead>
           <TableHead>24h</TableHead>
@@ -88,6 +92,20 @@ export function TopicsTable({
               </TableCell>
               <TableCell>
                 <SentimentBar counts={t} onOpen={(sentiment) => onOpen({ ...base, sentiment })} />
+              </TableCell>
+              <TableCell className="text-sm tabular-nums">
+                {t.splitShown && t.reach ? (
+                  <span
+                    aria-label={`${t.name}: reach-weighted positive ${t.reach.pos}%, neutral ${t.reach.neu}%, negative ${t.reach.neg}%`}
+                  >
+                    {formatSplit(t.reach)}
+                  </span>
+                ) : (
+                  <span className="text-muted-foreground">
+                    <span aria-hidden>-</span>
+                    <span className="sr-only">Not enough data</span>
+                  </span>
+                )}
               </TableCell>
               <TableCell className="text-right">
                 <button

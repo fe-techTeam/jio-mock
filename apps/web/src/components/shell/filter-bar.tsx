@@ -2,6 +2,7 @@
 
 import type { EntityFilter } from '@jio/core'
 import type { ReactNode } from 'react'
+import { LaneToggle } from '@/components/brief/lane-toggle'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import { useFilters } from './use-filters'
 
@@ -14,8 +15,9 @@ const ENTITY_OPTIONS: { value: EntityFilter; label: string }[] = [
 ]
 
 /**
- * Entity filter bound to the `entity` URL param. It filters by who is mentioned in the content,
- * never by author. `children` is a slot for further controls (the lane toggle, 06-01).
+ * Entity filter bound to the `entity` URL param, plus the lane toggle (06-01, `lane` param). The
+ * entity filter is by who is mentioned in the content, never by author. Shared by the brief and
+ * the topic page. `children` is a slot for further controls.
  */
 export function FilterBar({ children }: { children?: ReactNode }) {
   const { filters, setFilter } = useFilters()
@@ -43,6 +45,7 @@ export function FilterBar({ children }: { children?: ReactNode }) {
           ))}
         </ToggleGroup>
       </div>
+      <LaneToggle />
       {children}
     </div>
   )
