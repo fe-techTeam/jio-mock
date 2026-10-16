@@ -2,9 +2,16 @@
 // quarter-hours, which are also IST quarter-hours (IST = UTC+05:30). Rows are sparse (items > 0)
 // and store raw counts only; the 30-item split rule is applied at read time (04-01).
 //
+// Reach (06-01): every run first refreshes posts.reach_score (trust/reach.ts). The reach_* columns
+// sum reach_score per sentiment, with a NULL score counted as the unknown score. After a full
+// rescore, recomputeReachColumns rewrites only the reach columns over the last 7 days so older
+// buckets match the new per-source p95.
+//
 // Interfaces used by 06-01 and 07-01: runRollup, recomputeRange, bucketStart.
 import { getLatestConfig, type Db } from '@jio/db'
 import type { Sql } from '../triage/repo'
+import { resolveTrustConfig, TRUST_DEFAULTS } from '../trust/config'
+import { lastFullRescoreAt, refreshReachScores, shouldFullRescore } from '../trust/reach'
 import { ACTIVE_MIN_ITEMS_24H, refreshTopicStatus, type TopicStatusCounts } from './active'
 
 export { ACTIVE_MIN_ITEMS_24H, refreshTopicStatus, type TopicStatusCounts } from './active'
@@ -45,26 +52,17 @@ export function bucketRanges(buckets: Date[]): { from: Date; to: Date }[] {
 }
 
 /**
- * Recomputes every bucket in [from, to) (widened to whole buckets) in one statement: upserts the
- * counts produced from posts x effective_classifications, then deletes rows in the range that are
- * no longer produced (a relabel that empties a slice leaves nothing stale). Coordination columns
- * (suspected_coordinated, burst_flag, top5_author_share) are left as they are for 06-01/06-02.
- * Returns the number of rows written.
+ * The src + fan CTEs shared by recomputeRange and recomputeReachColumns: classified posts published
+ * in [from, to), bucketed, fanned out to entity ('all' plus each effective entity) x lane ('all'
+ * plus the post's lane). A NULL reach_score counts as `unknown`.
  */
-export async function recomputeRange(
-  h: { sql: Sql },
-  range: { from: Date; to: Date },
-): Promise<{ rows: number }> {
-  const from = bucketStart(range.from)
-  const to = bucketCeil(range.to)
-  if (to <= from) return { rows: 0 }
-  const rows = await h.sql.begin(async (tx) => {
-    const res = await tx<{ n: number }[]>`
-      with src as (
+function fanned(tx: Sql, from: Date, to: Date, unknown: number) {
+  return tx`
+      src as (
         select date_bin('15 minutes', p.published_at, timestamptz '2000-01-01 00:00:00+00')
                  as bucket_start,
                ec.topic_id, p.lane, ec.entities, ec.sentiment, ec.confidence,
-               coalesce(p.reach_score, 0)::double precision as reach
+               coalesce(p.reach_score, ${unknown}::real)::double precision as reach
         from posts p
         join effective_classifications ec on ec.post_id = p.id
         where p.published_at >= ${from.toISOString()}::timestamptz
@@ -79,7 +77,33 @@ export async function recomputeRange(
           select distinct x from unnest(s.entities) as x where x <> 'all'
         ) e
         cross join lateral (values ('all'::text), (s.lane)) as l(lane)
-      ),
+      )`
+}
+
+export type RecomputeOptions = {
+  /** Reach counted for a post whose reach_score is NULL (default TRUST_DEFAULTS.reach.unknownScore). */
+  unknownScore?: number
+}
+
+/**
+ * Recomputes every bucket in [from, to) (widened to whole buckets) in one statement: upserts the
+ * counts and reach sums produced from posts x effective_classifications, then deletes rows in the
+ * range that are no longer produced (a relabel that empties a slice leaves nothing stale).
+ * Coordination columns (suspected_coordinated, burst_flag, top5_author_share) are left as they
+ * are for 06-02. Returns the number of rows written.
+ */
+export async function recomputeRange(
+  h: { sql: Sql },
+  range: { from: Date; to: Date },
+  opts: RecomputeOptions = {},
+): Promise<{ rows: number }> {
+  const from = bucketStart(range.from)
+  const to = bucketCeil(range.to)
+  if (to <= from) return { rows: 0 }
+  const unknown = opts.unknownScore ?? TRUST_DEFAULTS.reach.unknownScore
+  const rows = await h.sql.begin(async (tx) => {
+    const res = await tx<{ n: number }[]>`
+      with ${fanned(tx as unknown as Sql, from, to, unknown)},
       agg as (
         select bucket_start, topic_id, entity, lane,
                count(*)::int as items,
@@ -123,6 +147,41 @@ export async function recomputeRange(
   return { rows }
 }
 
+/**
+ * Rewrites only reach_pos/neu/neg of the existing topic_stats_15m rows in [from, to) (widened to
+ * whole buckets) in one set-based UPDATE, after a full reach rescore changed the per-source p95.
+ * Counts, coordination columns and the set of rows are untouched. Returns the rows updated.
+ */
+export async function recomputeReachColumns(
+  h: { sql: Sql },
+  range: { from: Date; to: Date },
+  opts: RecomputeOptions = {},
+): Promise<{ rows: number }> {
+  const from = bucketStart(range.from)
+  const to = bucketCeil(range.to)
+  if (to <= from) return { rows: 0 }
+  const unknown = opts.unknownScore ?? TRUST_DEFAULTS.reach.unknownScore
+  const res = await h.sql`
+    with ${fanned(h.sql, from, to, unknown)},
+    agg as (
+      select bucket_start, topic_id, entity, lane,
+             coalesce(sum(reach) filter (where sentiment = 'positive'), 0)::real as reach_pos,
+             coalesce(sum(reach) filter (where sentiment = 'neutral'), 0)::real as reach_neu,
+             coalesce(sum(reach) filter (where sentiment = 'negative'), 0)::real as reach_neg
+      from fan
+      group by bucket_start, topic_id, entity, lane
+    )
+    update topic_stats_15m t
+    set reach_pos = a.reach_pos, reach_neu = a.reach_neu, reach_neg = a.reach_neg,
+        updated_at = now()
+    from agg a
+    where t.bucket_start = a.bucket_start and t.topic_id = a.topic_id
+      and t.entity = a.entity and t.lane = a.lane
+      and t.bucket_start >= ${from.toISOString()}::timestamptz
+      and t.bucket_start < ${to.toISOString()}::timestamptz`
+  return { rows: res.count }
+}
+
 export type RollupResult = {
   mode: RollupMode
   /** Buckets recomputed. */
@@ -130,6 +189,8 @@ export type RollupResult = {
   /** Rows upserted. */
   rows: number
   status: TopicStatusCounts
+  /** Reach scores written this run, and whether it was a full rescore. */
+  reach: { updated: number; full: boolean }
 }
 
 /**
@@ -137,6 +198,11 @@ export type RollupResult = {
  * current and previous buckets plus the buckets of posts whose classification rows were created
  * in the last 3 minutes (new labels and corrections), limited to the last 7 days so rollups whose
  * posts retention may have removed are never rewritten. Then refreshes active/dormant status.
+ *
+ * Before any bucket is recomputed, posts.reach_score is refreshed: a full rescore every
+ * `trust.reach.fullRescoreEveryMin` (and on the first run in a process), otherwise only unscored
+ * posts. After a full rescore in a 'recent' run, the reach columns of the last 7 days are
+ * rewritten (a 'full7d' run already recomputes that whole window).
  */
 export async function runRollup(
   h: RollupHandle,
@@ -144,6 +210,12 @@ export async function runRollup(
   opts: { mode?: RollupMode } = {},
 ): Promise<RollupResult> {
   const mode = resolveRollupMode(now, opts.mode)
+  const { config } = await getLatestConfig(h.db)
+  const trust = resolveTrustConfig(config)
+  const full = shouldFullRescore(lastFullRescoreAt(), now, trust.reach)
+  const reach = await refreshReachScores(h, now, trust.reach, { full })
+  const unknownScore = trust.reach.unknownScore
+
   const cur = bucketStart(now)
   const windowFrom = new Date(cur.getTime() - FULL_WINDOW_MS)
   const windowTo = new Date(cur.getTime() + BUCKET_MS)
@@ -171,12 +243,14 @@ export async function runRollup(
   let rows = 0
   let buckets = 0
   for (const r of ranges) {
-    rows += (await recomputeRange(h, r)).rows
+    rows += (await recomputeRange(h, r, { unknownScore })).rows
     buckets += Math.round((r.to.getTime() - r.from.getTime()) / BUCKET_MS)
   }
+  if (full && mode !== 'full7d') {
+    await recomputeReachColumns(h, { from: windowFrom, to: windowTo }, { unknownScore })
+  }
 
-  const { config } = await getLatestConfig(h.db)
   const minItems = config.active_min_items_24h ?? ACTIVE_MIN_ITEMS_24H
   const status = await refreshTopicStatus(h, now, minItems)
-  return { mode, buckets, rows, status }
+  return { mode, buckets, rows, status, reach: { updated: reach.updated, full } }
 }

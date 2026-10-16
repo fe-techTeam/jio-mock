@@ -1,6 +1,7 @@
 import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest'
 import { upsertSeedTopics, type Db } from '@jio/db'
 import { connectTestDb, prepareTestDb, truncateAll } from '@jio/db/testing'
+import { resetReachCache } from '../trust/reach'
 import { refreshTopicStatus } from './active'
 import { recomputeRange, runRollup } from './index'
 
@@ -21,6 +22,7 @@ afterAll(async () => {
 beforeEach(async () => {
   await truncateAll(sql)
   await upsertSeedTopics(db)
+  resetReachCache()
 })
 
 const h = () => ({ db, sql })
@@ -92,6 +94,7 @@ async function stats(): Promise<StatRow[]> {
 
 describe('recomputeRange and runRollup', () => {
   it('fans a post out to (all|each entity) x (all|its lane) with items 1', async () => {
+    // runRollup rescores reach first: an X post with no follower figure gets the unknown score.
     const p = await addPost({ publishedAt: new Date('2026-10-16T03:40:00Z'), reach: 2.5 })
     await label(p, {
       slug: 'gmp-grey-market',
@@ -117,7 +120,7 @@ describe('recomputeRange and runRollup', () => {
     for (const r of rows) {
       expect(r.bucket_start.toISOString()).toBe('2026-10-16T03:30:00.000Z')
       expect(r).toMatchObject({ items: 1, pos: 1, neu: 0, neg: 0, low_conf: 0 })
-      expect(r.reach_pos).toBeCloseTo(2.5)
+      expect(r.reach_pos).toBeCloseTo(0.25)
     }
     expect(out.rows).toBe(6)
   })
