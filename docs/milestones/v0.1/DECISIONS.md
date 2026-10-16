@@ -110,3 +110,4 @@ developer would otherwise have been asked.
 | 2026-10-16 | 04-03: Entity breakdown always shows the four rows, zero-filled when the API omits one. | - | see SUMMARY-04-03 | yes |
 | 2026-10-16 | 04-03: Task 1 commit references topic-view/topic-skeleton added in the Task 2 commit, so e34ffcd alone does not typecheck; HEAD does. | - | see SUMMARY-04-03 | yes |
 | 2026-10-16 | 04-03: Chart series colours are literal hex values in the chart config (green, slate, red, blue) rather than theme tokens. | - | see SUMMARY-04-03 | yes |
+| 2026-10-16 | No API keys copied from influ-finder; all sources and the classifier run on fixtures and stubs until this project gets its own keys | Copy influ-finder's Anthropic, YouTube and Apify keys | Developer choice: separate keys and billing for this project | yes |
