@@ -1,0 +1,12 @@
+{
+  "kind": "Listing",
+  "data": {
+    "children": [
+      { "kind": "t3", "data": { "name": "t3_a1", "id": "a1", "title": "Jio IPO GMP discussion", "selftext": "What are you all expecting for listing?", "author": "market_maven", "author_fullname": "t2_maven", "subreddit": "IndianStockMarket", "permalink": "/r/IndianStockMarket/comments/a1/jio_ipo_gmp_discussion/", "created_utc": 1792137600, "score": 120, "num_comments": 12 } },
+      { "kind": "t3", "data": { "name": "t3_b1", "id": "b1", "title": "Jio Platforms IPO allotment tips", "selftext": "", "author": "ipo_fan", "author_fullname": "t2_ipofan", "subreddit": "IndiaInvestments", "permalink": "/r/IndiaInvestments/comments/b1/jio_platforms_ipo_allotment_tips/", "created_utc": 1792139400, "score": 40, "num_comments": 3 } },
+      { "kind": "t3", "data": { "name": "t3_c1", "id": "c1", "title": "Deleted author Jio IPO post", "selftext": "[removed]", "author": "[deleted]", "subreddit": "india", "permalink": "/r/india/comments/c1/deleted_author_jio_ipo_post/", "created_utc": 1792140000, "score": 2, "num_comments": 0 } },
+      { "kind": "t3", "data": { "name": "t3_old", "id": "old", "title": "Old Jio IPO thread", "selftext": "", "author": "oldtimer", "author_fullname": "t2_old", "subreddit": "india", "permalink": "/r/india/comments/old/old_jio_ipo_thread/", "created_utc": 1790856000, "score": 10, "num_comments": 50 } },
+      { "kind": "t3", "data": { "name": "t3_f1", "id": "f1", "title": "Jio IPO older than 48h", "selftext": "", "author": "slowpoke", "author_fullname": "t2_slow", "subreddit": "mumbai", "permalink": "/r/mumbai/comments/f1/jio_ipo_older_than_48h/", "created_utc": 1791957600, "score": 7, "num_comments": 9 } }
+    ]
+  }
+}

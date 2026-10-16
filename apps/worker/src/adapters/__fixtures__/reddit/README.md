@@ -1,0 +1,1 @@
+Hand-written, `_synthetic` samples in the documented Reddit shapes: the `client_credentials` token response, `Listing` search results (`data.children[].data`) and the two-element `/comments/<id>` response. Not recorded from the live service.

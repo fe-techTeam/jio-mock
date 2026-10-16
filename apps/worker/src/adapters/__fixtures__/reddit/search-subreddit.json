@@ -1,0 +1,9 @@
+{
+  "kind": "Listing",
+  "data": {
+    "children": [
+      { "kind": "t3", "data": { "name": "t3_a1", "id": "a1", "title": "Jio IPO GMP discussion", "selftext": "What are you all expecting for listing?", "author": "market_maven", "author_fullname": "t2_maven", "subreddit": "IndianStockMarket", "permalink": "/r/IndianStockMarket/comments/a1/jio_ipo_gmp_discussion/", "created_utc": 1792137600, "score": 120, "num_comments": 12 } },
+      { "kind": "t3", "data": { "name": "t3_e1", "id": "e1", "title": "Reliance Jio IPO valuation", "selftext": "Is 8 lakh crore fair?", "author": "valuation_guy", "author_fullname": "t2_valguy", "subreddit": "IndianStockMarket", "permalink": "/r/IndianStockMarket/comments/e1/reliance_jio_ipo_valuation/", "created_utc": 1792144800, "score": 33, "num_comments": 5 } }
+    ]
+  }
+}
