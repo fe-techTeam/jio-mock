@@ -1,0 +1,7 @@
+{
+  "kind": "youtube#videoListResponse",
+  "items": [
+    { "id": "vid1", "snippet": { "publishedAt": "2026-10-15T08:00:00Z", "channelId": "UCcnbc", "channelTitle": "CNBC-TV18", "title": "Jio IPO: what to expect", "description": "Experts discuss the Jio Platforms IPO." }, "statistics": { "viewCount": "50000", "likeCount": "900", "commentCount": "120" } },
+    { "id": "vid2", "snippet": { "publishedAt": "2026-10-16T05:00:00Z", "channelId": "UCfin", "channelTitle": "Finance With Riya", "title": "Jio IPO GMP aaj", "description": "Jio IPO ka GMP kitna hai" }, "statistics": { "viewCount": "1200", "likeCount": "40", "commentCount": "9" } }
+  ]
+}

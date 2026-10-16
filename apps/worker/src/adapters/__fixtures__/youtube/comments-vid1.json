@@ -1,0 +1,7 @@
+{
+  "kind": "youtube#commentThreadListResponse",
+  "items": [
+    { "id": "cm1", "snippet": { "videoId": "vid1", "totalReplyCount": 2, "topLevelComment": { "id": "cm1", "snippet": { "videoId": "vid1", "textDisplay": "Jio IPO me paisa lagana chahiye?", "authorDisplayName": "Amit K", "authorChannelId": { "value": "UCamit" }, "likeCount": 7, "publishedAt": "2026-10-16T01:00:00Z" } } } },
+    { "id": "cm2", "snippet": { "videoId": "vid1", "totalReplyCount": 0, "topLevelComment": { "id": "cm2", "snippet": { "videoId": "vid1", "textDisplay": "Old comment from last week", "authorDisplayName": "Old Timer", "authorChannelId": { "value": "UCold" }, "likeCount": 1, "publishedAt": "2026-10-10T01:00:00Z" } } } }
+  ]
+}

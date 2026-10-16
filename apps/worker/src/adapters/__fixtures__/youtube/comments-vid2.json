@@ -1,0 +1,6 @@
+{
+  "kind": "youtube#commentThreadListResponse",
+  "items": [
+    { "id": "cm3", "snippet": { "videoId": "vid2", "totalReplyCount": 0, "topLevelComment": { "id": "cm3", "snippet": { "videoId": "vid2", "textDisplay": "GMP gir raha hai", "authorDisplayName": "Neha", "authorChannelId": { "value": "UCneha" }, "likeCount": 3, "publishedAt": "2026-10-16T06:00:00Z" } } } }
+  ]
+}

@@ -83,8 +83,10 @@ describe('ADAPTERS registry', () => {
     }
   })
 
-  // Portal adapters are real parsers since 02-04 (see portal-adapters.test.ts).
-  it.each(SOURCE_KEYS.filter((k) => !k.startsWith('portal_')))(
+  // Portal adapters are real parsers since 02-04 (see portal-adapters.test.ts); youtube, reddit,
+  // news_rss and web_search are live adapters since 02-03 (see their own test files).
+  const LIVE_BUILT = new Set<SourceKey>(['youtube', 'reddit', 'news_rss', 'web_search'])
+  it.each(SOURCE_KEYS.filter((k) => !k.startsWith('portal_') && !LIVE_BUILT.has(k)))(
     '%s stub rejects in live mode with NotConfiguredError',
     async (k) => {
       const p = ADAPTERS[k].fetch(ctx(k, 'live'))

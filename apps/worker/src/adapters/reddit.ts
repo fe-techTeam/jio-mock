@@ -8,7 +8,7 @@ import type {
   SourceAdapter,
   TermsConfig,
 } from '@jio/core'
-import { RateLimitedError, SourceAuthError } from '../breaker'
+import { NotConfiguredError, RateLimitedError, SourceAuthError } from '../breaker'
 import { fixtureFetch } from './_fixture'
 
 const USER_AGENT = 'jio-ipo-analysis/0.1 (+internal research)'
@@ -102,7 +102,7 @@ export function createRedditAdapter(
       const now = clock()
       const id = ctx.creds.REDDIT_CLIENT_ID
       const secret = ctx.creds.REDDIT_CLIENT_SECRET
-      if (!id || !secret) throw new SourceAuthError('Reddit client id or secret is missing')
+      if (!id || !secret) throw new NotConfiguredError('Reddit client id or secret is missing')
 
       let requests = 0
       let stop = false

@@ -8,7 +8,7 @@ import type {
   NormalizedPost,
   SourceAdapter,
 } from '@jio/core'
-import { RateLimitedError, SourceAuthError } from '../breaker'
+import { NotConfiguredError, RateLimitedError, SourceAuthError } from '../breaker'
 import { fixtureFetch } from './_fixture'
 
 const USER_AGENT = 'jio-ipo-analysis/0.1 (+internal research)'
@@ -151,7 +151,7 @@ export function createWebSearchAdapter(
       const doFetch = deps.fetch ?? globalThis.fetch
       const now = (deps.now ?? (() => new Date()))()
       const apiKey = ctx.creds.SERPER_API_KEY
-      if (!apiKey) throw new SourceAuthError('SERPER_API_KEY is missing')
+      if (!apiKey) throw new NotConfiguredError('SERPER_API_KEY is missing')
 
       // Company/IPO phrases: the first two multi-word English phrases (never a bare 'jio').
       const phrases = ctx.terms.ipo_terms.filter((t) => /^[\x20-\x7E]+$/.test(t) && /ipo/i.test(t))
