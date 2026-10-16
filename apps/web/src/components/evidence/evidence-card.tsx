@@ -36,6 +36,15 @@ export function EvidenceCard({ item }: { item: EvidenceItem }) {
             Low confidence
           </Badge>
         ) : null}
+        {item.suspectedCoordinated ? (
+          <Badge
+            variant="outline"
+            className="border-violet-500/50 text-violet-800 dark:text-violet-300"
+            title="Flagged by the coordination heuristics. Suspected, not proven."
+          >
+            Suspected coordinated
+          </Badge>
+        ) : null}
       </div>
       <p className="break-words whitespace-pre-wrap">{item.text}</p>
       {item.lang !== 'en' && item.glossEn ? (

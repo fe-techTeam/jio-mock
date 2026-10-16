@@ -30,6 +30,22 @@ export type EvidenceSlice = {
   source?: SourceKey
   confidence?: 'low'
   sort: EvidenceSort
+  /** 06-02: only posts flagged as suspected coordinated. */
+  coordinated?: true
+  /** 06-02: only posts of this near-duplicate cluster. */
+  cluster?: string
+  /** 06-02: ISO start of a 15-minute bucket; limits to [bucket, bucket + 15m). */
+  bucket?: string
+}
+
+/**
+ * The evidence query plus the 06-02 coordination params. lib/api's EvidenceQuery predates them;
+ * getEvidence sends every key, so this subtype travels through it unchanged.
+ */
+export type SliceEvidenceQuery = EvidenceQuery & {
+  coordinated?: 'true'
+  cluster?: string
+  bucket?: string
 }
 
 /** What callers pass to open the drawer: window defaults to 24h and sort to reach. */
@@ -41,6 +57,7 @@ export function normalizeSlice(input: EvidenceSliceInput): EvidenceSlice {
 }
 
 const SLUG_RE = /^[a-z0-9-]{1,64}$/
+const CLUSTER_RE = /^[A-Za-z0-9_-]{1,64}$/
 const MAX_SPAN_MS = 7 * 24 * 60 * 60_000
 const MAX_NAME = 120
 
@@ -55,6 +72,8 @@ const KEYS = [
   'source',
   'confidence',
   'sort',
+  'cluster',
+  'bucket',
 ] as const
 
 export function encodeSlice(input: EvidenceSliceInput): string {
@@ -64,6 +83,7 @@ export function encodeSlice(input: EvidenceSliceInput): string {
     const v = s[k]
     if (v !== undefined && v !== '') p.set(k, v)
   }
+  if (s.coordinated) p.set('coordinated', 'true')
   return p.toString()
 }
 
@@ -117,6 +137,21 @@ export function decodeSlice(raw: string | null | undefined): EvidenceSlice | nul
     if (confidence !== 'low') return null
     slice.confidence = 'low'
   }
+  const coordinated = p.get('coordinated')
+  if (coordinated !== null) {
+    if (coordinated !== 'true') return null
+    slice.coordinated = true
+  }
+  const cluster = get('cluster')
+  if (cluster !== null) {
+    if (!CLUSTER_RE.test(cluster)) return null
+    slice.cluster = cluster
+  }
+  const bucket = get('bucket')
+  if (bucket !== null) {
+    if (!isoOrNull(bucket)) return null
+    slice.bucket = bucket
+  }
   const from = get('from')
   const to = get('to')
   if ((from === null) !== (to === null)) return null
@@ -131,8 +166,8 @@ export function decodeSlice(raw: string | null | undefined): EvidenceSlice | nul
 }
 
 /** The 04-01 evidence query for a slice under the page filters (slice.entity wins). */
-export function toEvidenceParams(slice: EvidenceSlice, filters: Filters): EvidenceQuery {
-  const q: EvidenceQuery = {
+export function toEvidenceParams(slice: EvidenceSlice, filters: Filters): SliceEvidenceQuery {
+  const q: SliceEvidenceQuery = {
     entity: slice.entity ?? filters.entity,
     lane: filters.lane,
     window: slice.window,
@@ -146,6 +181,9 @@ export function toEvidenceParams(slice: EvidenceSlice, filters: Filters): Eviden
   }
   if (slice.source) q.source = slice.source
   if (slice.confidence) q.confidence = slice.confidence
+  if (slice.coordinated) q.coordinated = 'true'
+  if (slice.cluster) q.cluster = slice.cluster
+  if (slice.bucket) q.bucket = slice.bucket
   return q
 }
 
@@ -176,7 +214,12 @@ export function describeSlice(slice: EvidenceSlice, filters: Filters): string {
   else if (!slice.sentiment) parts.push('All topics')
   if (slice.sentiment) parts.push(SENTIMENT_LABEL[slice.sentiment])
   if (slice.confidence === 'low') parts.push('Low confidence')
-  if (slice.from && slice.to) parts.push(formatIstRange(slice.from, slice.to))
+  if (slice.coordinated) parts.push('Suspected coordinated')
+  if (slice.cluster) parts.push('Near-duplicate cluster')
+  if (slice.bucket) {
+    const end = new Date(new Date(slice.bucket).getTime() + 15 * 60_000).toISOString()
+    parts.push(formatIstRange(slice.bucket, end))
+  } else if (slice.from && slice.to) parts.push(formatIstRange(slice.from, slice.to))
   else parts.push(slice.window === '24h' ? 'Last 24h' : 'Last 7 days')
   if (slice.source) parts.push(sourceLabel(slice.source))
   if (filters.lane !== 'all') parts.push(LANE_LABEL[filters.lane])

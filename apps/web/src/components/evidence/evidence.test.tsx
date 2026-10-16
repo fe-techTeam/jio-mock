@@ -230,3 +230,92 @@ describe('EvidenceDrawer', () => {
     expect(await screen.findByText('No posts match this slice')).toBeInTheDocument()
   })
 })
+
+describe('coordination slices (06-02)', () => {
+  const filters = { entity: 'all', lane: 'all' } as const
+
+  it('round-trips coordinated, cluster and bucket and passes them to the API', () => {
+    const s: EvidenceSlice = {
+      topic: 'gmp-and-grey-market',
+      window: '7d',
+      sort: 'reach',
+      coordinated: true,
+      cluster: 'nd_6f1c2b1e-8a43-4f5e-9a8e-0d5b8e1f2a3c',
+      bucket: '2026-10-16T04:00:00.000Z',
+    }
+    expect(decodeSlice(encodeSlice(s))).toEqual(s)
+    expect(toEvidenceParams(s, filters)).toMatchObject({
+      coordinated: 'true',
+      cluster: s.cluster,
+      bucket: s.bucket,
+    })
+    expect(toEvidenceParams({ window: '24h', sort: 'reach' }, filters)).not.toHaveProperty(
+      'coordinated',
+    )
+  })
+
+  it('rejects malformed coordination values', () => {
+    expect(decodeSlice('coordinated=false')).toBeNull()
+    expect(decodeSlice('cluster=a%20b')).toBeNull()
+    expect(decodeSlice(`cluster=${'x'.repeat(65)}`)).toBeNull()
+    expect(decodeSlice('bucket=yesterday')).toBeNull()
+  })
+
+  it('describes coordination slices as suspected', () => {
+    expect(describeSlice({ window: '24h', sort: 'reach', coordinated: true }, filters)).toBe(
+      'All topics, Suspected coordinated, Last 24h',
+    )
+    expect(
+      describeSlice(
+        {
+          window: '7d',
+          sort: 'reach',
+          topic: 't',
+          topicName: 'T',
+          cluster: 'nd_x',
+          coordinated: true,
+        },
+        filters,
+      ),
+    ).toBe('T, Suspected coordinated, Near-duplicate cluster, Last 7 days')
+    expect(
+      describeSlice(
+        { window: '7d', sort: 'reach', topic: 't', topicName: 'T', bucket: '2026-10-16T04:00:00Z' },
+        filters,
+      ),
+    ).toBe('T, 09:30-09:45 16 Oct IST')
+  })
+
+  it('tags suspected coordinated cards', () => {
+    renderWithClient(<EvidenceCard item={item({ suspectedCoordinated: true })} />)
+    expect(screen.getByText('Suspected coordinated')).toBeInTheDocument()
+    cleanup()
+    renderWithClient(<EvidenceCard item={item({ suspectedCoordinated: false })} />)
+    expect(screen.queryByText('Suspected coordinated')).not.toBeInTheDocument()
+  })
+
+  it('the drawer toggle filters to suspected coordinated posts and back', async () => {
+    const s: EvidenceSlice = { topic: 'gmp-and-grey-market', window: '24h', sort: 'reach' }
+    resetNav(new URLSearchParams({ evidence: encodeSlice(s) }).toString())
+    getEvidenceMock.mockResolvedValue(page([], null))
+    renderWithClient(<EvidenceDrawer />)
+    const toggle = await screen.findByRole('button', { name: 'Suspected coordinated only' })
+    expect(toggle).toHaveAttribute('aria-pressed', 'false')
+    await userEvent.click(toggle)
+    expect(decodeSlice(replacedParams().get('evidence'))).toMatchObject({
+      topic: 'gmp-and-grey-market',
+      coordinated: true,
+    })
+
+    cleanup()
+    resetNav(new URLSearchParams({ evidence: encodeSlice({ ...s, coordinated: true }) }).toString())
+    renderWithClient(<EvidenceDrawer />)
+    const on = await screen.findByRole('button', { name: 'Suspected coordinated only' })
+    expect(on).toHaveAttribute('aria-pressed', 'true')
+    expect(getEvidenceMock).toHaveBeenLastCalledWith(
+      expect.objectContaining({ coordinated: 'true' }),
+    )
+    await userEvent.click(on)
+    expect(decodeSlice(replacedParams().get('evidence'))).not.toHaveProperty('coordinated')
+  })
+})

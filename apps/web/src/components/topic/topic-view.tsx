@@ -9,6 +9,7 @@ import { useFilters } from '@/components/shell/use-filters'
 import { Button } from '@/components/ui/button'
 import { ApiError, getTimeline, queryKeys } from '@/lib/api'
 import { BySourceTable } from './by-source-table'
+import { CoordinationPanel } from './coordination-panel'
 import { EntityBreakdown } from './entity-breakdown'
 import { TimelineChart } from './timeline-chart'
 import { TopicHeader } from './topic-header'
@@ -57,6 +58,7 @@ export function TopicView({ slug }: { slug: string }) {
       <FilterBar />
       {query.isError ? <StaleBanner asOf={data.asOf} onRetry={() => void query.refetch()} /> : null}
       <TimelineChart slug={slug} data={data} />
+      <CoordinationPanel slug={slug} topicName={data.topic.name} data={data.coordination} />
       <div className="grid gap-6 md:grid-cols-2">
         <BySourceTable slug={slug} rows={data.bySource} />
         <EntityBreakdown slug={slug} rows={data.byEntity} />

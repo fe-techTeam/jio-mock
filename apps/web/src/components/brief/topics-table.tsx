@@ -13,6 +13,7 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import type { Filters } from '@/lib/api'
+import { CoordinationBadges, CoordinationCount } from './coordination-count'
 import { formatSplit } from './reach-split'
 import { SentimentBar } from './sentiment-bar'
 import { Sparkline } from './sparkline'
@@ -117,8 +118,16 @@ export function TopicsTable({
                   {t.lowConfPct}%
                 </button>
               </TableCell>
-              <TableCell className="text-right tabular-nums">
-                {formatCount(t.suspectedCoordinated)}
+              <TableCell className="text-right">
+                <div className="flex flex-col items-end gap-1">
+                  <CoordinationCount
+                    n={t.suspectedCoordinated}
+                    slice={base}
+                    onOpen={onOpen}
+                    label={t.name}
+                  />
+                  <CoordinationBadges row={t} />
+                </div>
               </TableCell>
               <TableCell>
                 <Sparkline values={t.spark} />

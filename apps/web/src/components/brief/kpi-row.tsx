@@ -4,6 +4,7 @@ import type { BriefKpis, Trend } from '@jio/core'
 import type { ReactNode } from 'react'
 import type { EvidenceSliceInput } from '@/components/evidence/slice'
 import { formatCount } from '@/components/shell/format'
+import { CoordinationCount } from './coordination-count'
 import { ReachSplitView } from './reach-split'
 import { TrendArrow } from './trend-arrow'
 
@@ -86,10 +87,14 @@ export function KpiRow({
       </Kpi>
 
       <Kpi label="Suspected coordinated">
-        {/* Plain number until the coordination drill-down lands (06-02). */}
-        <span className="text-2xl font-semibold tabular-nums">
-          {formatCount(kpis.suspectedCoordinated)}
-        </span>
+        {/* Whole-brief slice; opens the drawer filtered to suspected coordinated posts (06-02). */}
+        <CoordinationCount
+          n={kpis.suspectedCoordinated}
+          slice={{ window: '24h' }}
+          onOpen={onOpen}
+          label="Suspected coordinated in 24h"
+          className="w-fit text-left text-2xl font-semibold"
+        />
       </Kpi>
     </section>
   )

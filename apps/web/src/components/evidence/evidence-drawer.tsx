@@ -20,6 +20,7 @@ import {
   SheetTitle,
 } from '@/components/ui/sheet'
 import { Skeleton } from '@/components/ui/skeleton'
+import { Toggle } from '@/components/ui/toggle'
 import { formatCount } from '@/components/shell/format'
 import { parseFilters } from '@/components/shell/use-filters'
 import { getEvidence, queryKeys, type Filters } from '@/lib/api'
@@ -98,6 +99,20 @@ function EvidencePanel({ slice, filters }: { slice: EvidenceSlice; filters: Filt
               <SelectItem value="newest">Newest</SelectItem>
             </SelectContent>
           </Select>
+          <Toggle
+            variant="outline"
+            size="sm"
+            pressed={slice.coordinated === true}
+            onPressedChange={(on) => {
+              const next: EvidenceSlice = { ...slice }
+              if (on) next.coordinated = true
+              else delete next.coordinated
+              open(next)
+            }}
+            title="Posts flagged by the coordination heuristics. Suspected, not proven."
+          >
+            Suspected coordinated only
+          </Toggle>
         </div>
       </SheetHeader>
 
