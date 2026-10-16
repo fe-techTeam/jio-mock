@@ -43,3 +43,10 @@ Deviations: drizzle-orm added to worker; per-file worker test DBs; 02-01 fixture
   - 04-02 done: Open evidence: useOpenEvidence()({topic, topicName, sentiment, entity, from, to, source, confidence, window?, sort?}); the drawer is already mounted once in (app)/layout.tsx. Reuse: EvidenceCard (evidence/evidence-card.t
 - Wave 3: gate green, fix rounds 0
   - 04-03 done: Topic page: apps/web/src/app/(app)/topics/[slug]/page.tsx renders TopicView (apps/web/src/components/topic/topic-view.tsx) under Suspense. 06-01 lane toggle: pass it as children of the FilterBar in topic-view.tsx (curren
+
+## 05-operator-pages
+
+- Wave 1: gate green, fix rounds 0
+  - 05-01 done: GET/PATCH /api/sources and GET /api/sources/[key]/runs are session-guarded via withApi; nothing returns credential values (explicit field allowlist in _lib/build.ts). Web crypto: encryptSecret/decryptSecret/isEncrypted/C
+  - 05-02 done: Settings API: GET/PATCH /api/config (terms, retentionDays, minItemsForSplit, activeMinItems24h; baseVersion required), POST /api/config/test-terms, GET/PATCH /api/config/topics, GET /api/config/audit?cursor=, POST /api/t
+  - 05-03 done: POST /api/labels returns {ok, classificationId}; DELETE /api/labels/[id] undoes correction or gold rows younger than 10 minutes; each call writes exactly one 'relabel' event (undo has detail.undo true). GET /api/accuracy

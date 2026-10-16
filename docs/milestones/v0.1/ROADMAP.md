@@ -79,7 +79,7 @@ Goal: operators can see source health and spend, set cadences and the X credenti
 | 05-02 | 1 | sonnet | 04-02 | apps/web/src/app/(app)/settings/**, apps/web/src/app/api/config/**, apps/web/src/app/api/topics/[slug]/promote/**, apps/web/src/components/settings/** | Settings: keyword, hashtag and entity editing with validation, topic list with Emerging promote and merge, retention days, audit log table, locked 'person-level views: off' row |
 | 05-03 | 1 | sonnet | 04-02 | apps/web/src/app/(app)/accuracy/**, apps/web/src/app/api/{labels,accuracy}/**, apps/web/src/components/accuracy/**, apps/web/src/components/evidence/relabel.tsx | Accuracy page: gold-set labelling queue (200 posts), per-language accuracy once 200 are labelled, relabel control in the evidence drawer |
 
-- [ ] 05-01  - [ ] 05-02  - [ ] 05-03
+- [x] 05-01  - [x] 05-02  - [x] 05-03
 
 ## Phase 06: Trust layer
 

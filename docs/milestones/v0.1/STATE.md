@@ -1,15 +1,15 @@
 # v0.1 State
 
 **Goal:** Locally running always-on Jio IPO sentiment board: every source ingested (fixtures until keys), classified, rolled up, served behind one login.
-**Current focus:** 05 of 07 (Operator pages)
+**Current focus:** 06 of 07 (Trust layer)
 
 ## Position
 
-Phase: 05 of 07 (Operator pages)
+Phase: 06 of 07 (Trust layer)
 Plan: 0 of 3 in this phase
 Status: Ready to execute
-Last activity: 2026-10-16 - 04-dashboard closed green
-Progress: 16 / 23
+Last activity: 2026-10-16 - 05-operator-pages closed green
+Progress: 19 / 23
 
 ## Recent decisions
 
@@ -25,10 +25,10 @@ None.
 
 ## Deferred issues
 
-59 open - see ISSUES.md.
+77 open - see ISSUES.md.
 
 ## Session continuity
 
 Last session: 2026-10-16
-Stopped at: 04-dashboard closed
-Next: execute Phase 05 wave 1 (PLAN-05-01, 05-02, 05-03 in parallel)
+Stopped at: 05-operator-pages closed
+Next: execute Phase 06 wave 1 (PLAN-06-01)

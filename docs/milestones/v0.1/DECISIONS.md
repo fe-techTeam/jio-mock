@@ -111,3 +111,27 @@ developer would otherwise have been asked.
 | 2026-10-16 | 04-03: Task 1 commit references topic-view/topic-skeleton added in the Task 2 commit, so e34ffcd alone does not typecheck; HEAD does. | - | see SUMMARY-04-03 | yes |
 | 2026-10-16 | 04-03: Chart series colours are literal hex values in the chart config (green, slate, red, blue) rather than theme tokens. | - | see SUMMARY-04-03 | yes |
 | 2026-10-16 | No API keys copied from influ-finder; all sources and the classifier run on fixtures and stubs until this project gets its own keys | Copy influ-finder's Anthropic, YouTube and Apify keys | Developer choice: separate keys and billing for this project | yes |
+| 2026-10-16 | 05-01: Config creds format is the existing enc:v1 AES-256-GCM (worker already decrypts it in apps/worker/src/runner.ts); apps/web/src/lib/crypto.ts matches byte for byte, with a test vector produced and verified by the worker's decryptSecret. No new ISS needed for worker decryption. | - | see SUMMARY-05-01 | yes |
+| 2026-10-16 | 05-01: Token stored in sources.x_api.creds_ref.X_BEARER_TOKEN (creds_ref is Record<string,string>/null); clearing deletes the key and sets creds_ref to null when empty. | - | see SUMMARY-05-01 | yes |
+| 2026-10-16 | 05-01: SourcesResponse, SourceRow, XCard, QuotaCard, RunRow, SourcesPatch live in apps/web/src/app/api/sources/_lib/contract.ts (api-types.ts is owned by 04-01). | - | see SUMMARY-05-01 | yes |
+| 2026-10-16 | 05-01: PATCH uses getLatestConfig plus saveConfigVersion(..., {expectedVersion}) (which takes the advisory lock itself) instead of a custom transaction, because drizzle-orm is not a dependency of apps/web; stale base version gives 409 with the exact conflict message. | - | see SUMMARY-05-01 | yes |
+| 2026-10-16 | 05-01: Field errors use the existing ParamError shape: 400 {error:'bad_request', issues:[{path:[...], code, message}]}; UI joins path with '.'. | - | see SUMMARY-05-01 | yes |
+| 2026-10-16 | 05-01: Mode shown prefers detail.mode of the last fetch_run, else resolved from SOURCES_MODE and credentials (env or config creds_ref names). | - | see SUMMARY-05-01 | yes |
+| 2026-10-16 | 05-01: Breaker threshold 3 hard-coded in status.ts to match worker; YouTube minimum interval 15 min derived from ceil(1440/i)*100 <= 10000. | - | see SUMMARY-05-01 | yes |
+| 2026-10-16 | 05-01: apify_instagram and apify_linkedin coverageLabel forced to 'sampled', displayed as 'sampled, not representative'. | - | see SUMMARY-05-01 | yes |
+| 2026-10-16 | 05-01: Rate-limit fields in the X card are max_pages_per_run and cost_per_post_usd (the keys x_api reads) plus any already saved. | - | see SUMMARY-05-01 | yes |
+| 2026-10-16 | 05-02: Settings types live in apps/web/src/app/api/config/_lib/contract.ts because api-types.ts belongs to 04-01 | - | see SUMMARY-05-02 | yes |
+| 2026-10-16 | 05-02: 400 validation responses use {error:'validation_failed', issues:[{path,message}]}; person-level key (any spelling, any value) -> 400 'person-level views are locked pending legal review' | - | see SUMMARY-05-02 | yes |
+| 2026-10-16 | 05-02: web app has no drizzle-orm dependency, so topic/audit/test-terms handlers use the postgres-js sql handle from getDb(); the event_log row is written in the same sql.begin transaction as the topic change | - | see SUMMARY-05-02 | yes |
+| 2026-10-16 | 05-02: PATCH /api/config does read-latest, base-version check, merge, then saveConfigVersion with expectedVersion (checked under its advisory lock) instead of a second outer lock; stale -> 409 | - | see SUMMARY-05-02 | yes |
+| 2026-10-16 | 05-02: The catch-all topic with slug 'emerging' is not an Emerging candidate and cannot be promoted, merged or dismissed (409) | - | see SUMMARY-05-02 | yes |
+| 2026-10-16 | 05-02: Merge also sets topics.merged_into_id on the dismissed source | - | see SUMMARY-05-02 | yes |
+| 2026-10-16 | 05-02: Audit cursor is 'YYYY-MM-DDTHH:MM:SS.UUUUUU/id' (microsecond precision) for a lossless keyset; audit kinds exclude fetch_run, login_locked, logout and retention per plan | - | see SUMMARY-05-02 | yes |
+| 2026-10-16 | 05-02: Person-level switch is a native disabled button role=switch with a Lock icon and no handler (no shadcn Switch present) | - | see SUMMARY-05-02 | yes |
+| 2026-10-16 | 05-03: Gold queue excludes is_fixture posts so the gold set measures real data only (to be logged in DECISIONS.md by the orchestrator). | - | see SUMMARY-05-03 | yes |
+| 2026-10-16 | 05-03: POST /api/labels and DELETE run in one SQL transaction together with the 'relabel' event_log insert; gold writes take pg_advisory_xact_lock so the 200 cap holds under concurrency. | - | see SUMMARY-05-03 | yes |
+| 2026-10-16 | 05-03: QueueResponse gains an additive top-level topics list (non-dismissed) for the gold form; LabelResponse gains classificationId. | - | see SUMMARY-05-03 | yes |
+| 2026-10-16 | 05-03: RelabelControls keeps the 04-02 stub export and props ({item}) with an optional topics prop. The plan's {postId,current,topics} signature was not used. | - | see SUMMARY-05-03 | yes |
+| 2026-10-16 | 05-03: Sarcasm is read from the latest gold relabel event per post (detail.sarcastic), since there is no column. | - | see SUMMARY-05-03 | yes |
+| 2026-10-16 | 05-03: Accuracy page keeps scope state (default or latest) so Re-score refreshes the displayed figures, with refetchInterval false (worksheet, not a poll). | - | see SUMMARY-05-03 | yes |
+| 2026-10-16 | 05-03: usedAsFewShot = min(20, corrections count); 03-02's few-shot cap is 20. | - | see SUMMARY-05-03 | yes |
