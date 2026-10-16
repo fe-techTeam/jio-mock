@@ -10,3 +10,4 @@ apps/worker/fixtures
 pnpm-lock.yaml
 docs/brew
 docker-compose.yml
+docs

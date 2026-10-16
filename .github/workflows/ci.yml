@@ -1,0 +1,39 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    services:
+      db:
+        image: pgvector/pgvector:pg16
+        env:
+          POSTGRES_USER: jio
+          POSTGRES_PASSWORD: jio
+          POSTGRES_DB: jio_ipo
+        ports:
+          - 5433:5432
+        options: >-
+          --health-cmd "pg_isready -U jio -d jio_ipo"
+          --health-interval 2s
+          --health-timeout 3s
+          --health-retries 30
+    env:
+      DATABASE_URL: postgres://jio:jio@localhost:5433/jio_ipo
+      DATABASE_URL_TEST: postgres://jio:jio@localhost:5433/jio_ipo_test
+      SOURCES_MODE: fixture
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+      - run: corepack enable
+      - run: pnpm install --frozen-lockfile
+      - name: Create test database
+        run: PGPASSWORD=jio psql -h localhost -p 5433 -U jio -d jio_ipo -c 'CREATE DATABASE jio_ipo_test'
+      - run: pnpm lint
+      - run: pnpm typecheck
+      - run: pnpm test
