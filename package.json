@@ -1,0 +1,33 @@
+{
+  "name": "jio-ipo-analysis",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@9.15.4",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "lint": "eslint . --max-warnings=0",
+    "typecheck": "pnpm -r --if-present typecheck",
+    "test": "pnpm -r --if-present test && node --test \"scripts/tests/*.test.mjs\"",
+    "build": "pnpm -r --if-present build",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "db:up": "docker compose up -d --wait db",
+    "db:migrate": "pnpm --filter @jio/db db:migrate",
+    "db:seed": "pnpm --filter @jio/db db:seed",
+    "db:test-setup": "bash scripts/test-db.sh",
+    "dev": "pnpm --parallel --filter @jio/web --filter @jio/worker dev"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9",
+    "@next/eslint-plugin-next": "^15",
+    "eslint": "^9",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-react-hooks": "^5",
+    "globals": "^17.13.0",
+    "prettier": "^3",
+    "typescript": "^5.7",
+    "typescript-eslint": "^8"
+  }
+}
