@@ -10,6 +10,7 @@ import { createEmbedder, type Embedder } from '../classify/embedder'
 import { createLogger } from '../log'
 import type { Sql } from '../triage/repo'
 import { loadFewShot } from './db'
+import { createSummarizer, type Summarizer } from './summarizer'
 
 export type PipelineHandle = { db: Db; sql: Sql }
 export type PipelineLog = Pick<Logger, 'info' | 'warn' | 'error'>
@@ -42,6 +43,7 @@ export class UsageMeter {
 export type PipelineDeps = {
   classifier: Classifier
   embedder: Embedder
+  summarizer: Summarizer
   log: PipelineLog
   usage?: UsageMeter
 }
@@ -49,7 +51,7 @@ export type PipelineDeps = {
 /**
  * Wires the classifier (Anthropic when ANTHROPIC_API_KEY is set, else the keyword stub) with
  * few-shot examples from analyst corrections, and the embedder (Voyage when VOYAGE_API_KEY is set,
- * else the hashing stub). The stub classifier's terms come from the config at boot (or opts.terms).
+ * else the hashing stub) and the two-line summarizer (same key and model). The stub classifier's terms come from the config at boot (or opts.terms).
  */
 export async function createPipelineDeps(
   h: PipelineHandle,
@@ -68,5 +70,9 @@ export async function createPipelineDeps(
     log,
   })
   const embedder = createEmbedder({ apiKey: env.VOYAGE_API_KEY })
-  return { classifier, embedder, log, usage }
+  const summarizer = createSummarizer({
+    apiKey: env.ANTHROPIC_API_KEY,
+    model: env.CLASSIFIER_MODEL,
+  })
+  return { classifier, embedder, summarizer, log, usage }
 }

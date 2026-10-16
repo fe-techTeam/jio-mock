@@ -9,6 +9,7 @@ import { createLogger } from '../log'
 import { runClassifyBatch } from './classify-step'
 import { loadFewShot } from './db'
 import { createPipelineDeps, type PipelineDeps } from './deps'
+import { StubSummarizer } from './summarizer'
 
 vi.stubGlobal('fetch', () => {
   throw new Error('network access is not allowed in tests')
@@ -60,8 +61,9 @@ function stubDeps(classifier?: Classifier): PipelineDeps {
   return {
     classifier: classifier ?? new StubClassifier({ terms }),
     embedder: new HashingEmbedder(),
+    summarizer: new StubSummarizer(),
     log,
-  } as PipelineDeps
+  }
 }
 
 function spy(inner: Classifier) {
@@ -108,6 +110,7 @@ describe('runClassifyBatch', () => {
     )
     expect(deps.classifier.model).toBe('stub-v1')
     expect(deps.embedder.model).toBe('hash-stub-v1')
+    expect(deps.summarizer).toBeInstanceOf(StubSummarizer)
 
     const out = await runClassifyBatch(h(), deps, { now: NOW })
     expect(out).toMatchObject({ pending: 5, classified: 5, cacheHits: 0, failed: 0 })
