@@ -8,7 +8,7 @@ import type { LabelResponse, QueueResponse } from '@/app/api/labels/_lib/contrac
 import { formatIst, safeExternalUrl } from '@/components/shell/format'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
-import { Skeleton } from '@/components/ui/skeleton'
+import { ChartSkeleton, ErrorState } from '@/components/states'
 import { ApiError, fetchJson } from '@/lib/api'
 
 const MAX_SKIP = 200
@@ -116,18 +116,14 @@ export function GoldQueue({
   }, [postId])
 
   if (queue.isPending) {
-    return <Skeleton className="h-64" aria-busy="true" aria-label="Loading gold queue" />
+    return <ChartSkeleton className="h-64" />
   }
   if (queue.isError) {
     return (
-      <Card>
-        <CardContent className="flex items-center justify-between gap-4">
-          <p role="alert">Could not load the labelling queue.</p>
-          <Button variant="outline" size="sm" onClick={() => void queue.refetch()}>
-            Retry
-          </Button>
-        </CardContent>
-      </Card>
+      <ErrorState
+        message="Could not load the labelling queue."
+        onRetry={() => void queue.refetch()}
+      />
     )
   }
 

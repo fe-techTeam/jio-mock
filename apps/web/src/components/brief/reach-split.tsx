@@ -3,7 +3,8 @@
 import type { ReachSplit, Sentiment } from '@jio/core'
 import { formatCount, pctSplit } from '@/components/shell/format'
 import { cn } from '@/lib/utils'
-import { NotEnoughData, SENTIMENT_STYLE } from './sentiment-bar'
+import { NotEnoughData } from '@/components/states'
+import { SENTIMENT_STYLE } from './sentiment-bar'
 
 const ORDER = [
   ['positive', 'pos'],

@@ -4,9 +4,7 @@ import { useQuery } from '@tanstack/react-query'
 import { ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
-import { Button } from '@/components/ui/button'
-import { Skeleton } from '@/components/ui/skeleton'
-import { StaleBanner } from '@/components/shell/stale-banner'
+import { ErrorState, SkeletonRows, StaleBanner } from '@/components/states'
 import { hrefWith } from '@/components/shell/use-filters'
 import { QuotaCard } from './quota-card'
 import { SOURCES_KEY, getSources } from './sources-api'
@@ -14,13 +12,7 @@ import { SourcesTable } from './sources-table'
 import { XConfigCard } from './x-config-card'
 
 export function SourcesSkeleton() {
-  return (
-    <div className="flex flex-col gap-3" aria-busy="true" aria-label="Loading sources">
-      {Array.from({ length: 11 }, (_, i) => (
-        <Skeleton key={i} className="h-12" />
-      ))}
-    </div>
-  )
+  return <SkeletonRows rows={11} className="gap-3" />
 }
 
 export function SourcesView() {
@@ -60,15 +52,7 @@ export function SourcesView() {
       </div>
 
       {!data && query.isError ? (
-        <div
-          role="alert"
-          className="flex items-center justify-between gap-2 rounded-lg border p-4 text-sm"
-        >
-          <span>Could not load sources.</span>
-          <Button variant="outline" size="sm" onClick={() => void query.refetch()}>
-            Retry
-          </Button>
-        </div>
+        <ErrorState message="Could not load sources." onRetry={() => void query.refetch()} />
       ) : null}
       {!data && !query.isError ? <SourcesSkeleton /> : null}
 

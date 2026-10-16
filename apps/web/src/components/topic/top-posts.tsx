@@ -5,7 +5,7 @@ import { EvidenceCard } from '@/components/evidence/evidence-card'
 import { useOpenEvidence } from '@/components/evidence/use-open-evidence'
 import { useFilters } from '@/components/shell/use-filters'
 import { Button } from '@/components/ui/button'
-import { Skeleton } from '@/components/ui/skeleton'
+import { CardSkeletons, ErrorState } from '@/components/states'
 import { getEvidence, queryKeys, type EvidenceQuery } from '@/lib/api'
 
 export function TopPosts({ slug }: { slug: string }) {
@@ -41,14 +41,9 @@ export function TopPosts({ slug }: { slug: string }) {
       </div>
       {!query.data ? (
         query.isError ? (
-          <p role="alert" className="text-sm">
-            Could not load posts.{' '}
-            <button type="button" className="underline" onClick={() => void query.refetch()}>
-              Retry
-            </button>
-          </p>
+          <ErrorState message="Could not load posts." onRetry={() => void query.refetch()} />
         ) : (
-          <Skeleton className="h-32" />
+          <CardSkeletons count={2} />
         )
       ) : items.length === 0 ? (
         <p className="text-sm text-muted-foreground">No posts in the last 24h</p>

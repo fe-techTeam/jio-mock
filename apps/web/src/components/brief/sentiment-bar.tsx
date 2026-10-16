@@ -1,5 +1,6 @@
 'use client'
 
+import { NotEnoughData } from '@/components/states'
 import type { Sentiment, SplitCounts } from '@jio/core'
 import { pctSplit } from '@/components/shell/format'
 import { cn } from '@/lib/utils'
@@ -28,10 +29,6 @@ const ORDER = [
   ['neutral', 'neu'],
   ['negative', 'neg'],
 ] as const
-
-export function NotEnoughData({ n }: { n: number }) {
-  return <span className="text-xs text-muted-foreground">Not enough data (n={n})</span>
-}
 
 /**
  * Stacked pos/neu/neg bar. Each non-zero segment is a button that opens its evidence.

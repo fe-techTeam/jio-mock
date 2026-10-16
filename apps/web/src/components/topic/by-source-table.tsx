@@ -1,5 +1,6 @@
 'use client'
 
+import { NotEnoughData } from '@/components/states'
 import type { SplitCounts, TimelineResponse } from '@jio/core'
 import { SourceBadge } from '@/components/evidence/source-badge'
 import { useOpenEvidence } from '@/components/evidence/use-open-evidence'
@@ -20,7 +21,7 @@ export const linkButton =
 /** Sentiment split as percentages, or the 30-item rule's "not enough data" text. */
 export function SplitCell({ counts }: { counts: SplitCounts }) {
   if (!counts.splitShown) {
-    return <span className="text-muted-foreground">Not enough data (n={counts.items})</span>
+    return <NotEnoughData n={counts.items} />
   }
   const p = pctSplit(counts)
   return <span className="tabular-nums">{`${p.pos}% pos / ${p.neu}% neu / ${p.neg}% neg`}</span>

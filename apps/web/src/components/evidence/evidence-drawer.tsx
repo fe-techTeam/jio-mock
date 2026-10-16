@@ -2,7 +2,7 @@
 
 import type { EvidenceSort } from '@jio/core'
 import { useInfiniteQuery } from '@tanstack/react-query'
-import { Loader2, RefreshCw } from 'lucide-react'
+import { Loader2 } from 'lucide-react'
 import { useSearchParams } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import {
@@ -19,7 +19,7 @@ import {
   SheetHeader,
   SheetTitle,
 } from '@/components/ui/sheet'
-import { Skeleton } from '@/components/ui/skeleton'
+import { CardSkeletons, EmptyState, ErrorState } from '@/components/states'
 import { Toggle } from '@/components/ui/toggle'
 import { formatCount } from '@/components/shell/format'
 import { parseFilters } from '@/components/shell/use-filters'
@@ -46,16 +46,6 @@ export function EvidenceDrawer() {
         {slice ? <EvidencePanel slice={slice} filters={filters} /> : null}
       </SheetContent>
     </Sheet>
-  )
-}
-
-function CardSkeleton() {
-  return (
-    <div className="flex flex-col gap-2 rounded-lg border p-3" aria-hidden>
-      <Skeleton className="h-4 w-1/3" />
-      <Skeleton className="h-4 w-full" />
-      <Skeleton className="h-4 w-2/3" />
-    </div>
   )
 }
 
@@ -117,31 +107,14 @@ function EvidencePanel({ slice, filters }: { slice: EvidenceSlice; filters: Filt
       </SheetHeader>
 
       <div className="flex flex-1 flex-col gap-3 overflow-y-auto p-4">
-        {query.isPending ? (
-          <>
-            <CardSkeleton />
-            <CardSkeleton />
-            <CardSkeleton />
-          </>
-        ) : null}
+        {query.isPending ? <CardSkeletons count={3} /> : null}
 
         {query.isError && !query.isFetchNextPageError ? (
-          <div
-            role="alert"
-            className="flex items-center justify-between gap-2 rounded-md border p-3 text-sm"
-          >
-            <span>Could not load posts.</span>
-            <Button variant="outline" size="xs" onClick={() => void query.refetch()}>
-              <RefreshCw aria-hidden />
-              Retry
-            </Button>
-          </div>
+          <ErrorState message="Could not load posts." onRetry={() => void query.refetch()} />
         ) : null}
 
         {query.isSuccess && items.length === 0 ? (
-          <p className="py-8 text-center text-sm text-muted-foreground">
-            No posts match this slice
-          </p>
+          <EmptyState title="No posts match this slice" />
         ) : null}
 
         {items.map((item) => (

@@ -1,25 +1,16 @@
 'use client'
 
 import { useQuery } from '@tanstack/react-query'
-import { Button } from '@/components/ui/button'
-import { Skeleton } from '@/components/ui/skeleton'
+import { ErrorState, SkeletonRows } from '@/components/states'
 import { formatIst } from '@/components/shell/format'
 import { getRuns, runsKey } from './sources-api'
 
 export function SourceRuns({ sourceKey }: { sourceKey: string }) {
   const q = useQuery({ queryKey: runsKey(sourceKey), queryFn: () => getRuns(sourceKey) })
 
-  if (q.isPending) return <Skeleton className="h-16" />
-  if (q.isError) {
-    return (
-      <div role="alert" className="flex items-center gap-2 text-sm">
-        Could not load runs.
-        <Button size="xs" variant="outline" onClick={() => void q.refetch()}>
-          Retry
-        </Button>
-      </div>
-    )
-  }
+  if (q.isPending) return <SkeletonRows rows={2} />
+  if (q.isError)
+    return <ErrorState message="Could not load runs." onRetry={() => void q.refetch()} />
   if (q.data.length === 0) return <p className="text-sm text-muted-foreground">No runs yet.</p>
 
   return (

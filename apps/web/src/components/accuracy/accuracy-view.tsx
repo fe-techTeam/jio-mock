@@ -6,9 +6,7 @@ import Link from 'next/link'
 import { useState } from 'react'
 import type { AccuracyResponse } from '@/app/api/accuracy/_lib/compute'
 import { hrefWith, useFilters } from '@/components/shell/use-filters'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent } from '@/components/ui/card'
-import { Skeleton } from '@/components/ui/skeleton'
+import { ChartSkeleton, ErrorState, SkeletonRows } from '@/components/states'
 import { fetchJson } from '@/lib/api'
 import { AccuracyHeader } from './accuracy-header'
 import { ConfusionMatrix } from './confusion-matrix'
@@ -17,10 +15,9 @@ import { LanguageBreakdown } from './language-breakdown'
 
 export function AccuracySkeleton() {
   return (
-    <div className="flex flex-col gap-6" aria-busy="true" aria-label="Loading accuracy">
-      <Skeleton className="h-4 w-24" />
-      <Skeleton className="h-28" />
-      <Skeleton className="h-64" />
+    <div className="flex flex-col gap-6">
+      <SkeletonRows rows={1} />
+      <ChartSkeleton />
     </div>
   )
 }
@@ -56,16 +53,12 @@ export function AccuracyView() {
       </div>
 
       {accuracy.isPending ? (
-        <Skeleton className="h-28" aria-busy="true" aria-label="Loading accuracy figures" />
+        <SkeletonRows rows={2} />
       ) : accuracy.isError ? (
-        <Card>
-          <CardContent className="flex items-center justify-between gap-4">
-            <p role="alert">Could not load accuracy figures.</p>
-            <Button variant="outline" size="sm" onClick={() => void accuracy.refetch()}>
-              Retry
-            </Button>
-          </CardContent>
-        </Card>
+        <ErrorState
+          message="Could not load accuracy figures."
+          onRetry={() => void accuracy.refetch()}
+        />
       ) : (
         <>
           <AccuracyHeader data={accuracy.data} />
