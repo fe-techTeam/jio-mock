@@ -1,0 +1,25 @@
+{
+  "name": "@jio/db",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./testing": "./src/testing.ts"
+  },
+  "scripts": {
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "drizzle-orm": "^0.45.4",
+    "postgres": "^3.4"
+  },
+  "devDependencies": {
+    "drizzle-kit": "^0.31.11",
+    "typescript": "^5.7",
+    "vitest": "^2.1"
+  }
+}
