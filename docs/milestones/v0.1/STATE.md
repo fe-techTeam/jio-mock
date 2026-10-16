@@ -1,15 +1,15 @@
 # v0.1 State
 
 **Goal:** Locally running always-on Jio IPO sentiment board: every source ingested (fixtures until keys), classified, rolled up, served behind one login.
-**Current focus:** Phase 03 - Classification and rollups
+**Current focus:** 04 of 07 (Executive dashboard)
 
 ## Position
 
-Phase: 03 of 07 (Classification and rollups)
+Phase: 04 of 07 (Executive dashboard)
 Plan: 0 of 3 in this phase
 Status: Ready to execute
-Last activity: 2026-10-16 - Phase 02 ingestion closed
-Progress: 10 / 23
+Last activity: 2026-10-16 - 03-classification closed green
+Progress: 13 / 23
 
 ## Recent decisions
 
@@ -25,10 +25,10 @@ None.
 
 ## Deferred issues
 
-25 open - see ISSUES.md.
+42 open - see ISSUES.md.
 
 ## Session continuity
 
 Last session: 2026-10-16
-Stopped at: Phase 02 complete
-Next: execute Phase 03 (PLAN-03-01)
+Stopped at: 03-classification closed
+Next: execute Phase 04 wave 1 (PLAN-04-01)

@@ -26,3 +26,11 @@ Deviations: config schema gained anchor_groups, generic_hashtags, lane and recor
 - 02-04: Chittorgarh, InvestorGain, IPOWatch cheerio parsers producing Jio market series and news posts.
 
 Deviations: drizzle-orm added to worker; per-file worker test DBs; 02-01 fixtures.test.ts edited twice for real adapters; repeat fixture runs add 0 market points (page-time dedupe); all live adapters tested only against synthetic responses.
+
+## 03-classification
+
+- Wave 1: gate green, fix rounds 0
+  - 03-01 done: 03-03: call triagePosts({db, sql}, {embedder: createEmbedder({apiKey: env.VOYAGE_API_KEY}), terms: config.terms, log}), then classify only posts with lang IS NOT NULL AND matched_terms <> '{}'; content_hash is the classi
+  - 03-02 done: 03-03: import createClassifier from './classify/anthropic' and call createClassifier({apiKey: env.ANTHROPIC_API_KEY, model: env.CLASSIFIER_MODEL, terms, getFewShot, onUsage, log}), then classifyInBatches(items, topics, {
+- Wave 2: gate green, fix rounds 0
+  - 03-03 done: 04-01: topic_stats_15m rows are sparse raw counts (apply the 30-item rule at read time); summary_2line holds two lines separated by '\n'; emerging topics have kind 'emerging' and slugs starting 'emerging-' (exclude the g

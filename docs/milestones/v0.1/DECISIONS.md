@@ -57,3 +57,28 @@ developer would otherwise have been asked.
 | 2026-10-16 | Edited 02-01 fixtures.test.ts stub test to skip real adapters (youtube, reddit, news_rss, web_search, portals) | Leave failing | Real adapters replaced the stubs | yes |
 | 2026-10-16 | Portal market point observedAt = page's Last Updated (IST), else now; repeat fixture runs add 0 points | Run time | Stale pages must not write duplicates | yes |
 | 2026-10-16 | Portal table lookup is header-driven; header overrides tried before defaults | CSS selectors | Survives layout drift | yes |
+| 2026-10-16 | 03-01: 03-01: detectLang counts script shares per word token, not per letter, because the plan's case 'जियो IPO allotment' is only 25% Devanagari by letters | - | see SUMMARY-03-01 | yes |
+| 2026-10-16 | 03-01: 03-01: the embedding stub is classify/embed-stub.ts (CONTRACTS names classify/stub.ts, which belongs to the classifier stub) | - | see SUMMARY-03-01 | yes |
+| 2026-10-16 | 03-01: 03-01: the seed 'live' phrases (jio aur jeene do, khul ke jio, जियो और जीने दो) report reason negative_term, matching the brew spec's seed negative terms; tests assert not-relevant | - | see SUMMARY-03-01 | yes |
+| 2026-10-16 | 03-01: 03-01: repo.ts types the client as ReturnType<typeof createDb>['sql'] (exported Sql) rather than adding a 'postgres' dependency to the worker | - | see SUMMARY-03-01 | yes |
+| 2026-10-16 | 03-01: 03-01: writeTriage updates only rows still lang IS NULL, and neighbor cluster updates only fill an empty near_dup_cluster_id | - | see SUMMARY-03-01 | yes |
+| 2026-10-16 | 03-01: 03-01: assessRelevance strips URLs and @handles before calling matchTerms (the SUMMARY-01-01 note) | - | see SUMMARY-03-01 | yes |
+| 2026-10-16 | 03-01: 03-01: near-dup cluster id is nd_<seed post id>; clusters are never merged | - | see SUMMARY-03-01 | yes |
+| 2026-10-16 | 03-02: createClassifier is exported from classify/anthropic.ts, not re-exported from classifier.ts, to avoid a classifier -> anthropic -> classifier import cycle | - | see SUMMARY-03-02 | yes |
+| 2026-10-16 | 03-02: The classifier never assigns the emerging/unclassified buckets: classifiableTopics drops them from the prompt topic list, the schema enum and validSlugs | - | see SUMMARY-03-02 | yes |
+| 2026-10-16 | 03-02: The raw label shape is the model schema item {topic, sentiment, entities, confidence, gloss_en}; the stub emits the same shape so both go through normalizeResult | - | see SUMMARY-03-02 | yes |
+| 2026-10-16 | 03-02: '<' inside wrapped JSON is escaped as < (the plan's '<' was an HTML-mangled <) | - | see SUMMARY-03-02 | yes |
+| 2026-10-16 | 03-02: onUsage inputTokens = uncached + cache-write + cache-read tokens; cost prices cache writes at 1.25x and reads at 0.1x of $0.10/MTok, output at $0.50/MTok (named constants) | - | see SUMMARY-03-02 | yes |
+| 2026-10-16 | 03-02: An empty CLASSIFIER_MODEL is treated as unset and falls back to claude-haiku-5-5 | - | see SUMMARY-03-02 | yes |
+| 2026-10-16 | 03-02: AnthropicClassifier, createClassifier and classifyInBatches take an optional log: Pick<Logger,'warn'>; AnthropicClassifier.client is public and readonly | - | see SUMMARY-03-02 | yes |
+| 2026-10-16 | 03-02: Adding @anthropic-ai/sdk pulled in @opentelemetry/api and changed the peer-resolved drizzle-orm variant; a workspace pnpm install was needed to relink packages/db (lockfile committed with Task 3) | - | see SUMMARY-03-02 | yes |
+| 2026-10-16 | 03-03: Rule 3: the '// Phase 03' placeholder in apps/worker/src/index.ts is replaced by one import (createPipelineDeps, registerPipelineJobs from './jobs') and one await registerPipelineJobs(...) call, which Prettier wraps over 5 lines. | - | see SUMMARY-03-03 | yes |
+| 2026-10-16 | 03-03: Queues that ensureQueues already created get the stately/retryLimit 1/expire 900 options through updateQueue instead of being skipped. | - | see SUMMARY-03-03 | yes |
+| 2026-10-16 | 03-03: createPipelineDeps(h, env, {log?, terms?}) is async (the stub classifier's terms come from the config at boot), and PipelineDeps has an optional usage meter for classifier token logging. | - | see SUMMARY-03-03 | yes |
+| 2026-10-16 | 03-03: Timestamps go to postgres-js as ISO strings with ::timestamptz casts, because the drizzle postgres-js driver disables Date serialization. | - | see SUMMARY-03-03 | yes |
+| 2026-10-16 | 03-03: runRollup also returns a status field (active, dormant and changed counts). | - | see SUMMARY-03-03 | yes |
+| 2026-10-16 | 03-03: Emerging only moves posts whose effective label is a model row; analyst corrections and gold labels are never moved. A topic and its member rows are written in one transaction; slugs use the IST day. | - | see SUMMARY-03-03 | yes |
+| 2026-10-16 | 03-03: An unknown or generic 'emerging' slug from the classifier maps to the unclassified topic with confidence forced to 'low'. | - | see SUMMARY-03-03 | yes |
+| 2026-10-16 | 03-03: runSummaries computes 24h stats live from posts; seed topics need at least 1 item and emerging topics at least 3; the Anthropic summarizer throws on refusal, max_tokens or malformed JSON, and that topic is skipped. | - | see SUMMARY-03-03 | yes |
+| 2026-10-16 | 03-03: The retention job handler writes one 'retention' event_log row with the counts; runRetention itself never touches event_log. | - | see SUMMARY-03-03 | yes |
+| 2026-10-16 | 03-03: No ledger file under docs/plans (outside the owned paths) and no code-reviewer subagent was available, so the final review was a self-review. | - | see SUMMARY-03-03 | yes |

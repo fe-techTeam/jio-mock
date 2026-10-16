@@ -55,7 +55,7 @@ Goal: every ingested post gets a topic, sentiment, entities and confidence, and 
 | 03-02 | 1 | opus | 02-01 | apps/worker/src/classify/{classifier,anthropic,stub,prompt,batch}.ts | Classifier interface, Anthropic implementation (CLASSIFIER_MODEL, structured JSON, batching, content-hash cache, untrusted-text wrapping, few-shot from corrections), deterministic stub, low confidence goes to unclassified |
 | 03-03 | 2 | opus | 03-01, 03-02 | apps/worker/src/pipeline/**, apps/worker/src/rollup/**, apps/worker/src/jobs.ts, apps/worker/src/retention.ts | pg-boss wiring (post-ingest triage, classify-batch, rollup every minute, summaries every 30 min, emerging clustering, nightly retention), TopicStat15m recompute of current and previous buckets for each topic x entity x lane, active-topic rule (10 or more in 24h), two-line summaries |
 
-- [ ] 03-01  - [ ] 03-02  - [ ] 03-03
+- [x] 03-01  - [x] 03-02  - [x] 03-03
 
 ## Phase 04: Executive dashboard
 
