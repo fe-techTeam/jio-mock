@@ -1,23 +1,23 @@
 # v0.1 State
 
 **Goal:** Locally running always-on Jio IPO sentiment board: every source ingested (fixtures until keys), classified, rolled up, served behind one login.
-**Current focus:** Phase 01 - Data model and single login
+**Current focus:** Phase 02 - Ingestion
 
 ## Position
 
-Phase: 01 of 07 (Data model and single login)
-Plan: 0 of 3 in this phase
+Phase: 02 of 07 (Ingestion)
+Plan: 0 of 4 in this phase
 Status: Ready to execute
-Last activity: 2026-10-16 - Phase 00 foundation closed
-Progress: 3 / 23
+Last activity: 2026-10-16 - Phase 01 data and login closed
+Progress: 4 / 23 (01-01 and 01-02 code done and green, SUMMARY files missing)
 
 ## Recent decisions
 
-- 00: corepack needs COREPACK_INTEGRITY_KEYS=0 (use scripts/pnpm-locked.sh)
-- 00: next.config.ts force-reloads root .env for apps/web
-- 00: exchange holidays not modelled; weekdays count as market hours
-- 00: pg-boss v10 default import; drizzle-orm ^0.45.4
-- 00: docs/ and docker-compose.yml are prettier-ignored
+- 01: matcher bare 'jio' rule is data (anchor_groups), not code
+- 01: per-package test DBs via prepareTestDb('jio_ipo_test_<pkg>')
+- 01: config is one jsonb per config_versions row
+- 01: lockout on the auth HTTP route (6th attempt locks)
+- 01: creds_ref is a record of env-style name to enc:v1 blob
 
 ## Open blockers
 
@@ -25,10 +25,10 @@ None.
 
 ## Deferred issues
 
-3 open - see ISSUES.md.
+11 open - see ISSUES.md.
 
 ## Session continuity
 
 Last session: 2026-10-16
-Stopped at: Phase 00 complete
-Next: execute Phase 01 (PLAN-01-01)
+Stopped at: Phase 01 complete
+Next: execute Phase 02 (PLAN-02-01); write SUMMARY-01-01/02 from the implementer notes if wanted

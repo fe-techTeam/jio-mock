@@ -30,7 +30,7 @@ Goal: the full schema migrated, seed config and topics loaded, and the seeded us
 | 01-02 | 2 | opus | 01-01 | packages/db/** | full Drizzle schema plus auth schema, migrations (vector, pgcrypto, effective_classifications view), query helpers (config, events, posts, market) with integration tests, `db:seed` (config v1, topics) |
 | 01-03 | 3 | sonnet | 01-02 | apps/web/** | Better Auth (email and password, sign-up off, DB sessions), seed user creation, login page, middleware, lockout after 5 failures, login and view audit events, protected placeholder `/` |
 
-- [ ] 01-01  - [ ] 01-02  - [ ] 01-03
+- [ ] 01-01  - [ ] 01-02  - [x] 01-03
 
 ## Phase 02: Ingestion
 

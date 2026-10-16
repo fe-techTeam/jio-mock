@@ -23,3 +23,17 @@ developer would otherwise have been asked.
 | 2026-10-16 | apps/web/next-env.d.ts git-ignored; @next/env pinned 15.5.28 as dev dep | Commit generated file | Generated file | yes |
 | 2026-10-16 | Exchange holidays not modelled; weekday holidays count as market hours | NSE holiday list in config | Only changes portal polling 10 vs 60 min | yes |
 | 2026-10-16 | pg-boss v10 imported as default export; drizzle-orm ^0.45.4, drizzle-kit ^0.31.11 pinned | Named import | pg-boss v10 module shape | yes |
+| 2026-10-16 | TermsConfig has anchor_groups and generic_hashtags; seed lists split into strong lists and anchors | Hardcode bare-jio rule in matcher | Bare 'jio' must never match alone; rule as data | yes |
+| 2026-10-16 | SourceConfig.creds_ref is Record<string,string>|null of env-style name to enc:v1 blob | Bare string | Reddit needs two secrets; 02-01 reads a record | yes |
+| 2026-10-16 | NormalizedPost.lane optional field added | Lane fixed per source | web_search and youtube set lane per post | yes |
+| 2026-10-16 | DEFAULT_CONFIG is a plain object and matchTerms caches by identity; callers structuredClone before editing | Freeze config | Keeps matcher cache cheap | yes |
+| 2026-10-16 | Per-package test DBs: prepareTestDb('jio_ipo_test_<pkg>') | One shared test DB | pnpm -r test runs packages in parallel; truncateAll would clobber | yes |
+| 2026-10-16 | Config stored as one jsonb column per config_versions row | Column per key | New AppConfig keys need no migration; defaults fill on read | yes |
+| 2026-10-16 | runMigrations takes a session advisory lock; ensureTestDatabase tolerates concurrent create | No locking | Parallel packages migrate the same test DB safely | yes |
+| 2026-10-16 | Added posts.lane, classifications.actor, topics.merged_into_id, event_log.actor columns | Derive at read time | Audit and lane needs from design | costly (migration) |
+| 2026-10-16 | topic_stats_15m.topic_id cascades on topic delete; classifications.topic_id restricts | Restrict both | Stats are derived data | yes |
+| 2026-10-16 | upsertPosts upserts authors in sorted key order; leaves lang, content_hash, matched_terms, embedding for 03-01 triage | Triage inside upsert | Avoids x_api/x_apify deadlocks; triage is a later stage | yes |
+| 2026-10-16 | Lockout enforced on the auth HTTP route (5 failures, 30 min lookback, locks on 6th attempt) | Form-only lockout | Covers direct API calls too | yes |
+| 2026-10-16 | Auth export is a lazy Proxy; seed password reset via auth.$context.internalAdapter | Eager init; drizzle-orm in web | Import needs no DATABASE_URL; second drizzle copy broke types | yes |
+| 2026-10-16 | packages/db/src/migrate.ts uses path.resolve for migrations dir | new URL('../migrations') | next build could not bundle @jio/db | yes |
+| 2026-10-16 | Local BETTER_AUTH_SECRET and SEED_USER_PASSWORD generated into gitignored root .env | Leave empty | Login and smoke test need them | yes |
