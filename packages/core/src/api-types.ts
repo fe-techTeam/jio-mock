@@ -7,6 +7,7 @@ import type {
   EntityKey,
   Lang,
   Lane,
+  LaneFilter,
   MarketSeries,
   Sentiment,
   SourceKey,
@@ -61,6 +62,12 @@ export type SplitCounts = {
   splitShown: boolean
 }
 
+/**
+ * Reach-weighted sentiment (06-01): integer percents of sum(reach_score) per sentiment that add up
+ * to 100 (largest-remainder rounding). null under `minItemsForSplit` items or when the reach sum is 0.
+ */
+export type ReachSplit = { pos: number; neu: number; neg: number }
+
 // ---------------------------------------------------------------------------------------------
 // GET /api/brief
 
@@ -79,6 +86,8 @@ export type TopicRow = SplitCounts & {
   suspectedCoordinated: number
   /** 24 item counts, one per IST hour, oldest first, ending with the current hour. */
   spark: number[]
+  /** Reach-weighted split over the same 24h slice; null under the split minimum. */
+  reach: ReachSplit | null
 }
 
 /** pos/neu/neg are counts; the UI turns them into percentages. */
@@ -91,6 +100,8 @@ export type BriefKpis = {
   splitShown: boolean
   lowConfPct: number
   suspectedCoordinated: number
+  /** Reach-weighted split over the same 24h slice; null under the split minimum. */
+  reach: ReachSplit | null
 }
 
 export type MarketStripItem = {
@@ -119,6 +130,8 @@ export type SourceFreshness = {
 
 export type BriefResponse = {
   asOf: string
+  /** The lane filter that was applied (echo of the `lane` param, default 'all'). */
+  lane: LaneFilter
   minItemsForSplit: number
   activeMinItems: number
   kpis: BriefKpis
@@ -158,6 +171,8 @@ export type TimelineTopic = {
 export type TimelineResponse = {
   topic: TimelineTopic
   asOf: string
+  /** The lane filter that was applied (echo of the `lane` param, default 'all'). */
+  lane: LaneFilter
   minItemsForSplit: number
   /** 168 IST hours, oldest first. */
   series: HourPoint[]

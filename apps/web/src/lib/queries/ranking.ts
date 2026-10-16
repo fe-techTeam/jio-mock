@@ -1,5 +1,5 @@
 // Ranking, trend and threshold rules for the brief. Pure functions, decided once here.
-import type { Trend } from '@jio/core'
+import type { ReachSplit, Trend } from '@jio/core'
 
 export const DEFAULT_ACTIVE_MIN = 10
 export const DEFAULT_MIN_FOR_SPLIT = 30
@@ -44,4 +44,37 @@ export function splitShown(n: number, min = DEFAULT_MIN_FOR_SPLIT): boolean {
 
 export function lowConfPct(lowConf: number, items: number): number {
   return items > 0 ? round1((lowConf / items) * 100) : 0
+}
+
+/** Integer percents of pos/neu/neg that sum to 100 (largest remainder, ties to the earlier key). */
+export function percentSplit(c: ReachSplit): ReachSplit {
+  const keys = ['pos', 'neu', 'neg'] as const
+  const total = c.pos + c.neu + c.neg
+  if (!(total > 0)) return { pos: 0, neu: 0, neg: 0 }
+  const raw = keys.map((k) => (Math.max(0, c[k]) / total) * 100)
+  const out = raw.map(Math.floor)
+  let left = 100 - out.reduce((a, b) => a + b, 0)
+  const order = raw
+    .map((r, i) => ({ i, rem: r - Math.floor(r) }))
+    .sort((a, b) => b.rem - a.rem || a.i - b.i)
+  for (const { i } of order) {
+    if (left <= 0) break
+    out[i] = (out[i] ?? 0) + 1
+    left -= 1
+  }
+  return { pos: out[0] ?? 0, neu: out[1] ?? 0, neg: out[2] ?? 0 }
+}
+
+/**
+ * The reach-weighted split for a slice: null under `min` items (the 30-item rule) or when the
+ * reach sums add to 0; otherwise integer percents summing to 100.
+ */
+export function reachSplit(
+  reach: ReachSplit,
+  items: number,
+  min = DEFAULT_MIN_FOR_SPLIT,
+): ReachSplit | null {
+  if (!splitShown(items, min)) return null
+  if (!(reach.pos + reach.neu + reach.neg > 0)) return null
+  return percentSplit(reach)
 }

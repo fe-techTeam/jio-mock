@@ -17,7 +17,15 @@ import {
 } from '@jio/core'
 import { getLatestConfig, sourceHealth, type SourceHealthRow } from '@jio/db'
 import { iso, minutesBetween, msToIso, type ReadCtx, type SliceFilter } from './ctx'
-import { isActive, lowConfPct, rankScore, rankTopics, splitShown, trendOf } from './ranking'
+import {
+  isActive,
+  lowConfPct,
+  rankScore,
+  rankTopics,
+  reachSplit,
+  splitShown,
+  trendOf,
+} from './ranking'
 import { IST_HOUR_ORIGIN, istHours, windowRanges } from './window'
 
 const STALE_FAILURES = 3
@@ -37,6 +45,9 @@ type TopicSumRow = {
   low_conf: number
   suspected: number
   items_prev: number
+  reach_pos: number
+  reach_neu: number
+  reach_neg: number
 }
 
 const round2 = (n: number) => Math.round(n * 100) / 100
@@ -91,6 +102,9 @@ export async function getBrief(ctx: ReadCtx, f: SliceFilter): Promise<BriefRespo
              coalesce(sum(s.neg) filter (where s.bucket_start >= ${iso(cur.from)}::timestamptz), 0)::int as neg,
              coalesce(sum(s.low_conf) filter (where s.bucket_start >= ${iso(cur.from)}::timestamptz), 0)::int as low_conf,
              coalesce(sum(s.suspected_coordinated) filter (where s.bucket_start >= ${iso(cur.from)}::timestamptz), 0)::int as suspected,
+             coalesce(sum(s.reach_pos) filter (where s.bucket_start >= ${iso(cur.from)}::timestamptz), 0)::float8 as reach_pos,
+             coalesce(sum(s.reach_neu) filter (where s.bucket_start >= ${iso(cur.from)}::timestamptz), 0)::float8 as reach_neu,
+             coalesce(sum(s.reach_neg) filter (where s.bucket_start >= ${iso(cur.from)}::timestamptz), 0)::float8 as reach_neg,
              coalesce(sum(s.items) filter (where s.bucket_start < ${iso(cur.from)}::timestamptz), 0)::int as items_prev
       from topics t
       left join topic_stats_15m s
@@ -160,6 +174,9 @@ export async function getBrief(ctx: ReadCtx, f: SliceFilter): Promise<BriefRespo
   let neg = 0
   let lowConf = 0
   let suspected = 0
+  // Reach is read from the rows of the requested lane only ('all' rows for lane=all), so the
+  // lane rows are never added on top of the 'all' rows.
+  const reachSum = { pos: 0, neu: 0, neg: 0 }
   let emergingCount = 0
   let emergingCandidates = 0
   let unclassifiedCount = 0
@@ -172,6 +189,10 @@ export async function getBrief(ctx: ReadCtx, f: SliceFilter): Promise<BriefRespo
     neg += r.neg
     lowConf += r.low_conf
     suspected += r.suspected
+    const reach = { pos: Number(r.reach_pos), neu: Number(r.reach_neu), neg: Number(r.reach_neg) }
+    reachSum.pos += reach.pos
+    reachSum.neu += reach.neu
+    reachSum.neg += reach.neg
     if (r.kind === 'emerging') {
       emergingCount += r.items
       if (r.items > 0 && r.slug !== 'emerging' && r.status !== 'dismissed') emergingCandidates++
@@ -202,6 +223,7 @@ export async function getBrief(ctx: ReadCtx, f: SliceFilter): Promise<BriefRespo
       lowConfPct: lowConfPct(r.low_conf, r.items),
       suspectedCoordinated: r.suspected,
       spark: spark.get(r.id) ?? new Array<number>(hours.length).fill(0),
+      reach: reachSplit(reach, r.items, minSplit),
     })
   }
 
@@ -229,6 +251,7 @@ export async function getBrief(ctx: ReadCtx, f: SliceFilter): Promise<BriefRespo
 
   return {
     asOf: iso(now),
+    lane: f.lane,
     minItemsForSplit: minSplit,
     activeMinItems: activeMin,
     kpis: {
@@ -240,6 +263,7 @@ export async function getBrief(ctx: ReadCtx, f: SliceFilter): Promise<BriefRespo
       splitShown: splitShown(items24h, minSplit),
       lowConfPct: lowConfPct(lowConf, items24h),
       suspectedCoordinated: suspected,
+      reach: reachSplit(reachSum, items24h, minSplit),
     },
     topics: rankTopics(seedRows),
     emerging: { count: emergingCount, candidates: emergingCandidates },

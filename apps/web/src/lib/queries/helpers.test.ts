@@ -4,7 +4,15 @@ import { clearMemo, memo } from './cache'
 import { decodeCursor, encodeCursor } from './cursor'
 import { BriefParams, EvidenceParams, ParamError, TimelineParams, parseParams } from './params'
 import { authorLabel, toEvidenceAuthor } from './privacy'
-import { isActive, lowConfPct, rankScore, rankTopics, splitShown, trendOf } from './ranking'
+import {
+  isActive,
+  lowConfPct,
+  rankScore,
+  rankTopics,
+  reachSplit,
+  splitShown,
+  trendOf,
+} from './ranking'
 import { floor15, floorIstHour, istHours, range7d, windowRanges } from './window'
 
 const iso = (d: Date) => d.toISOString()
@@ -343,5 +351,20 @@ describe('memo', () => {
     expect(calls).toBe(201)
     await memo('k0', 15_000, fn, clock) // oldest evicted
     expect(calls).toBe(202)
+  })
+})
+
+describe('reachSplit', () => {
+  it('turns reach sums into integer percents that sum to 100 (largest remainder)', () => {
+    expect(reachSplit({ pos: 1, neu: 1, neg: 1 }, 30, 30)).toEqual({ pos: 34, neu: 33, neg: 33 })
+    expect(reachSplit({ pos: 18, neu: 0, neg: 2 }, 40, 30)).toEqual({ pos: 90, neu: 0, neg: 10 })
+    const odd = reachSplit({ pos: 0.123, neu: 0.456, neg: 0.789 }, 50, 30)!
+    expect(odd.pos + odd.neu + odd.neg).toBe(100)
+    expect(Object.values(odd).every(Number.isInteger)).toBe(true)
+  })
+
+  it('is null under the split minimum or when the reach sum is 0', () => {
+    expect(reachSplit({ pos: 5, neu: 0, neg: 1 }, 29, 30)).toBeNull()
+    expect(reachSplit({ pos: 0, neu: 0, neg: 0 }, 30, 30)).toBeNull()
   })
 })

@@ -184,4 +184,10 @@ describe('getTimeline', () => {
     expect(tl!.bySource.map((s) => s.items)).toEqual([1])
     expect(tl!.topic.items24h).toBe(1)
   })
+
+  it('echoes the lane filter it applied', async () => {
+    await resetAndSeed(sql, { posts: [{ publishedAt: minutesAgo(50), labels: [{ topic: SLUG }] }] })
+    expect((await getTimeline(ctx(), SLUG, ALL))!.lane).toBe('all')
+    expect((await getTimeline(ctx(), SLUG, { entity: 'all', lane: 'media' }))!.lane).toBe('media')
+  })
 })

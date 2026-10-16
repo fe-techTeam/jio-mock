@@ -187,6 +187,104 @@ describe('getBrief topics', () => {
   })
 })
 
+describe('getBrief reach and lane', () => {
+  it('kpis.reach sums reach over the last 24h and raw counts stay as before', async () => {
+    await resetAndSeed(sql, {
+      posts: [
+        ...posts(30, 'gmp-grey-market', { reachScore: 0.6 }),
+        ...many(10, () => ({
+          publishedAt: minutesAgo(45),
+          reachScore: 0.2,
+          labels: [{ topic: 'valuation-price-band', sentiment: 'negative' as const }],
+        })),
+        // Older than 24h: never counted.
+        ...posts(20, 'gmp-grey-market', { reachScore: 1 }, hoursAgo(30)),
+      ],
+    })
+    const brief = await getBrief(ctx(), ALL)
+    expect(brief.lane).toBe('all')
+    // Raw counts are unchanged by the reach columns.
+    expect(brief.kpis).toMatchObject({ items24h: 40, pos: 30, neu: 0, neg: 10, splitShown: true })
+    // 18 vs 2 reach -> 90 / 0 / 10
+    expect(brief.kpis.reach).toEqual({ pos: 90, neu: 0, neg: 10 })
+  })
+
+  it("lane=all reads the 'all' rows, never a sum of the lane rows", async () => {
+    const at = minutesAgo(30)
+    const t = 'gmp-grey-market'
+    await resetAndSeed(sql, {
+      rollup: false,
+      stats: [
+        {
+          topic: t,
+          bucketStart: at,
+          lane: 'all',
+          items: 40,
+          pos: 30,
+          neg: 10,
+          reachPos: 3,
+          reachNeg: 1,
+        },
+        { topic: t, bucketStart: at, lane: 'social', items: 30, pos: 30, reachPos: 100 },
+        { topic: t, bucketStart: at, lane: 'media', items: 10, neg: 10, reachNeg: 100 },
+      ],
+    })
+    expect((await getBrief(ctx(), ALL)).kpis.reach).toEqual({ pos: 75, neu: 0, neg: 25 })
+    const social = await getBrief(ctx(), { entity: 'all', lane: 'social' })
+    expect(social.lane).toBe('social')
+    expect(social.kpis.reach).toEqual({ pos: 100, neu: 0, neg: 0 })
+    expect(social.topics[0]!.reach).toEqual({ pos: 100, neu: 0, neg: 0 })
+  })
+
+  it('lane=media drops a topic that only has social posts', async () => {
+    await resetAndSeed(sql, {
+      posts: [
+        ...posts(12, 'valuation-price-band', { sourceKey: 'reddit' }),
+        ...posts(12, 'gmp-grey-market', { sourceKey: 'news_rss' }),
+      ],
+    })
+    const all = await getBrief(ctx(), ALL)
+    expect(all.topics.map((t) => t.slug).sort()).toEqual([
+      'gmp-grey-market',
+      'valuation-price-band',
+    ])
+    const media = await getBrief(ctx(), { entity: 'all', lane: 'media' })
+    expect(media.lane).toBe('media')
+    expect(media.topics.map((t) => t.slug)).toEqual(['gmp-grey-market'])
+    expect(media.kpis.items24h).toBe(12)
+  })
+
+  it('a 29-item topic has reach null and a 30-item topic has both splits', async () => {
+    await resetAndSeed(sql, {
+      posts: [
+        ...posts(29, 'gmp-grey-market', { reachScore: 0.5 }),
+        ...posts(30, 'valuation-price-band', { reachScore: 0.5 }),
+      ],
+    })
+    const brief = await getBrief(ctx(), ALL)
+    const bySlug = Object.fromEntries(brief.topics.map((t) => [t.slug, t]))
+    expect(bySlug['gmp-grey-market']).toMatchObject({ splitShown: false, reach: null })
+    expect(bySlug['valuation-price-band']).toMatchObject({
+      splitShown: true,
+      reach: { pos: 100, neu: 0, neg: 0 },
+    })
+  })
+
+  it('reach is null under 30 items in the slice or when the reach sum is 0', async () => {
+    await resetAndSeed(sql, { posts: posts(12, 'gmp-grey-market', { reachScore: 0.5 }) })
+    expect((await getBrief(ctx(), ALL)).kpis.reach).toBeNull()
+
+    await resetAndSeed(sql, {
+      rollup: false,
+      stats: [{ topic: 'gmp-grey-market', bucketStart: minutesAgo(30), items: 30, pos: 30 }],
+    })
+    const brief = await getBrief(ctx(), ALL)
+    expect(brief.kpis.splitShown).toBe(true)
+    expect(brief.kpis.reach).toBeNull()
+    expect(brief.topics[0]!.reach).toBeNull()
+  })
+})
+
 describe('getBrief freshness and market', () => {
   // Friday 2026-10-16: 04:30Z = 10:00 IST (market hours), 14:30Z = 20:00 IST (closed).
   const morning = new Date('2026-10-16T04:30:00Z')

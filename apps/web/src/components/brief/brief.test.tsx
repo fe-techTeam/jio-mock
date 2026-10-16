@@ -49,11 +49,13 @@ const topic = (over: Partial<TopicRow>): TopicRow => ({
   lowConfPct: 12.2,
   suspectedCoordinated: 3,
   spark: Array.from({ length: 24 }, (_, i) => i % 5),
+  reach: { pos: 30, neu: 30, neg: 40 },
   ...over,
 })
 
 const brief = (over: Partial<BriefResponse> = {}): BriefResponse => ({
   asOf: '2026-10-16T04:00:00Z',
+  lane: 'all',
   minItemsForSplit: 30,
   activeMinItems: 10,
   kpis: {
@@ -65,6 +67,7 @@ const brief = (over: Partial<BriefResponse> = {}): BriefResponse => ({
     splitShown: true,
     lowConfPct: 8.5,
     suspectedCoordinated: 4,
+    reach: { pos: 45, neu: 35, neg: 20 },
   },
   topics: [
     topic({}),

@@ -2,6 +2,7 @@
 // `resetAndSeed` truncates the dashboard tables and inserts compact specs. By default it also
 // derives topic_stats_15m rows from the posts' effective labels (the same fan-out as the worker
 // rollup: entity 'all' + each entity, lane 'all' + the post's lane), so counts stay consistent.
+// Reach sums use the post's reachScore, or UNKNOWN_REACH when it is null (as the worker does).
 import {
   DEFAULT_CONFIG,
   SEED_TOPICS,
@@ -84,6 +85,9 @@ export type StatSpec = {
   neg?: number
   lowConf?: number
   suspectedCoordinated?: number
+  reachPos?: number
+  reachNeu?: number
+  reachNeg?: number
 }
 
 export type MarketSpec = {
@@ -130,8 +134,21 @@ const DASHBOARD_TABLES = [
 
 const ts = (d: Date) => d.toISOString()
 
+/** The worker's TRUST_DEFAULTS.reach.unknownScore: what a NULL reach_score adds to a rollup. */
+export const UNKNOWN_REACH = 0.25
+
 /** Same bucket key as the worker rollup. */
-type Agg = { items: number; pos: number; neu: number; neg: number; lowConf: number; sc: number }
+type Agg = {
+  items: number
+  pos: number
+  neu: number
+  neg: number
+  lowConf: number
+  sc: number
+  rPos: number
+  rNeu: number
+  rNeg: number
+}
 
 function effectiveLabel(labels: LabelSpec[], createdAt: (i: number) => Date): LabelSpec | null {
   const indexed = labels.map((l, i) => ({ l, at: (l.createdAt ?? createdAt(i)).getTime(), i }))
@@ -192,6 +209,9 @@ export async function resetAndSeed(sql: Sql, spec: SeedSpec = {}): Promise<Seede
       neg: 0,
       lowConf: 0,
       sc: 0,
+      rPos: 0,
+      rNeu: 0,
+      rNeg: 0,
     }
     cur.items += d.items ?? 0
     cur.pos += d.pos ?? 0
@@ -199,6 +219,9 @@ export async function resetAndSeed(sql: Sql, spec: SeedSpec = {}): Promise<Seede
     cur.neg += d.neg ?? 0
     cur.lowConf += d.lowConf ?? 0
     cur.sc += d.sc ?? 0
+    cur.rPos += d.rPos ?? 0
+    cur.rNeu += d.rNeu ?? 0
+    cur.rNeg += d.rNeg ?? 0
     agg.set(k, cur)
   }
 
@@ -234,12 +257,16 @@ export async function resetAndSeed(sql: Sql, spec: SeedSpec = {}): Promise<Seede
     if (!eff) continue
     const bucket = floor15(p.publishedAt)
     const s = eff.sentiment ?? 'neutral'
+    const reach = p.reachScore ?? UNKNOWN_REACH
     const d: Partial<Agg> = {
       items: 1,
       pos: s === 'positive' ? 1 : 0,
       neu: s === 'neutral' ? 1 : 0,
       neg: s === 'negative' ? 1 : 0,
       lowConf: eff.confidence === 'low' ? 1 : 0,
+      rPos: s === 'positive' ? reach : 0,
+      rNeu: s === 'neutral' ? reach : 0,
+      rNeg: s === 'negative' ? reach : 0,
     }
     for (const entity of ['all', ...new Set(eff.entities ?? [])]) {
       for (const l of ['all', lane]) bump(eff.topic, bucket, entity, l, d)
@@ -254,6 +281,9 @@ export async function resetAndSeed(sql: Sql, spec: SeedSpec = {}): Promise<Seede
       neg: s.neg ?? 0,
       lowConf: s.lowConf ?? 0,
       sc: s.suspectedCoordinated ?? 0,
+      rPos: s.reachPos ?? 0,
+      rNeu: s.reachNeu ?? 0,
+      rNeg: s.reachNeg ?? 0,
     })
   }
   for (const r of agg.values()) {
@@ -261,9 +291,9 @@ export async function resetAndSeed(sql: Sql, spec: SeedSpec = {}): Promise<Seede
     if (!topicId) throw new Error(`unknown topic ${r.topic}`)
     await sql`
       insert into topic_stats_15m (bucket_start, topic_id, entity, lane, items, pos, neu, neg,
-                                   low_conf, suspected_coordinated)
+                                   low_conf, suspected_coordinated, reach_pos, reach_neu, reach_neg)
       values (${ts(r.bucket)}::timestamptz, ${topicId}, ${r.entity}, ${r.lane}, ${r.items}, ${r.pos},
-              ${r.neu}, ${r.neg}, ${r.lowConf}, ${r.sc})`
+              ${r.neu}, ${r.neg}, ${r.lowConf}, ${r.sc}, ${r.rPos}, ${r.rNeu}, ${r.rNeg})`
   }
 
   for (const m of spec.market ?? []) {

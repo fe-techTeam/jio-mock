@@ -38,6 +38,7 @@ const topicRow: TopicRow = {
   lowConfPct: 2.5,
   suspectedCoordinated: 0,
   spark: Array.from({ length: 24 }, () => 0),
+  reach: { pos: 30, neu: 45, neg: 25 },
 }
 
 const freshness: SourceFreshness = {
@@ -70,6 +71,7 @@ describe('api-types shapes', () => {
   it('builds a BriefResponse', () => {
     const brief: BriefResponse = {
       asOf: '2026-10-16T08:00:00.000Z',
+      lane: 'all',
       minItemsForSplit: 30,
       activeMinItems: 10,
       kpis: {
@@ -81,6 +83,7 @@ describe('api-types shapes', () => {
         splitShown: true,
         lowConfPct: 2.5,
         suspectedCoordinated: 0,
+        reach: null,
       },
       topics: [topicRow],
       emerging: { count: 0, candidates: 0 },
@@ -119,6 +122,7 @@ describe('api-types shapes', () => {
         lastItemAt: '2026-10-16T03:45:00.000Z',
       },
       asOf: '2026-10-16T08:00:00.000Z',
+      lane: 'media',
       minItemsForSplit: 30,
       series: [point],
       market,

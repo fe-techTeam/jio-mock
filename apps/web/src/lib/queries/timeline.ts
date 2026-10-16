@@ -189,6 +189,7 @@ export async function getTimeline(
   return {
     topic: meta.topic,
     asOf: iso(now),
+    lane: f.lane,
     minItemsForSplit: minSplit,
     series,
     market,
