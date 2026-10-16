@@ -1,0 +1,29 @@
+{
+  "name": "@jio/worker",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "dev": "node --env-file-if-exists=../../.env --watch --import tsx src/index.ts",
+    "start": "node --env-file-if-exists=../../.env --import tsx src/index.ts",
+    "check": "node --env-file-if-exists=../../.env --import tsx src/check.ts",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@jio/core": "workspace:*",
+    "@jio/db": "workspace:*",
+    "pg-boss": "^10",
+    "pino": "^9",
+    "zod": "^3"
+  },
+  "devDependencies": {
+    "@types/node": "^22",
+    "tsx": "^4",
+    "typescript": "^5.7",
+    "vitest": "^2.1"
+  }
+}
