@@ -79,6 +79,9 @@ export const posts = pgTable(
     matchedTerms: text('matched_terms').array().notNull().default([]),
     rawJson: jsonb('raw_json'),
     isFixture: boolean('is_fixture').notNull().default(false),
+    /** Suspected near-duplicate coordination (06-02). Monotonic: never reset to false. */
+    coordSuspected: boolean('coord_suspected').notNull().default(false),
+    coordDetectedAt: tstz('coord_detected_at'),
   },
   (t) => [
     unique('posts_source_external_uq').on(t.sourceKey, t.externalId),
@@ -91,6 +94,9 @@ export const posts = pgTable(
       .on(t.fetchedAt)
       .where(sql`lang is null`),
     index('posts_embedding_hnsw_idx').using('hnsw', t.embedding.op('vector_cosine_ops')),
+    index('posts_coord_suspected_idx')
+      .on(t.publishedAt)
+      .where(sql`coord_suspected`),
   ],
 )
 

@@ -15,6 +15,13 @@
       "when": 1792145508868,
       "tag": "0001_effective_classifications_view",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1792153915008,
+      "tag": "0002_coordination_flag",
+      "breakpoints": true
     }
   ]
 }
