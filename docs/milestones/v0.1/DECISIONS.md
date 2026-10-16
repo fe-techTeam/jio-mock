@@ -37,3 +37,23 @@ developer would otherwise have been asked.
 | 2026-10-16 | Auth export is a lazy Proxy; seed password reset via auth.$context.internalAdapter | Eager init; drizzle-orm in web | Import needs no DATABASE_URL; second drizzle copy broke types | yes |
 | 2026-10-16 | packages/db/src/migrate.ts uses path.resolve for migrations dir | new URL('../migrations') | next build could not bundle @jio/db | yes |
 | 2026-10-16 | Local BETTER_AUTH_SECRET and SEED_USER_PASSWORD generated into gitignored root .env | Leave empty | Login and smoke test need them | yes |
+| 2026-10-16 | fetch_run status ok/error/rate_limited stored as text; only error counts toward the breaker | Treat 429 as error | Rate limits must not open the circuit | yes |
+| 2026-10-16 | fetch_run detail = {mode, startedAt, since, cursor, fetched, duplicates, dropped, marketPoints, rateLimitedUntil?, quota?}; detail.quota copied from JSON nextCursor.quota | Separate quota table | Operator pages read quota from the event log | yes |
+| 2026-10-16 | Config creds: creds_ref wins over env; enc:v1 AES-256-GCM, base64 CONFIG_ENCRYPTION_KEY, blob enc:v1:+base64url(iv12/tag16/ct); decrypt failure = missing, no env fallback | Env first | 05-01 must emit byte-compatible blobs | costly (stored data) |
+| 2026-10-16 | Post lane: adapter lane, then media_outlet->media, other/public_figure on media source->social; set before upsert | Post-upsert UPDATE | One write per post | yes |
+| 2026-10-16 | Fixture-mode market points get #fixture appended to sourceUrl | Separate table | Distinguishable and purgeable | yes |
+| 2026-10-16 | since/cursor come from latest ok run in same mode (since = startedAt - 5 min); none = now - backfill_days | Any-mode cursor | Fixture to live starts a fresh backfill | yes |
+| 2026-10-16 | Breaker threshold 3, cooldown min(interval*2^(failures-3),120) min; isDue allows 5s tick slack | Fixed cooldown | Backoff without hammering | yes |
+| 2026-10-16 | x_api is the active X route only when enabled, circuit closed, not rate-limited, and live or fixture-forced; else x_apify | Run both | Avoid duplicate cost | yes |
+| 2026-10-16 | index.ts main does not reuse boot.ts startWorker; fetch-source switched to stately via updateQueue | Reuse boot | Needs 30s graceful stop | yes |
+| 2026-10-16 | --once exits 0 when some sources error; 1 only if DB unreachable | Exit non-zero on any error | Table shows per-source errors | yes |
+| 2026-10-16 | Worker integration tests use per-file DBs jio_ipo_test_worker_{runner,scheduler,index} | Shared test DB | vitest.config.ts not owned by 02-01 | yes |
+| 2026-10-16 | Live mode without creds throws NotConfiguredError containing 'live mode not built' | New message | Keeps 02-01 fixtures test green | yes |
+| 2026-10-16 | X cost estimate 0.005 USD/post, overridable via rate_limits.cost_per_post_usd; max pages via rate_limits.max_pages_per_run (default 3) | Hardcode | Tier pricing varies | yes |
+| 2026-10-16 | x_apify builds canonical tweet url from username+id so it equals x_api's url | Use actor link | Cross-source dedupe | yes |
+| 2026-10-16 | YouTube cursor JSON {v:1, quota, tracked}; allowance=min(9000, 9000*ptDayFraction+200); search only when units+121<=allowance | Fixed interval | Stay under 10k daily units | yes |
+| 2026-10-16 | Serper cost estimated at 0.001 USD per query sent | Billed figure | API returns none | yes |
+| 2026-10-16 | web_search uses 8 queries (2 IPO phrases x instagram, linkedin posts, Groww, Emkay/Centrum) | More queries | Credit budget | yes |
+| 2026-10-16 | Edited 02-01 fixtures.test.ts stub test to skip real adapters (youtube, reddit, news_rss, web_search, portals) | Leave failing | Real adapters replaced the stubs | yes |
+| 2026-10-16 | Portal market point observedAt = page's Last Updated (IST), else now; repeat fixture runs add 0 points | Run time | Stale pages must not write duplicates | yes |
+| 2026-10-16 | Portal table lookup is header-driven; header overrides tried before defaults | CSS selectors | Survives layout drift | yes |

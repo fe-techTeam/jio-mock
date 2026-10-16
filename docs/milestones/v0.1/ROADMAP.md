@@ -43,7 +43,7 @@ Goal: every named source flows into `posts` and `market_points` on its own caden
 | 02-03 | 2 | sonnet | 02-01 | adapters youtube.ts, reddit.ts, news-rss.ts, web-search.ts (+ tests) | YouTube search.list and commentThreads within quota, Reddit OAuth search across subreddits, Google News and publisher RSS (Mint, ETMarkets, Moneycontrol, Business Standard, ET, Financial Express), Serper web search (site:instagram.com, site:linkedin.com, Groww, Emkay, Centrum) |
 | 02-04 | 2 | sonnet | 02-01 | adapters portal-*.ts (+ tests, HTML fixtures) | Chittorgarh, InvestorGain and IPOWatch parsers (cheerio) producing MarketPoint rows (GMP, subscription by category), plus portal news items as posts when present |
 
-- [ ] 02-01  - [ ] 02-02  - [ ] 02-03  - [ ] 02-04
+- [x] 02-01  - [x] 02-02  - [x] 02-03  - [x] 02-04
 
 ## Phase 03: Classification and rollups
 

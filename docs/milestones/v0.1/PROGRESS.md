@@ -17,3 +17,12 @@ Deviations: corepack integrity workaround; hand-written shadcn components.json; 
 - 01-03: Better Auth login, lockout after 5 failures, middleware, protected shell, login/view audit events.
 
 Deviations: config schema gained anchor_groups, generic_hashtags, lane and record-valued creds_ref; per-package test DBs; migrate.ts edited for next build. SUMMARY-01-01/02 not written (harness blocked); ROADMAP ticks 01-03 only.
+
+## 02-ingestion (2026-10-16)
+
+- 02-01: scheduler, circuit breaker, never-throwing fetch runner, fetch_run events, 11 fixture adapters, 139 fixture posts, --once mode (146 worker tests).
+- 02-02: X API v2 adapter with query builder, Apify runner, X fallback, Instagram and LinkedIn sampled adapters.
+- 02-03: news RSS, Serper web search, Reddit OAuth, quota-paced YouTube adapters.
+- 02-04: Chittorgarh, InvestorGain, IPOWatch cheerio parsers producing Jio market series and news posts.
+
+Deviations: drizzle-orm added to worker; per-file worker test DBs; 02-01 fixtures.test.ts edited twice for real adapters; repeat fixture runs add 0 market points (page-time dedupe); all live adapters tested only against synthetic responses.
