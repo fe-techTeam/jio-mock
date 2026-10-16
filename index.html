@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Jio IPO sentiment</title>
+    <meta name="description" content="Jio IPO sentiment board (snapshot of scraped data)" />
+    <!-- Tailwind v4 in the browser, with the theme copied verbatim from apps/web/src/app/globals.css -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.1.11"></script>
+    <style type="text/tailwindcss">
+      @custom-variant dark (&:is(.dark *));
+
+      /* Light: white surfaces, near-black text and a single blue accent. Blue marks what is
+         going well, grey is neutral, and a muted red is kept only for "needs attention". */
+      :root {
+        color-scheme: light;
+        --radius: 0.75rem;
+        --brand: #2563eb;
+        --brand-deep: #1d4ed8;
+        --brand-soft: #eef3ff;
+        --good: #2563eb;
+        --good-soft: #eef3ff;
+        --watch: #52525b;
+        --watch-soft: #f1f1f3;
+        --act: #dc2626;
+        --act-soft: #fdf0f0;
+        --calm: #d4d4d8;
+        --background: #f7f7f8;
+        --card: #ffffff;
+        --card-foreground: #0a0a0a;
+        --foreground: #0a0a0a;
+        --primary: #2563eb;
+        --primary-foreground: #ffffff;
+        --secondary: #f1f1f3;
+        --secondary-foreground: #0a0a0a;
+        --muted: #f1f1f3;
+        --muted-foreground: #6b6b73;
+        --accent: #f1f1f3;
+        --accent-foreground: #0a0a0a;
+        --destructive: #dc2626;
+        --border: rgb(0 0 0 / 0.08);
+        --input: rgb(0 0 0 / 0.14);
+        --ring: #2563eb;
+      }
+
+      @theme inline {
+        --color-brand: var(--brand);
+        --color-brand-deep: var(--brand-deep);
+        --color-brand-soft: var(--brand-soft);
+        --color-good: var(--good);
+        --color-good-soft: var(--good-soft);
+        --color-watch: var(--watch);
+        --color-watch-soft: var(--watch-soft);
+        --color-act: var(--act);
+        --color-act-soft: var(--act-soft);
+        --color-calm: var(--calm);
+        --color-card: var(--card);
+        --color-card-foreground: var(--card-foreground);
+        --color-background: var(--background);
+        --color-foreground: var(--foreground);
+        --color-primary: var(--primary);
+        --color-primary-foreground: var(--primary-foreground);
+        --color-secondary: var(--secondary);
+        --color-secondary-foreground: var(--secondary-foreground);
+        --color-muted: var(--muted);
+        --color-muted-foreground: var(--muted-foreground);
+        --color-accent: var(--accent);
+        --color-accent-foreground: var(--accent-foreground);
+        --color-destructive: var(--destructive);
+        --color-border: var(--border);
+        --color-input: var(--input);
+        --color-ring: var(--ring);
+        --radius-md: calc(var(--radius) - 4px);
+        --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+      }
+
+      @layer base {
+        * {
+          @apply border-border outline-ring/50;
+        }
+        body {
+          @apply bg-background text-foreground;
+        }
+      }
+
+      /* Stand-ins for tw-animate-css (sheet and toast motion). */
+      @keyframes sheet-in { from { transform: translateX(100%); } to { transform: translateX(0); } }
+      @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+      @keyframes toast-in { from { transform: translateY(8px); opacity: 0; } to { transform: none; opacity: 1; } }
+      .anim-sheet { animation: sheet-in 0.4s ease-in-out; }
+      .anim-fade { animation: fade-in 0.2s ease-out; }
+      .anim-toast { animation: toast-in 0.2s ease-out; }
+
+      /* Data animations. `backwards` holds the start frame during a delay and then lets go, so hover
+         transforms still work after the entry animation. Set --d for a stagger delay. */
+      @keyframes enter-up { from { opacity: 0; transform: translateY(10px); } }
+      @keyframes enter-fade { from { opacity: 0; } }
+      @keyframes grow-x { from { transform: scaleX(0); } }
+      @keyframes grow-y { from { transform: scaleY(0); } }
+      @keyframes draw { from { stroke-dashoffset: 1; } }
+      @keyframes pop { from { opacity: 0; transform: scale(0); } }
+      .anim-up { animation: enter-up 0.55s cubic-bezier(0.2, 0.7, 0.2, 1) var(--d, 0ms) backwards; }
+      .anim-in { animation: enter-fade 0.7s ease var(--d, 0ms) backwards; }
+      .anim-grow-x { transform-origin: left center; animation: grow-x 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) var(--d, 0ms) backwards; }
+      .anim-grow-y { transform-origin: center bottom; transform-box: fill-box; animation: grow-y 0.8s cubic-bezier(0.2, 0.7, 0.2, 1) var(--d, 0ms) backwards; }
+      .anim-draw { stroke-dasharray: 1; animation: draw 1.2s cubic-bezier(0.45, 0, 0.2, 1) var(--d, 0ms) backwards; }
+      .anim-pop { transform-box: fill-box; transform-origin: center; animation: pop 0.4s cubic-bezier(0.2, 0.8, 0.3, 1.4) var(--d, 0ms) backwards; }
+      @media (prefers-reduced-motion: reduce) {
+        .anim-up, .anim-in, .anim-grow-x, .anim-grow-y, .anim-draw, .anim-pop { animation: none !important; }
+      }
+    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%232563eb'/%3E%3Cpath d='M8 21l5-6 4 3 7-9' stroke='white' stroke-width='2.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E" />
+  </head>
+  <body class="antialiased">
+    <div id="root"></div>
+    <noscript>This demo needs JavaScript.</noscript>
+
+    <script src="https://cdn.jsdelivr.net/npm/react@18.3.1/umd/react.production.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/react-dom@18.3.1/umd/react-dom.production.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/htm@3.1.1/dist/htm.umd.js"></script>
+
+    <script src="js/core.js"></script>
+    <script src="js/data.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/evidence.js"></script>
+    <script src="js/brief.js"></script>
+    <script src="js/topic.js"></script>
+    <script src="js/sources.js"></script>
+    <script src="js/settings.js"></script>
+    <script src="js/accuracy.js"></script>
+    <script src="js/main.js"></script>
+  </body>
+</html>
