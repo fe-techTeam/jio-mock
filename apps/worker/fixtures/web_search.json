@@ -1,0 +1,185 @@
+{
+  "sourceKey": "web_search",
+  "items": [
+    {
+      "id": "ws-001",
+      "url": "https://www.instagram.com/p/ws-001/",
+      "minutesAgo": 180,
+      "text": "Jio IPO apply karu ya nahi? Comment karo 👇 #JioIPO #IPO",
+      "lang": "hinglish",
+      "topic": "valuation-price-band",
+      "author": {
+        "platform": "instagram",
+        "platformUserId": "fx-ig-ipo.with.ishaan",
+        "handle": "ipo.with.ishaan",
+        "kind": "other"
+      },
+      "reachRaw": {}
+    },
+    {
+      "id": "ws-002",
+      "url": "https://www.instagram.com/p/ws-002/",
+      "minutesAgo": 620,
+      "text": "जियो आईपीओ जीएमपी अपडेट 📈 आज का रेट बायो में",
+      "lang": "hi",
+      "topic": "gmp-grey-market",
+      "author": {
+        "platform": "instagram",
+        "platformUserId": "fx-ig-share.bazaar.hindi",
+        "handle": "share.bazaar.hindi",
+        "kind": "other"
+      },
+      "reachRaw": {}
+    },
+    {
+      "id": "ws-003",
+      "url": "https://www.instagram.com/p/ws-003/",
+      "minutesAgo": 1900,
+      "text": "જિયો આઈપીઓ: અરજી કરવી કે નહીં?",
+      "lang": "gu",
+      "topic": "valuation-price-band",
+      "author": {
+        "platform": "instagram",
+        "platformUserId": "fx-ig-surti.stocks",
+        "handle": "surti.stocks",
+        "kind": "other"
+      },
+      "reachRaw": {}
+    },
+    {
+      "id": "ws-004",
+      "url": "https://www.linkedin.com/posts/ws-004",
+      "minutesAgo": 2600,
+      "text": "Thoughts on the Jio Platforms IPO from a telecom strategy lens: ARPU, 5G capex and the AI narrative",
+      "lang": "en",
+      "topic": "telecom-business",
+      "author": {
+        "platform": "linkedin",
+        "platformUserId": "fx-li-telecom-strategist",
+        "displayName": "Telecom strategy consultant",
+        "kind": "other"
+      },
+      "reachRaw": {}
+    },
+    {
+      "id": "ws-005",
+      "url": "https://www.linkedin.com/posts/ws-005",
+      "minutesAgo": 3400,
+      "text": "Jio Platforms' AI ambitions are the most interesting part of the RHP",
+      "lang": "en",
+      "topic": "digital-ai-growth",
+      "author": {
+        "platform": "linkedin",
+        "platformUserId": "fx-li-ai-product-lead",
+        "displayName": "AI product lead",
+        "kind": "other"
+      },
+      "reachRaw": {}
+    },
+    {
+      "id": "ws-006",
+      "url": "https://www.groww.in/ipo/ws-006",
+      "minutesAgo": 900,
+      "text": "Jio Platforms IPO: price band, GMP, lot size, dates and review",
+      "lang": "en",
+      "topic": "valuation-price-band",
+      "author": {
+        "platform": "web",
+        "platformUserId": "fx-web-groww.in",
+        "displayName": "Groww",
+        "kind": "media_outlet"
+      },
+      "reachRaw": {}
+    },
+    {
+      "id": "ws-007",
+      "url": "https://www.groww.in/ipo/ws-007",
+      "minutesAgo": 1300,
+      "text": "Jio IPO allotment status: check online with PAN",
+      "lang": "en",
+      "topic": "allotment-retail-access",
+      "author": {
+        "platform": "web",
+        "platformUserId": "fx-web-groww.in",
+        "displayName": "Groww",
+        "kind": "media_outlet"
+      },
+      "reachRaw": {}
+    },
+    {
+      "id": "ws-008",
+      "url": "https://www.emkayglobal.com/ipo/ws-008",
+      "minutesAgo": 4100,
+      "text": "IPO note: Jio Platforms - subscribe for the long term",
+      "lang": "en",
+      "topic": "valuation-price-band",
+      "author": {
+        "platform": "web",
+        "platformUserId": "fx-web-emkayglobal.com",
+        "displayName": "Emkay Global",
+        "kind": "media_outlet"
+      },
+      "reachRaw": {}
+    },
+    {
+      "id": "ws-009",
+      "url": "https://www.centrum.co.in/ipo/ws-009",
+      "minutesAgo": 4800,
+      "text": "Jio Platforms IPO note: listing gains likely, valuation full",
+      "lang": "en",
+      "topic": "listing-expectations",
+      "author": {
+        "platform": "web",
+        "platformUserId": "fx-web-centrum.co.in",
+        "displayName": "Centrum Broking",
+        "kind": "media_outlet"
+      },
+      "reachRaw": {}
+    },
+    {
+      "id": "ws-010",
+      "url": "https://www.emkayglobal.com/ipo/ws-010",
+      "minutesAgo": 5500,
+      "text": "Jio Platforms: governance and promoter control after the IPO",
+      "lang": "en",
+      "topic": "governance-promoter-control",
+      "author": {
+        "platform": "web",
+        "platformUserId": "fx-web-emkayglobal.com",
+        "displayName": "Emkay Global",
+        "kind": "media_outlet"
+      },
+      "reachRaw": {}
+    },
+    {
+      "id": "ws-011",
+      "url": "https://www.linkedin.com/posts/ws-011",
+      "minutesAgo": 6100,
+      "text": "Khul ke jio, Monday motivation 💪",
+      "lang": "hinglish",
+      "expectRelevant": false,
+      "author": {
+        "platform": "linkedin",
+        "platformUserId": "fx-li-hr-motivator",
+        "displayName": "HR professional",
+        "kind": "other"
+      },
+      "reachRaw": {}
+    },
+    {
+      "id": "ws-012",
+      "url": "https://www.centrum.co.in/ipo/ws-012",
+      "minutesAgo": 7200,
+      "text": "Reliance Jio IPO subscription demand: QIB, NII and retail breakdown",
+      "lang": "en",
+      "topic": "subscription-demand",
+      "author": {
+        "platform": "web",
+        "platformUserId": "fx-web-centrum.co.in",
+        "displayName": "Centrum Broking",
+        "kind": "media_outlet"
+      },
+      "reachRaw": {}
+    }
+  ]
+}

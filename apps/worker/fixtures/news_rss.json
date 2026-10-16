@@ -1,0 +1,230 @@
+{
+  "sourceKey": "news_rss",
+  "items": [
+    {
+      "id": "nw-001",
+      "url": "https://www.livemint.com/market/ipo/nw-001",
+      "minutesAgo": 240,
+      "text": "Jio Platforms IPO: price band set, valuation pegged near ₹11 lakh crore at the upper end",
+      "lang": "en",
+      "topic": "valuation-price-band",
+      "author": {
+        "platform": "news",
+        "platformUserId": "fx-pub-mint",
+        "displayName": "Mint",
+        "kind": "media_outlet"
+      },
+      "reachRaw": {}
+    },
+    {
+      "id": "nw-002",
+      "url": "https://economictimes.indiatimes.com/markets/ipos/fpos/nw-002",
+      "minutesAgo": 410,
+      "text": "Jio IPO GMP climbs ahead of subscription opening; grey market signals strong listing",
+      "lang": "en",
+      "topic": "gmp-grey-market",
+      "author": {
+        "platform": "news",
+        "platformUserId": "fx-pub-etmarkets",
+        "displayName": "ETMarkets",
+        "kind": "media_outlet"
+      },
+      "reachRaw": {}
+    },
+    {
+      "id": "nw-003",
+      "url": "https://www.moneycontrol.com/news/business/ipo/nw-003",
+      "minutesAgo": 1500,
+      "text": "Jio Platforms IPO subscribed 1.8 times on day 1; QIB portion leads",
+      "lang": "en",
+      "topic": "subscription-demand",
+      "author": {
+        "platform": "news",
+        "platformUserId": "fx-pub-moneycontrol",
+        "displayName": "Moneycontrol",
+        "kind": "media_outlet"
+      },
+      "reachRaw": {}
+    },
+    {
+      "id": "nw-004",
+      "url": "https://www.business-standard.com/markets/ipo-news/nw-004",
+      "minutesAgo": 4300,
+      "text": "Jio IPO allotment status: how to check it on the registrar website",
+      "lang": "en",
+      "topic": "allotment-retail-access",
+      "author": {
+        "platform": "news",
+        "platformUserId": "fx-pub-business-standard",
+        "displayName": "Business Standard",
+        "kind": "media_outlet"
+      },
+      "reachRaw": {}
+    },
+    {
+      "id": "nw-005",
+      "url": "https://economictimes.indiatimes.com/news/company/nw-005",
+      "minutesAgo": 3600,
+      "text": "Analysts see 15-25% listing gains for Jio Platforms, flag valuation risks",
+      "lang": "en",
+      "topic": "listing-expectations",
+      "author": {
+        "platform": "news",
+        "platformUserId": "fx-pub-economic-times",
+        "displayName": "Economic Times",
+        "kind": "media_outlet"
+      },
+      "reachRaw": {}
+    },
+    {
+      "id": "nw-006",
+      "url": "https://www.financialexpress.com/market/ipo-news/nw-006",
+      "minutesAgo": 5000,
+      "text": "Akash Ambani to steer Jio Platforms after listing; Mukesh Ambani remains chairman of RIL",
+      "lang": "en",
+      "topic": "ambani-family-leadership",
+      "author": {
+        "platform": "news",
+        "platformUserId": "fx-pub-financial-express",
+        "displayName": "Financial Express",
+        "kind": "media_outlet"
+      },
+      "reachRaw": {}
+    },
+    {
+      "id": "nw-007",
+      "url": "https://www.livemint.com/market/ipo/nw-007",
+      "minutesAgo": 6200,
+      "text": "Reliance Jio IPO: proxy advisers raise questions on board independence",
+      "lang": "en",
+      "topic": "governance-promoter-control",
+      "author": {
+        "platform": "news",
+        "platformUserId": "fx-pub-mint",
+        "displayName": "Mint",
+        "kind": "media_outlet"
+      },
+      "reachRaw": {}
+    },
+    {
+      "id": "nw-008",
+      "url": "https://economictimes.indiatimes.com/markets/ipos/fpos/nw-008",
+      "minutesAgo": 7400,
+      "text": "Reliance Jio tariff hike lifts ARPU ahead of the IPO",
+      "lang": "en",
+      "topic": "telecom-business",
+      "author": {
+        "platform": "news",
+        "platformUserId": "fx-pub-etmarkets",
+        "displayName": "ETMarkets",
+        "kind": "media_outlet"
+      },
+      "reachRaw": {}
+    },
+    {
+      "id": "nw-009",
+      "url": "https://www.moneycontrol.com/news/business/ipo/nw-009",
+      "minutesAgo": 8200,
+      "text": "Jio Platforms bets on AI cloud and data centres in its IPO pitch",
+      "lang": "en",
+      "topic": "digital-ai-growth",
+      "author": {
+        "platform": "news",
+        "platformUserId": "fx-pub-moneycontrol",
+        "displayName": "Moneycontrol",
+        "kind": "media_outlet"
+      },
+      "reachRaw": {}
+    },
+    {
+      "id": "nw-010",
+      "url": "https://www.business-standard.com/markets/ipo-news/nw-010",
+      "minutesAgo": 2800,
+      "text": "Jio IPO: users flag network complaints as the ad blitz intensifies",
+      "lang": "en",
+      "topic": "customer-experience",
+      "author": {
+        "platform": "news",
+        "platformUserId": "fx-pub-business-standard",
+        "displayName": "Business Standard",
+        "kind": "media_outlet"
+      },
+      "reachRaw": {}
+    },
+    {
+      "id": "nw-011",
+      "url": "https://hindi-business-daily.example/ipo/nw-011",
+      "minutesAgo": 1800,
+      "text": "जियो आईपीओ: प्राइस बैंड तय, जानें लॉट साइज और जरूरी तारीखें",
+      "lang": "hi",
+      "topic": "valuation-price-band",
+      "author": {
+        "platform": "news",
+        "platformUserId": "fx-pub-hindi-business-daily",
+        "displayName": "Hindi Business Daily (fictional)",
+        "kind": "media_outlet"
+      },
+      "reachRaw": {}
+    },
+    {
+      "id": "nw-012",
+      "url": "https://hindi-business-daily.example/ipo/nw-012",
+      "minutesAgo": 5300,
+      "text": "मुकेश अंबानी के जियो आईपीओ पर निवेशकों की नज़र",
+      "lang": "hi",
+      "topic": "ambani-family-leadership",
+      "author": {
+        "platform": "news",
+        "platformUserId": "fx-pub-hindi-business-daily",
+        "displayName": "Hindi Business Daily (fictional)",
+        "kind": "media_outlet"
+      },
+      "reachRaw": {}
+    },
+    {
+      "id": "nw-013",
+      "url": "https://gujarat-arthik-samachar.example/ipo/nw-013",
+      "minutesAgo": 1550,
+      "text": "જિયો આઈપીઓ: પ્રથમ દિવસે રિટેલ ભાગ પૂરો ભરાયો",
+      "lang": "gu",
+      "topic": "subscription-demand",
+      "author": {
+        "platform": "news",
+        "platformUserId": "fx-pub-gujarat-arthik-samachar",
+        "displayName": "Gujarat Arthik Samachar (fictional)",
+        "kind": "media_outlet"
+      },
+      "reachRaw": {}
+    },
+    {
+      "id": "nw-014",
+      "url": "https://economictimes.indiatimes.com/news/company/nw-014",
+      "minutesAgo": 6900,
+      "text": "Jio Financial Services Q2 profit rises 6%; AUM grows",
+      "lang": "en",
+      "expectRelevant": false,
+      "author": {
+        "platform": "news",
+        "platformUserId": "fx-pub-economic-times",
+        "displayName": "Economic Times",
+        "kind": "media_outlet"
+      },
+      "reachRaw": {}
+    },
+    {
+      "id": "nw-015",
+      "url": "https://www.financialexpress.com/market/ipo-news/nw-015",
+      "minutesAgo": 9300,
+      "text": "Isha Ambani's retail arm watches the Jio IPO closely as a sister listing looms",
+      "lang": "en",
+      "topic": "ambani-family-leadership",
+      "author": {
+        "platform": "news",
+        "platformUserId": "fx-pub-financial-express",
+        "displayName": "Financial Express",
+        "kind": "media_outlet"
+      },
+      "reachRaw": {}
+    }
+  ]
+}

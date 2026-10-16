@@ -1,0 +1,425 @@
+{
+  "sourceKey": "reddit",
+  "items": [
+    {
+      "id": "rd-001",
+      "url": "https://www.reddit.com/r/IndiaInvestments/comments/rd-001/",
+      "minutesAgo": 500,
+      "text": "Jio Platforms IPO: apply or avoid? My notes on valuation vs Airtel and Vodafone Idea",
+      "lang": "en",
+      "topic": "valuation-price-band",
+      "author": {
+        "platform": "reddit",
+        "platformUserId": "fx-t2_ledger_lion",
+        "handle": "ledger_lion",
+        "kind": "other"
+      },
+      "reachRaw": {
+        "score": 842,
+        "comments": 311
+      },
+      "meta": {
+        "subreddit": "IndiaInvestments"
+      }
+    },
+    {
+      "id": "rd-002",
+      "url": "https://www.reddit.com/r/IndianStockMarket/comments/rd-002/",
+      "minutesAgo": 760,
+      "text": "Jio IPO GMP has been all over the place. Is grey market data even reliable?",
+      "lang": "en",
+      "topic": "gmp-grey-market",
+      "author": {
+        "platform": "reddit",
+        "platformUserId": "fx-t2_chai_compounder",
+        "handle": "chai_compounder",
+        "kind": "other"
+      },
+      "reachRaw": {
+        "score": 214,
+        "comments": 96
+      },
+      "meta": {
+        "subreddit": "IndianStockMarket"
+      }
+    },
+    {
+      "id": "rd-003",
+      "url": "https://www.reddit.com/r/IndiaInvestments/comments/rd-003/",
+      "minutesAgo": 1600,
+      "text": "PSA: you need RIL shares in your demat by the record date for the shareholder quota in the Jio IPO",
+      "lang": "en",
+      "topic": "allotment-retail-access",
+      "author": {
+        "platform": "reddit",
+        "platformUserId": "fx-t2_drhp_reader",
+        "handle": "drhp_reader",
+        "kind": "other"
+      },
+      "reachRaw": {
+        "score": 1530,
+        "comments": 204
+      },
+      "meta": {
+        "subreddit": "IndiaInvestments"
+      }
+    },
+    {
+      "id": "rd-004",
+      "url": "https://www.reddit.com/r/IndianStreetBets/comments/rd-004/",
+      "minutesAgo": 2000,
+      "text": "Jio IPO allotment kab aayega? Registrar site pe kuch nahi dikh raha",
+      "lang": "hinglish",
+      "topic": "allotment-retail-access",
+      "author": {
+        "platform": "reddit",
+        "platformUserId": "fx-t2_throwaway_ipo_q",
+        "handle": "throwaway_ipo_q",
+        "kind": "other"
+      },
+      "reachRaw": {
+        "score": 66,
+        "comments": 41
+      },
+      "meta": {
+        "subreddit": "IndianStreetBets"
+      }
+    },
+    {
+      "id": "rd-005",
+      "url": "https://www.reddit.com/r/IndianStockMarket/comments/rd-005/",
+      "minutesAgo": 2500,
+      "text": "Listing day plan for the Jio IPO: sell half at open, hold the rest?",
+      "lang": "en",
+      "topic": "listing-expectations",
+      "author": {
+        "platform": "reddit",
+        "platformUserId": "fx-t2_bombay_bull",
+        "handle": "bombay_bull",
+        "kind": "other"
+      },
+      "reachRaw": {
+        "score": 305,
+        "comments": 188
+      },
+      "meta": {
+        "subreddit": "IndianStockMarket"
+      }
+    },
+    {
+      "id": "rd-006",
+      "url": "https://www.reddit.com/r/IndiaInvestments/comments/rd-006/",
+      "minutesAgo": 3300,
+      "text": "Akash Ambani's leadership is being priced in here. Is that a risk or a premium?",
+      "lang": "en",
+      "topic": "ambani-family-leadership",
+      "author": {
+        "platform": "reddit",
+        "platformUserId": "fx-t2_quiet_index_fund",
+        "handle": "quiet_index_fund",
+        "kind": "other"
+      },
+      "reachRaw": {
+        "score": 178,
+        "comments": 92
+      },
+      "meta": {
+        "subreddit": "IndiaInvestments"
+      }
+    },
+    {
+      "id": "rd-007",
+      "url": "https://www.reddit.com/r/IndiaInvestments/comments/rd-007/",
+      "minutesAgo": 3800,
+      "text": "Reliance Jio related party transactions in the RHP: a thread",
+      "lang": "en",
+      "topic": "governance-promoter-control",
+      "author": {
+        "platform": "reddit",
+        "platformUserId": "fx-t2_drhp_reader",
+        "handle": "drhp_reader",
+        "kind": "other"
+      },
+      "reachRaw": {
+        "score": 612,
+        "comments": 133
+      },
+      "meta": {
+        "subreddit": "IndiaInvestments"
+      }
+    },
+    {
+      "id": "rd-008",
+      "url": "https://www.reddit.com/r/StockMarketIndia/comments/rd-008/",
+      "minutesAgo": 4400,
+      "text": "Reliance Jio subscriber churn after the tariff hike, numbers from the DRHP",
+      "lang": "en",
+      "topic": "telecom-business",
+      "author": {
+        "platform": "reddit",
+        "platformUserId": "fx-t2_arpu_watcher",
+        "handle": "arpu_watcher",
+        "kind": "other"
+      },
+      "reachRaw": {
+        "score": 390,
+        "comments": 77
+      },
+      "meta": {
+        "subreddit": "StockMarketIndia"
+      }
+    },
+    {
+      "id": "rd-009",
+      "url": "https://www.reddit.com/r/IndiaInvestments/comments/rd-009/",
+      "minutesAgo": 5100,
+      "text": "How much of the Jio Platforms valuation is AI hype?",
+      "lang": "en",
+      "topic": "digital-ai-growth",
+      "author": {
+        "platform": "reddit",
+        "platformUserId": "fx-t2_pune_pe_ratio",
+        "handle": "pune_pe_ratio",
+        "kind": "other"
+      },
+      "reachRaw": {
+        "score": 257,
+        "comments": 140
+      },
+      "meta": {
+        "subreddit": "IndiaInvestments"
+      }
+    },
+    {
+      "id": "rd-010",
+      "url": "https://www.reddit.com/r/mumbai/comments/rd-010/",
+      "minutesAgo": 5600,
+      "text": "Jio IPO aside, has anyone's Jio Fiber complaint ever been resolved in under a week?",
+      "lang": "en",
+      "topic": "customer-experience",
+      "author": {
+        "platform": "reddit",
+        "platformUserId": "fx-t2_kutch_kapital",
+        "handle": "kutch_kapital",
+        "kind": "other"
+      },
+      "reachRaw": {
+        "score": 944,
+        "comments": 402
+      },
+      "meta": {
+        "subreddit": "mumbai"
+      }
+    },
+    {
+      "id": "rd-011",
+      "url": "https://www.reddit.com/r/IndianStreetBets/comments/rd-011/",
+      "minutesAgo": 300,
+      "text": "Bhai Jio ka IPO lagau ya nahi? 50k hai bas, loan nahi lunga",
+      "lang": "hinglish",
+      "topic": "valuation-price-band",
+      "author": {
+        "platform": "reddit",
+        "platformUserId": "fx-t2_throwaway_ipo_q",
+        "handle": "throwaway_ipo_q",
+        "kind": "other"
+      },
+      "reachRaw": {
+        "score": 48,
+        "comments": 63
+      },
+      "meta": {
+        "subreddit": "IndianStreetBets"
+      }
+    },
+    {
+      "id": "rd-012",
+      "url": "https://www.reddit.com/r/india/comments/rd-012/",
+      "minutesAgo": 2200,
+      "text": "Can't wait for my uncle to tell me the Jio IPO is 'guaranteed returns' at Diwali dinner",
+      "lang": "en",
+      "topic": "listing-expectations",
+      "author": {
+        "platform": "reddit",
+        "platformUserId": "fx-t2_meme_portfolio",
+        "handle": "meme_portfolio",
+        "kind": "other"
+      },
+      "reachRaw": {
+        "score": 2210,
+        "comments": 156
+      },
+      "meta": {
+        "subreddit": "india"
+      }
+    },
+    {
+      "id": "rd-013",
+      "url": "https://www.reddit.com/r/IndiaInvestments/comments/rd-013/",
+      "minutesAgo": 6000,
+      "text": "JFS vs Bajaj Finance, which is better long term?",
+      "lang": "en",
+      "expectRelevant": false,
+      "author": {
+        "platform": "reddit",
+        "platformUserId": "fx-t2_quiet_index_fund",
+        "handle": "quiet_index_fund",
+        "kind": "other"
+      },
+      "reachRaw": {
+        "score": 81,
+        "comments": 70
+      },
+      "meta": {
+        "subreddit": "IndiaInvestments"
+      }
+    },
+    {
+      "id": "rd-014",
+      "url": "https://www.reddit.com/r/india/comments/rd-014/",
+      "minutesAgo": 6400,
+      "text": "jio aur jeene do is my life motto honestly",
+      "lang": "en",
+      "expectRelevant": false,
+      "author": {
+        "platform": "reddit",
+        "platformUserId": "fx-t2_meme_portfolio",
+        "handle": "meme_portfolio",
+        "kind": "other"
+      },
+      "reachRaw": {
+        "score": 12,
+        "comments": 4
+      },
+      "meta": {
+        "subreddit": "india"
+      }
+    },
+    {
+      "id": "rd-015",
+      "url": "https://www.reddit.com/r/IndianStockMarket/comments/rd-015/",
+      "minutesAgo": 7000,
+      "text": "Mukesh Ambani ka last AGM speech dekha? Jio IPO pe pura focus tha",
+      "lang": "hinglish",
+      "topic": "ambani-family-leadership",
+      "author": {
+        "platform": "reddit",
+        "platformUserId": "fx-t2_bombay_bull",
+        "handle": "bombay_bull",
+        "kind": "other"
+      },
+      "reachRaw": {
+        "score": 143,
+        "comments": 58
+      },
+      "meta": {
+        "subreddit": "IndianStockMarket"
+      }
+    },
+    {
+      "id": "rd-016",
+      "url": "https://www.reddit.com/r/IndianStockMarket/comments/rd-016/",
+      "minutesAgo": 2900,
+      "text": "Day 2: Jio IPO subscribed 4.1x overall, NII 9x. HNI money is flowing in",
+      "lang": "en",
+      "topic": "subscription-demand",
+      "author": {
+        "platform": "reddit",
+        "platformUserId": "fx-t2_ledger_lion",
+        "handle": "ledger_lion",
+        "kind": "other"
+      },
+      "reachRaw": {
+        "score": 721,
+        "comments": 230
+      },
+      "meta": {
+        "subreddit": "IndianStockMarket"
+      }
+    },
+    {
+      "id": "rd-017",
+      "url": "https://www.reddit.com/r/IndianStreetBets/comments/rd-017/",
+      "minutesAgo": 1000,
+      "text": "Kostak 1200 chal raha Jio IPO ka Ahmedabad mein, sauda bhi active hai",
+      "lang": "hinglish",
+      "topic": "gmp-grey-market",
+      "author": {
+        "platform": "reddit",
+        "platformUserId": "fx-t2_kutch_kapital",
+        "handle": "kutch_kapital",
+        "kind": "other"
+      },
+      "reachRaw": {
+        "score": 97,
+        "comments": 35
+      },
+      "meta": {
+        "subreddit": "IndianStreetBets"
+      }
+    },
+    {
+      "id": "rd-018",
+      "url": "https://www.reddit.com/r/india/comments/rd-018/",
+      "minutesAgo": 8100,
+      "text": "Isha Ambani was missing from the IPO roadshow photos. Read nothing into it.",
+      "lang": "en",
+      "topic": "ambani-family-leadership",
+      "author": {
+        "platform": "reddit",
+        "platformUserId": "fx-t2_meme_portfolio",
+        "handle": "meme_portfolio",
+        "kind": "other"
+      },
+      "reachRaw": {
+        "score": 64,
+        "comments": 49
+      },
+      "meta": {
+        "subreddit": "india"
+      }
+    },
+    {
+      "id": "rd-019",
+      "url": "https://www.reddit.com/r/mumbai/comments/rd-019/",
+      "minutesAgo": 8900,
+      "text": "Reliance Jio ki customer service ekdum bekaar, IPO mein paisa nahi daalunga",
+      "lang": "hinglish",
+      "topic": "customer-experience",
+      "author": {
+        "platform": "reddit",
+        "platformUserId": "fx-t2_kutch_kapital",
+        "handle": "kutch_kapital",
+        "kind": "other"
+      },
+      "reachRaw": {
+        "score": 188,
+        "comments": 61
+      },
+      "meta": {
+        "subreddit": "mumbai"
+      }
+    },
+    {
+      "id": "rd-020",
+      "url": "https://www.reddit.com/r/IndianStockMarket/comments/rd-020/",
+      "minutesAgo": 9800,
+      "text": "जियो प्लेटफॉर्म्स की लिस्टिंग कीमत क्या होगी? पीयर्स के हिसाब से अनुमान",
+      "lang": "hi",
+      "topic": "listing-expectations",
+      "author": {
+        "platform": "reddit",
+        "platformUserId": "fx-t2_pune_pe_ratio",
+        "handle": "pune_pe_ratio",
+        "kind": "other"
+      },
+      "reachRaw": {
+        "score": 55,
+        "comments": 22
+      },
+      "meta": {
+        "subreddit": "IndianStockMarket"
+      }
+    }
+  ]
+}

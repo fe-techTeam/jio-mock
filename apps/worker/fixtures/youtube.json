@@ -1,0 +1,463 @@
+{
+  "sourceKey": "youtube",
+  "items": [
+    {
+      "id": "yt-001",
+      "url": "https://www.youtube.com/watch?v=yt-001",
+      "minutesAgo": 900,
+      "text": "Jio Platforms IPO: price band, GMP, should you apply? | Full analysis",
+      "lang": "en",
+      "topic": "valuation-price-band",
+      "author": {
+        "platform": "youtube",
+        "platformUserId": "fx-UCbiznewslive",
+        "handle": "@biznewslive",
+        "displayName": "BizNews Live (fictional)",
+        "followers": 2100000,
+        "kind": "media_outlet"
+      },
+      "reachRaw": {
+        "views": 412000,
+        "likes": 9800,
+        "comments": 1530
+      },
+      "meta": {
+        "type": "video",
+        "videoId": "yt-001"
+      }
+    },
+    {
+      "id": "yt-002",
+      "url": "https://www.youtube.com/watch?v=yt-002",
+      "minutesAgo": 1300,
+      "text": "जियो आईपीओ: अप्लाई करें या नहीं? पूरी जानकारी",
+      "lang": "hi",
+      "topic": "valuation-price-band",
+      "author": {
+        "platform": "youtube",
+        "platformUserId": "fx-UCmarketpulsehindi",
+        "handle": "@marketpulsehindi",
+        "displayName": "Market Pulse Hindi (fictional)",
+        "followers": 3400000,
+        "kind": "media_outlet"
+      },
+      "reachRaw": {
+        "views": 980000,
+        "likes": 31000,
+        "comments": 4200
+      },
+      "meta": {
+        "type": "video",
+        "videoId": "yt-002"
+      }
+    },
+    {
+      "id": "yt-003",
+      "url": "https://www.youtube.com/watch?v=yt-001&lc=yt-003",
+      "minutesAgo": 850,
+      "text": "Sir Jio IPO GMP kitna chal raha abhi? Video mein bataya nahi",
+      "lang": "hinglish",
+      "topic": "gmp-grey-market",
+      "author": {
+        "platform": "youtube",
+        "platformUserId": "fx-UCviewer01",
+        "displayName": "Rahul S",
+        "kind": "other"
+      },
+      "reachRaw": {
+        "likes": 41,
+        "replies": 3
+      },
+      "meta": {
+        "type": "comment",
+        "videoId": "yt-001"
+      }
+    },
+    {
+      "id": "yt-004",
+      "url": "https://www.youtube.com/watch?v=yt-002&lc=yt-004",
+      "minutesAgo": 700,
+      "text": "Bhai allotment mila kya kisi ko Jio IPO mein? Mera nahi laga 😭",
+      "lang": "hinglish",
+      "topic": "allotment-retail-access",
+      "author": {
+        "platform": "youtube",
+        "platformUserId": "fx-UCviewer05",
+        "displayName": "Arjun K",
+        "kind": "other"
+      },
+      "reachRaw": {
+        "likes": 120,
+        "replies": 18
+      },
+      "meta": {
+        "type": "comment",
+        "videoId": "yt-002"
+      }
+    },
+    {
+      "id": "yt-005",
+      "url": "https://www.youtube.com/watch?v=yt-002&lc=yt-005",
+      "minutesAgo": 1250,
+      "text": "जियो आईपीओ में लंबे समय के लिए पैसा लगाना सही रहेगा",
+      "lang": "hi",
+      "topic": "listing-expectations",
+      "author": {
+        "platform": "youtube",
+        "platformUserId": "fx-UCviewer03",
+        "displayName": "Deepak Y",
+        "kind": "other"
+      },
+      "reachRaw": {
+        "likes": 66,
+        "replies": 2
+      },
+      "meta": {
+        "type": "comment",
+        "videoId": "yt-002"
+      }
+    },
+    {
+      "id": "yt-006",
+      "url": "https://www.youtube.com/watch?v=yt-015&lc=yt-006",
+      "minutesAgo": 2400,
+      "text": "જિયો આઈપીઓ માં લાંબા ગાળે ફાયદો છે",
+      "lang": "gu",
+      "topic": "listing-expectations",
+      "author": {
+        "platform": "youtube",
+        "platformUserId": "fx-UCviewer04",
+        "displayName": "Jignesh P",
+        "kind": "other"
+      },
+      "reachRaw": {
+        "likes": 14,
+        "replies": 0
+      },
+      "meta": {
+        "type": "comment",
+        "videoId": "yt-015"
+      }
+    },
+    {
+      "id": "yt-007",
+      "url": "https://www.youtube.com/watch?v=yt-007",
+      "minutesAgo": 3100,
+      "text": "Jio IPO Listing Gain Kitna Milega? GMP Analysis 🔥",
+      "lang": "hinglish",
+      "topic": "listing-expectations",
+      "author": {
+        "platform": "youtube",
+        "platformUserId": "fx-UCipoanalysisdesk",
+        "handle": "@ipoanalysisdesk",
+        "displayName": "IPO Analysis Desk",
+        "followers": 412000,
+        "kind": "other"
+      },
+      "reachRaw": {
+        "views": 156000,
+        "likes": 6100,
+        "comments": 880
+      },
+      "meta": {
+        "type": "video",
+        "videoId": "yt-007"
+      }
+    },
+    {
+      "id": "yt-008",
+      "url": "https://www.youtube.com/watch?v=yt-001&lc=yt-008",
+      "minutesAgo": 880,
+      "text": "The Akash Ambani interview clip at 4:10 was the most useful part. #JioIPO",
+      "lang": "en",
+      "topic": "ambani-family-leadership",
+      "author": {
+        "platform": "youtube",
+        "platformUserId": "fx-UCviewer02",
+        "displayName": "Priya M",
+        "kind": "other"
+      },
+      "reachRaw": {
+        "likes": 230,
+        "replies": 9
+      },
+      "meta": {
+        "type": "comment",
+        "videoId": "yt-001"
+      }
+    },
+    {
+      "id": "yt-009",
+      "url": "https://www.youtube.com/watch?v=yt-007&lc=yt-009",
+      "minutesAgo": 3000,
+      "text": "Network pe dhyan do pehle, Jio IPO baad mein. Call drop har din 😡",
+      "lang": "hinglish",
+      "topic": "customer-experience",
+      "author": {
+        "platform": "youtube",
+        "platformUserId": "fx-UCviewer05",
+        "displayName": "Arjun K",
+        "kind": "other"
+      },
+      "reachRaw": {
+        "likes": 510,
+        "replies": 44
+      },
+      "meta": {
+        "type": "comment",
+        "videoId": "yt-007"
+      }
+    },
+    {
+      "id": "yt-010",
+      "url": "https://www.youtube.com/watch?v=yt-007&lc=yt-010",
+      "minutesAgo": 2950,
+      "text": "Khul ke jio, bro! Loved the vlog",
+      "lang": "en",
+      "expectRelevant": false,
+      "author": {
+        "platform": "youtube",
+        "platformUserId": "fx-UCviewer06",
+        "displayName": "Meena T",
+        "kind": "other"
+      },
+      "reachRaw": {
+        "likes": 2,
+        "replies": 0
+      },
+      "meta": {
+        "type": "comment",
+        "videoId": "yt-007"
+      }
+    },
+    {
+      "id": "yt-011",
+      "url": "https://www.youtube.com/watch?v=yt-011",
+      "minutesAgo": 4700,
+      "text": "Reliance Jio 5G and the ARPU story behind the IPO",
+      "lang": "en",
+      "topic": "telecom-business",
+      "author": {
+        "platform": "youtube",
+        "platformUserId": "fx-UCbiznewslive",
+        "handle": "@biznewslive",
+        "displayName": "BizNews Live (fictional)",
+        "followers": 2100000,
+        "kind": "media_outlet"
+      },
+      "reachRaw": {
+        "views": 203000,
+        "likes": 5200,
+        "comments": 610
+      },
+      "meta": {
+        "type": "video",
+        "videoId": "yt-011"
+      }
+    },
+    {
+      "id": "yt-012",
+      "url": "https://www.youtube.com/watch?v=yt-011&lc=yt-012",
+      "minutesAgo": 4600,
+      "text": "रिलायंस जियो का एआई प्लान अच्छा है पर अभी कमाई टेलीकॉम से ही है",
+      "lang": "hi",
+      "topic": "digital-ai-growth",
+      "author": {
+        "platform": "youtube",
+        "platformUserId": "fx-UCviewer03",
+        "displayName": "Deepak Y",
+        "kind": "other"
+      },
+      "reachRaw": {
+        "likes": 37,
+        "replies": 1
+      },
+      "meta": {
+        "type": "comment",
+        "videoId": "yt-011"
+      }
+    },
+    {
+      "id": "yt-013",
+      "url": "https://www.youtube.com/watch?v=yt-002&lc=yt-013",
+      "minutesAgo": 1200,
+      "text": "Mukesh Ambani ne bola tha Jio IPO 2026 mein, aa gaya finally",
+      "lang": "hinglish",
+      "topic": "ambani-family-leadership",
+      "author": {
+        "platform": "youtube",
+        "platformUserId": "fx-UCviewer01",
+        "displayName": "Rahul S",
+        "kind": "other"
+      },
+      "reachRaw": {
+        "likes": 88,
+        "replies": 5
+      },
+      "meta": {
+        "type": "comment",
+        "videoId": "yt-002"
+      }
+    },
+    {
+      "id": "yt-014",
+      "url": "https://www.youtube.com/watch?v=yt-015&lc=yt-014",
+      "minutesAgo": 5900,
+      "text": "QIB સબ્સ્ક્રિપ્શન જ સાચો સંકેત છે, જિયો આઈપીઓ માટે",
+      "lang": "gu",
+      "topic": "subscription-demand",
+      "author": {
+        "platform": "youtube",
+        "platformUserId": "fx-UCviewer04",
+        "displayName": "Jignesh P",
+        "kind": "other"
+      },
+      "reachRaw": {
+        "likes": 19,
+        "replies": 1
+      },
+      "meta": {
+        "type": "comment",
+        "videoId": "yt-015"
+      }
+    },
+    {
+      "id": "yt-015",
+      "url": "https://www.youtube.com/watch?v=yt-015",
+      "minutesAgo": 6000,
+      "text": "જિયો આઈપીઓ: GMP અને લિસ્ટિંગ ગેઇન ની સંપૂર્ણ માહિતી",
+      "lang": "gu",
+      "topic": "gmp-grey-market",
+      "author": {
+        "platform": "youtube",
+        "platformUserId": "fx-UCgujaratsharebazaar",
+        "handle": "@gujaratsharebazaar",
+        "displayName": "Gujarat Share Bazaar",
+        "followers": 186000,
+        "kind": "other"
+      },
+      "reachRaw": {
+        "views": 88000,
+        "likes": 3900,
+        "comments": 410
+      },
+      "meta": {
+        "type": "video",
+        "videoId": "yt-015"
+      }
+    },
+    {
+      "id": "yt-016",
+      "url": "https://www.youtube.com/watch?v=yt-011&lc=yt-016",
+      "minutesAgo": 4500,
+      "text": "Promoter control 70% se upar rahega, minority shareholders ka kya? Jio IPO governance pe koi baat nahi karta",
+      "lang": "hinglish",
+      "topic": "governance-promoter-control",
+      "author": {
+        "platform": "youtube",
+        "platformUserId": "fx-UCviewer02",
+        "displayName": "Priya M",
+        "kind": "other"
+      },
+      "reachRaw": {
+        "likes": 140,
+        "replies": 12
+      },
+      "meta": {
+        "type": "comment",
+        "videoId": "yt-011"
+      }
+    },
+    {
+      "id": "yt-017",
+      "url": "https://www.youtube.com/watch?v=yt-007&lc=yt-017",
+      "minutesAgo": 2900,
+      "text": "Yes sir, buy the Jio IPO and retire next year. Totally how markets work 🙄",
+      "lang": "en",
+      "topic": "listing-expectations",
+      "author": {
+        "platform": "youtube",
+        "platformUserId": "fx-UCviewer06",
+        "displayName": "Meena T",
+        "kind": "other"
+      },
+      "reachRaw": {
+        "likes": 390,
+        "replies": 21
+      },
+      "meta": {
+        "type": "comment",
+        "videoId": "yt-007"
+      }
+    },
+    {
+      "id": "yt-018",
+      "url": "https://www.youtube.com/watch?v=yt-002&lc=yt-018",
+      "minutesAgo": 1100,
+      "text": "जियो आईपीओ का प्राइस बैंड बहुत महंगा है",
+      "lang": "hi",
+      "topic": "valuation-price-band",
+      "author": {
+        "platform": "youtube",
+        "platformUserId": "fx-UCviewer03",
+        "displayName": "Deepak Y",
+        "kind": "other"
+      },
+      "reachRaw": {
+        "likes": 72,
+        "replies": 4
+      },
+      "meta": {
+        "type": "comment",
+        "videoId": "yt-002"
+      }
+    },
+    {
+      "id": "yt-019",
+      "url": "https://www.youtube.com/watch?v=yt-011&lc=yt-019",
+      "minutesAgo": 7000,
+      "text": "JioHotstar subscription renewal price went up again",
+      "lang": "en",
+      "expectRelevant": false,
+      "author": {
+        "platform": "youtube",
+        "platformUserId": "fx-UCviewer02",
+        "displayName": "Priya M",
+        "kind": "other"
+      },
+      "reachRaw": {
+        "likes": 5,
+        "replies": 0
+      },
+      "meta": {
+        "type": "comment",
+        "videoId": "yt-011"
+      }
+    },
+    {
+      "id": "yt-020",
+      "url": "https://www.youtube.com/watch?v=yt-020",
+      "minutesAgo": 8600,
+      "text": "जियो प्लेटफॉर्म्स आईपीओ: सब्सक्रिप्शन का पहला दिन",
+      "lang": "hi",
+      "topic": "subscription-demand",
+      "author": {
+        "platform": "youtube",
+        "platformUserId": "fx-UCmarketpulsehindi",
+        "handle": "@marketpulsehindi",
+        "displayName": "Market Pulse Hindi (fictional)",
+        "followers": 3400000,
+        "kind": "media_outlet"
+      },
+      "reachRaw": {
+        "views": 640000,
+        "likes": 18000,
+        "comments": 2900
+      },
+      "meta": {
+        "type": "video",
+        "videoId": "yt-020"
+      }
+    }
+  ]
+}

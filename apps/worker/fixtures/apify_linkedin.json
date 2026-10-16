@@ -1,0 +1,195 @@
+{
+  "sourceKey": "apify_linkedin",
+  "items": [
+    {
+      "id": "li-001",
+      "url": "https://www.linkedin.com/posts/li-001",
+      "minutesAgo": 600,
+      "text": "Reflections on the Jio Platforms IPO: what it means for India's digital public infrastructure and AI",
+      "lang": "en",
+      "topic": "digital-ai-growth",
+      "author": {
+        "platform": "linkedin",
+        "platformUserId": "fx-li-dpi-researcher",
+        "displayName": "Digital policy researcher",
+        "followers": 12000,
+        "kind": "other"
+      },
+      "reachRaw": {
+        "reactions": 1400,
+        "comments": 88
+      }
+    },
+    {
+      "id": "li-002",
+      "url": "https://www.linkedin.com/posts/li-002",
+      "minutesAgo": 1700,
+      "text": "Governance angle on the Jio IPO: promoter control, board composition and minority rights",
+      "lang": "en",
+      "topic": "governance-promoter-control",
+      "author": {
+        "platform": "linkedin",
+        "platformUserId": "fx-li-governance-advisor",
+        "displayName": "Corporate governance advisor",
+        "followers": 8400,
+        "kind": "other"
+      },
+      "reachRaw": {
+        "reactions": 920,
+        "comments": 61
+      }
+    },
+    {
+      "id": "li-003",
+      "url": "https://www.linkedin.com/posts/li-003",
+      "minutesAgo": 2600,
+      "text": "The Jio Platforms IPO is a case study in telecom tariff discipline. ARPU up, churn manageable.",
+      "lang": "en",
+      "topic": "telecom-business",
+      "author": {
+        "platform": "linkedin",
+        "platformUserId": "fx-li-telecom-analyst",
+        "displayName": "Telecom equity analyst",
+        "followers": 21000,
+        "kind": "other"
+      },
+      "reachRaw": {
+        "reactions": 2100,
+        "comments": 140
+      }
+    },
+    {
+      "id": "li-004",
+      "url": "https://www.linkedin.com/posts/li-004",
+      "minutesAgo": 3500,
+      "text": "Isha Ambani and Akash Ambani both feature in the roadshow decks. Succession is part of the story now.",
+      "lang": "en",
+      "topic": "ambani-family-leadership",
+      "author": {
+        "platform": "linkedin",
+        "platformUserId": "fx-li-brand-strategist",
+        "displayName": "Brand strategist",
+        "followers": 5600,
+        "kind": "other"
+      },
+      "reachRaw": {
+        "reactions": 760,
+        "comments": 39
+      }
+    },
+    {
+      "id": "li-005",
+      "url": "https://www.linkedin.com/posts/li-005",
+      "minutesAgo": 4300,
+      "text": "Customer experience will decide Jio's next decade more than the IPO valuation.",
+      "lang": "en",
+      "topic": "customer-experience",
+      "author": {
+        "platform": "linkedin",
+        "platformUserId": "fx-li-cx-leader",
+        "displayName": "Customer experience leader",
+        "followers": 3100,
+        "kind": "other"
+      },
+      "reachRaw": {
+        "reactions": 430,
+        "comments": 27
+      }
+    },
+    {
+      "id": "li-006",
+      "url": "https://www.linkedin.com/posts/li-006",
+      "minutesAgo": 5100,
+      "text": "Proud to share our analysis of the Jio Platforms IPO subscription data by investor category",
+      "lang": "en",
+      "topic": "subscription-demand",
+      "author": {
+        "platform": "linkedin",
+        "platformUserId": "fx-li-data-team-lead",
+        "displayName": "Data team lead",
+        "followers": 2400,
+        "kind": "other"
+      },
+      "reachRaw": {
+        "reactions": 310,
+        "comments": 18
+      }
+    },
+    {
+      "id": "li-007",
+      "url": "https://www.linkedin.com/posts/li-007",
+      "minutesAgo": 5900,
+      "text": "Jio Financial Services is hiring for credit risk roles in Mumbai",
+      "lang": "en",
+      "expectRelevant": false,
+      "author": {
+        "platform": "linkedin",
+        "platformUserId": "fx-li-recruiter-fintech",
+        "displayName": "Fintech recruiter",
+        "followers": 15000,
+        "kind": "other"
+      },
+      "reachRaw": {
+        "reactions": 150,
+        "comments": 12
+      }
+    },
+    {
+      "id": "li-008",
+      "url": "https://www.linkedin.com/posts/li-008",
+      "minutesAgo": 6800,
+      "text": "જિયો IPO પછી સુરતના રોકાણકારોમાં ઉત્સાહ છે, લિસ્ટિંગ પર સૌની નજર",
+      "lang": "gu",
+      "topic": "listing-expectations",
+      "author": {
+        "platform": "linkedin",
+        "platformUserId": "fx-li-gujarati-founder",
+        "displayName": "Founder, Surat",
+        "followers": 4300,
+        "kind": "other"
+      },
+      "reachRaw": {
+        "reactions": 260,
+        "comments": 14
+      }
+    },
+    {
+      "id": "li-009",
+      "url": "https://www.linkedin.com/posts/li-009",
+      "minutesAgo": 7700,
+      "text": "GMP is not a fundamental. Please read the RHP before applying to the Jio IPO.",
+      "lang": "en",
+      "topic": "gmp-grey-market",
+      "author": {
+        "platform": "linkedin",
+        "platformUserId": "fx-li-telecom-analyst",
+        "displayName": "Telecom equity analyst",
+        "followers": 21000,
+        "kind": "other"
+      },
+      "reachRaw": {
+        "reactions": 1800,
+        "comments": 97
+      }
+    },
+    {
+      "id": "li-010",
+      "url": "https://www.linkedin.com/posts/li-010",
+      "minutesAgo": 9200,
+      "text": "Price band at the top end implies roughly 22x EV/EBITDA for Jio Platforms. Expensive, but a scarce asset.",
+      "lang": "en",
+      "topic": "valuation-price-band",
+      "author": {
+        "platform": "linkedin",
+        "platformUserId": "fx-li-telecom-analyst",
+        "displayName": "Telecom equity analyst",
+        "followers": 21000,
+        "kind": "other"
+      },
+      "reachRaw": {
+        "reactions": 1300,
+        "comments": 76
+      }
+    }
+  ]
+}

@@ -1,0 +1,555 @@
+{
+  "sourceKey": "x_apify",
+  "items": [
+    {
+      "id": "xp-001",
+      "url": "https://x.com/paisa_double_karo/status/xp-001",
+      "minutesAgo": 300,
+      "text": "Jio IPO mein paisa lagao bhai, listing pe double pakka hai! 🚀 #JioIPO",
+      "lang": "hinglish",
+      "topic": "listing-expectations",
+      "author": {
+        "platform": "x",
+        "platformUserId": "fx-x-paisa_double_karo",
+        "handle": "paisa_double_karo",
+        "displayName": "Paisa Double",
+        "followers": 410,
+        "kind": "other"
+      },
+      "reachRaw": {
+        "likes": 5,
+        "reposts": 9,
+        "replies": 0,
+        "views": 140
+      }
+    },
+    {
+      "id": "xp-002",
+      "url": "https://x.com/rocket_returns_in/status/xp-002",
+      "minutesAgo": 307,
+      "text": "Jio IPO mein paisa lagao bhai, listing pe double pakka! 🚀🚀 #JioIPO",
+      "lang": "hinglish",
+      "topic": "listing-expectations",
+      "author": {
+        "platform": "x",
+        "platformUserId": "fx-x-rocket_returns_in",
+        "handle": "rocket_returns_in",
+        "displayName": "Rocket Returns",
+        "followers": 380,
+        "kind": "other"
+      },
+      "reachRaw": {
+        "likes": 4,
+        "reposts": 8,
+        "replies": 0,
+        "views": 120
+      }
+    },
+    {
+      "id": "xp-003",
+      "url": "https://x.com/ipo_guru_bhai/status/xp-003",
+      "minutesAgo": 312,
+      "text": "Jio IPO mein paisa lagao, listing pe double pakka hai bhai! 🚀 #JioIPO",
+      "lang": "hinglish",
+      "topic": "listing-expectations",
+      "author": {
+        "platform": "x",
+        "platformUserId": "fx-x-ipo_guru_bhai",
+        "handle": "ipo_guru_bhai",
+        "displayName": "IPO Guru Bhai",
+        "followers": 520,
+        "kind": "other"
+      },
+      "reachRaw": {
+        "likes": 6,
+        "reposts": 11,
+        "replies": 1,
+        "views": 160
+      }
+    },
+    {
+      "id": "xp-004",
+      "url": "https://x.com/stock_tips_daily_99/status/xp-004",
+      "minutesAgo": 320,
+      "text": "jio IPO mein paisa lagao bhai listing pe double pakka hai 🚀 #JioIPO",
+      "lang": "hinglish",
+      "topic": "listing-expectations",
+      "author": {
+        "platform": "x",
+        "platformUserId": "fx-x-stock_tips_daily_99",
+        "handle": "stock_tips_daily_99",
+        "displayName": "Stock Tips Daily",
+        "followers": 290,
+        "kind": "other"
+      },
+      "reachRaw": {
+        "likes": 3,
+        "reposts": 7,
+        "replies": 0,
+        "views": 90
+      }
+    },
+    {
+      "id": "xp-005",
+      "url": "https://x.com/listing_king_007/status/xp-005",
+      "minutesAgo": 331,
+      "text": "Jio IPO mein paisa lagao bhai, listing pe DOUBLE pakka hai! 🚀 #JioIPO",
+      "lang": "hinglish",
+      "topic": "listing-expectations",
+      "author": {
+        "platform": "x",
+        "platformUserId": "fx-x-listing_king_007",
+        "handle": "listing_king_007",
+        "displayName": "Listing King",
+        "followers": 610,
+        "kind": "other"
+      },
+      "reachRaw": {
+        "likes": 7,
+        "reposts": 10,
+        "replies": 0,
+        "views": 175
+      }
+    },
+    {
+      "id": "xp-006",
+      "url": "https://x.com/market_ka_sher/status/xp-006",
+      "minutesAgo": 338,
+      "text": "Jio IPO mein paisa lagao bhai, listing pe double pakka hai!! 🚀 #JioIPO",
+      "lang": "hinglish",
+      "topic": "listing-expectations",
+      "author": {
+        "platform": "x",
+        "platformUserId": "fx-x-market_ka_sher",
+        "handle": "market_ka_sher",
+        "displayName": "Market ka Sher",
+        "followers": 350,
+        "kind": "other"
+      },
+      "reachRaw": {
+        "likes": 5,
+        "reposts": 9,
+        "replies": 1,
+        "views": 130
+      }
+    },
+    {
+      "id": "xp-007",
+      "url": "https://x.com/ahmedabad_arbitrage/status/xp-007",
+      "minutesAgo": 45,
+      "text": "Jio IPO GMP aaj 140, kal 120 tha. Grey market garam hai 🔥",
+      "lang": "hinglish",
+      "topic": "gmp-grey-market",
+      "author": {
+        "platform": "x",
+        "platformUserId": "fx-x-ahmedabad_arbitrage",
+        "handle": "ahmedabad_arbitrage",
+        "displayName": "Bhavesh",
+        "followers": 2200,
+        "kind": "other"
+      },
+      "reachRaw": {
+        "likes": 260,
+        "reposts": 41,
+        "replies": 38,
+        "views": 19000
+      }
+    },
+    {
+      "id": "xp-008",
+      "url": "https://x.com/dilli_ka_trader/status/xp-008",
+      "minutesAgo": 140,
+      "text": "Jio ka IPO lena chahiye ya nahi? Valuation dekh ke dar lag raha hai yaar",
+      "lang": "hinglish",
+      "topic": "valuation-price-band",
+      "author": {
+        "platform": "x",
+        "platformUserId": "fx-x-dilli_ka_trader",
+        "handle": "dilli_ka_trader",
+        "displayName": "Sameer",
+        "followers": 760,
+        "kind": "other"
+      },
+      "reachRaw": {
+        "likes": 33,
+        "reposts": 4,
+        "replies": 21,
+        "views": 2400
+      }
+    },
+    {
+      "id": "xp-009",
+      "url": "https://x.com/fintwit_farhan/status/xp-009",
+      "minutesAgo": 1100,
+      "text": "Sold my RIL shares before the record date, so no shareholder quota for the Jio IPO. Classic me.",
+      "lang": "en",
+      "topic": "allotment-retail-access",
+      "author": {
+        "platform": "x",
+        "platformUserId": "fx-x-fintwit_farhan",
+        "handle": "fintwit_farhan",
+        "displayName": "Farhan",
+        "followers": 9100,
+        "kind": "other"
+      },
+      "reachRaw": {
+        "likes": 410,
+        "reposts": 36,
+        "replies": 58,
+        "views": 27000
+      }
+    },
+    {
+      "id": "xp-010",
+      "url": "https://x.com/nifty_nanda/status/xp-010",
+      "minutesAgo": 2300,
+      "text": "जियो आईपीओ में शेयरहोल्डर कोटा के लिए रिलायंस के शेयर कब तक खरीदने होंगे?",
+      "lang": "hi",
+      "topic": "allotment-retail-access",
+      "author": {
+        "platform": "x",
+        "platformUserId": "fx-x-nifty_nanda",
+        "handle": "nifty_nanda",
+        "displayName": "Nanda",
+        "followers": 3300,
+        "kind": "other"
+      },
+      "reachRaw": {
+        "likes": 88,
+        "reposts": 14,
+        "replies": 29,
+        "views": 6600
+      }
+    },
+    {
+      "id": "xp-011",
+      "url": "https://x.com/nifty_nanda/status/xp-011",
+      "minutesAgo": 3100,
+      "text": "जियो प्लेटफॉर्म्स की लिस्टिंग पर 20 प्रतिशत फायदा मिल सकता है",
+      "lang": "hi",
+      "topic": "listing-expectations",
+      "author": {
+        "platform": "x",
+        "platformUserId": "fx-x-nifty_nanda",
+        "handle": "nifty_nanda",
+        "displayName": "Nanda",
+        "followers": 3300,
+        "kind": "other"
+      },
+      "reachRaw": {
+        "likes": 57,
+        "reposts": 9,
+        "replies": 6,
+        "views": 4100
+      }
+    },
+    {
+      "id": "xp-012",
+      "url": "https://x.com/ahmedabad_arbitrage/status/xp-012",
+      "minutesAgo": 4000,
+      "text": "રિલાયન્સ જિયો IPO માં રિટેલ ભાગ બે વાર ભરાયો",
+      "lang": "gu",
+      "topic": "subscription-demand",
+      "author": {
+        "platform": "x",
+        "platformUserId": "fx-x-ahmedabad_arbitrage",
+        "handle": "ahmedabad_arbitrage",
+        "displayName": "Bhavesh",
+        "followers": 2200,
+        "kind": "other"
+      },
+      "reachRaw": {
+        "likes": 71,
+        "reposts": 10,
+        "replies": 5,
+        "views": 5200
+      }
+    },
+    {
+      "id": "xp-013",
+      "url": "https://x.com/fintwit_farhan/status/xp-013",
+      "minutesAgo": 5200,
+      "text": "Akash Ambani's first big capital-markets moment. Mukesh Ambani clearly stepping back from day-to-day. #JioIPO",
+      "lang": "en",
+      "topic": "ambani-family-leadership",
+      "author": {
+        "platform": "x",
+        "platformUserId": "fx-x-fintwit_farhan",
+        "handle": "fintwit_farhan",
+        "displayName": "Farhan",
+        "followers": 9100,
+        "kind": "other"
+      },
+      "reachRaw": {
+        "likes": 530,
+        "reposts": 95,
+        "replies": 47,
+        "views": 33000
+      }
+    },
+    {
+      "id": "xp-014",
+      "url": "https://x.com/cricket_and_chill/status/xp-014",
+      "minutesAgo": 600,
+      "text": "JioHotstar crashed again during the match, unreal",
+      "lang": "en",
+      "expectRelevant": false,
+      "author": {
+        "platform": "x",
+        "platformUserId": "fx-x-cricket_and_chill",
+        "handle": "cricket_and_chill",
+        "displayName": "Ankit",
+        "followers": 95,
+        "kind": "other"
+      },
+      "reachRaw": {
+        "likes": 22,
+        "reposts": 3,
+        "replies": 5,
+        "views": 900
+      }
+    },
+    {
+      "id": "xp-015",
+      "url": "https://x.com/cricket_and_chill/status/xp-015",
+      "minutesAgo": 880,
+      "text": "जियो और जीने दो bhai, tension mat le",
+      "lang": "hinglish",
+      "expectRelevant": false,
+      "author": {
+        "platform": "x",
+        "platformUserId": "fx-x-cricket_and_chill",
+        "handle": "cricket_and_chill",
+        "displayName": "Ankit",
+        "followers": 95,
+        "kind": "other"
+      },
+      "reachRaw": {
+        "likes": 9,
+        "reposts": 0,
+        "replies": 1,
+        "views": 200
+      }
+    },
+    {
+      "id": "xp-016",
+      "url": "https://x.com/valuepicker_vik/status/xp-016",
+      "minutesAgo": 6600,
+      "text": "Board independence at Jio Platforms looks thin. Half the directors have long ties to the promoter group.",
+      "lang": "en",
+      "topic": "governance-promoter-control",
+      "author": {
+        "platform": "x",
+        "platformUserId": "fx-x-valuepicker_vik",
+        "handle": "valuepicker_vik",
+        "displayName": "Vik",
+        "followers": 14800,
+        "kind": "other"
+      },
+      "reachRaw": {
+        "likes": 720,
+        "reposts": 160,
+        "replies": 66,
+        "views": 51000
+      }
+    },
+    {
+      "id": "xp-017",
+      "url": "https://x.com/valuepicker_vik/status/xp-017",
+      "minutesAgo": 7100,
+      "text": "The Jio IPO is basically a bet on AI and data centres now, not telecom",
+      "lang": "en",
+      "topic": "digital-ai-growth",
+      "author": {
+        "platform": "x",
+        "platformUserId": "fx-x-valuepicker_vik",
+        "handle": "valuepicker_vik",
+        "displayName": "Vik",
+        "followers": 14800,
+        "kind": "other"
+      },
+      "reachRaw": {
+        "likes": 400,
+        "reposts": 70,
+        "replies": 39,
+        "views": 28000
+      }
+    },
+    {
+      "id": "xp-018",
+      "url": "https://x.com/dilli_ka_trader/status/xp-018",
+      "minutesAgo": 1500,
+      "text": "Jio IPO se pehle recharge mehenga kar diya 😤 #JioIPO",
+      "lang": "hinglish",
+      "topic": "telecom-business",
+      "author": {
+        "platform": "x",
+        "platformUserId": "fx-x-dilli_ka_trader",
+        "handle": "dilli_ka_trader",
+        "displayName": "Sameer",
+        "followers": 760,
+        "kind": "other"
+      },
+      "reachRaw": {
+        "likes": 150,
+        "reposts": 40,
+        "replies": 33,
+        "views": 9800
+      }
+    },
+    {
+      "id": "xp-019",
+      "url": "https://x.com/fintwit_farhan/status/xp-019",
+      "minutesAgo": 260,
+      "text": "Love how every finfluencer became a telecom analyst this week. Jio IPO season 🤡",
+      "lang": "en",
+      "topic": "listing-expectations",
+      "author": {
+        "platform": "x",
+        "platformUserId": "fx-x-fintwit_farhan",
+        "handle": "fintwit_farhan",
+        "displayName": "Farhan",
+        "followers": 9100,
+        "kind": "other"
+      },
+      "reachRaw": {
+        "likes": 880,
+        "reposts": 120,
+        "replies": 64,
+        "views": 47000
+      }
+    },
+    {
+      "id": "xp-020",
+      "url": "https://x.com/dalal_st_dreamer/status/xp-020",
+      "minutesAgo": 1900,
+      "text": "Mera 2 lot ka bid laga diya Jio IPO mein, ab allotment ki dua karo 🙏",
+      "lang": "hinglish",
+      "topic": "allotment-retail-access",
+      "author": {
+        "platform": "x",
+        "platformUserId": "fx-x-dalal_st_dreamer",
+        "handle": "dalal_st_dreamer",
+        "displayName": "Rohan",
+        "followers": 1200,
+        "kind": "other"
+      },
+      "reachRaw": {
+        "likes": 64,
+        "reposts": 5,
+        "replies": 12,
+        "views": 3900
+      }
+    },
+    {
+      "id": "xp-021",
+      "url": "https://x.com/ahmedabad_arbitrage/status/xp-021",
+      "minutesAgo": 2700,
+      "text": "जियो आईपीओ जीएमपी आज 130 रुपये पर पहुंचा",
+      "lang": "hi",
+      "topic": "gmp-grey-market",
+      "author": {
+        "platform": "x",
+        "platformUserId": "fx-x-ahmedabad_arbitrage",
+        "handle": "ahmedabad_arbitrage",
+        "displayName": "Bhavesh",
+        "followers": 2200,
+        "kind": "other"
+      },
+      "reachRaw": {
+        "likes": 190,
+        "reposts": 33,
+        "replies": 14,
+        "views": 12000
+      }
+    },
+    {
+      "id": "xp-022",
+      "url": "https://x.com/ahmedabad_arbitrage/status/xp-022",
+      "minutesAgo": 8400,
+      "text": "જિયો IPO લિસ્ટિંગ ગેઇન માટે સારો લાગે છે",
+      "lang": "gu",
+      "topic": "listing-expectations",
+      "author": {
+        "platform": "x",
+        "platformUserId": "fx-x-ahmedabad_arbitrage",
+        "handle": "ahmedabad_arbitrage",
+        "displayName": "Bhavesh",
+        "followers": 2200,
+        "kind": "other"
+      },
+      "reachRaw": {
+        "likes": 42,
+        "reposts": 4,
+        "replies": 3,
+        "views": 2900
+      }
+    },
+    {
+      "id": "xp-023",
+      "url": "https://x.com/valuepicker_vik/status/xp-023",
+      "minutesAgo": 9100,
+      "text": "Jio Platforms DRHP says ARPU grew 12% YoY. Tariff hikes are doing the heavy lifting.",
+      "lang": "en",
+      "topic": "telecom-business",
+      "author": {
+        "platform": "x",
+        "platformUserId": "fx-x-valuepicker_vik",
+        "handle": "valuepicker_vik",
+        "displayName": "Vik",
+        "followers": 14800,
+        "kind": "other"
+      },
+      "reachRaw": {
+        "likes": 610,
+        "reposts": 140,
+        "replies": 29,
+        "views": 39000
+      }
+    },
+    {
+      "id": "xp-024",
+      "url": "https://x.com/dilli_ka_trader/status/xp-024",
+      "minutesAgo": 9900,
+      "text": "Isha Ambani ka role kya hoga Jio listing ke baad? Retail wali company to unke paas hai",
+      "lang": "hinglish",
+      "topic": "ambani-family-leadership",
+      "author": {
+        "platform": "x",
+        "platformUserId": "fx-x-dilli_ka_trader",
+        "handle": "dilli_ka_trader",
+        "displayName": "Sameer",
+        "followers": 760,
+        "kind": "other"
+      },
+      "reachRaw": {
+        "likes": 47,
+        "reposts": 6,
+        "replies": 9,
+        "views": 3100
+      }
+    },
+    {
+      "id": "xp-025",
+      "url": "https://x.com/dalal_st_dreamer/status/xp-025",
+      "minutesAgo": 700,
+      "text": "Jio IPO valuation 11 lakh crore? Bhai Airtel se bhi mehenga 😂",
+      "lang": "hinglish",
+      "topic": "valuation-price-band",
+      "author": {
+        "platform": "x",
+        "platformUserId": "fx-x-dalal_st_dreamer",
+        "handle": "dalal_st_dreamer",
+        "displayName": "Rohan",
+        "followers": 1200,
+        "kind": "other"
+      },
+      "reachRaw": {
+        "likes": 300,
+        "reposts": 52,
+        "replies": 70,
+        "views": 21000
+      }
+    }
+  ]
+}
