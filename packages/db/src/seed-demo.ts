@@ -397,15 +397,17 @@ export async function demoSnapshot(db: Db, opts: { now: Date }): Promise<DemoSna
   const classified = counts?.classified ?? 0
 
   const from = new Date(opts.now.getTime() - DAY)
+  // Emerging topics get a slug derived from random post ids, so they are keyed by name instead.
   const topicRows = await db.execute<{ slug: string; items: number }>(
-    sql`select t.slug, sum(s.items)::int as items
+    sql`select case when t.kind = 'emerging' then 'emerging:' || t.name else t.slug end as slug,
+               sum(s.items)::int as items
         from topic_stats_15m s join topics t on t.id = s.topic_id
         where s.entity = 'all' and s.lane = 'all'
           and s.bucket_start > ${from.toISOString()}::timestamptz
           and s.bucket_start <= ${opts.now.toISOString()}::timestamptz
           and t.slug <> 'unclassified'
-        group by t.slug having sum(s.items) > 0
-        order by sum(s.items) desc, t.slug`,
+        group by 1 having sum(s.items) > 0
+        order by sum(s.items) desc, 1`,
   )
 
   const marketPointCounts = Object.fromEntries(MARKET_SERIES.map((s) => [s, 0])) as Record<

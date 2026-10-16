@@ -16,6 +16,7 @@
     "db:up": "docker compose up -d --wait db",
     "db:migrate": "pnpm --filter @jio/db db:migrate",
     "db:seed": "pnpm --filter @jio/db db:seed",
+    "demo": "pnpm --filter @jio/worker exec tsx src/demo.ts",
     "db:test-setup": "bash scripts/test-db.sh",
     "dev": "pnpm --parallel --filter @jio/web --filter @jio/worker dev"
   },
