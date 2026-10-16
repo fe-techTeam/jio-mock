@@ -1,5 +1,4 @@
-import { cleanup, render, screen } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
+import { cleanup, fireEvent, render, screen } from '@testing-library/react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import {
   COORDINATION_HELP,
@@ -59,7 +58,7 @@ describe('CoordinationCount', () => {
     expect(screen.queryByRole('button')).toBeNull()
   })
 
-  it('opens the evidence drawer with the slice plus coordinated, without bubbling', async () => {
+  it('opens the evidence drawer with the slice plus coordinated, without bubbling', () => {
     const onOpen = vi.fn()
     const parent = vi.fn()
     render(
@@ -74,7 +73,8 @@ describe('CoordinationCount', () => {
     )
     const button = screen.getByRole('button', { name: /GMP: 7 suspected coordinated/i })
     expect(button.textContent).toBe('7 suspected')
-    await userEvent.click(button)
+    // A plain click: a pointer hover would open the Radix tooltip, which needs ResizeObserver.
+    fireEvent.click(button)
     expect(onOpen).toHaveBeenCalledWith({
       topic: 'gmp-grey-market',
       topicName: 'GMP',
