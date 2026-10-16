@@ -4,6 +4,8 @@
 import { NextResponse } from 'next/server'
 import type { ApiErrorBody } from '@jio/core'
 import { auth } from '@/lib/auth'
+import { clientIp } from '@/lib/login-guard'
+import { apiLimiter } from '@/lib/rate-limit'
 import { ParamError } from './errors'
 
 export const DEFAULT_CACHE_CONTROL = 'private, max-age=15'
@@ -31,6 +33,19 @@ export function withApi<C = unknown>(
       return apiError(503, 'db_unavailable')
     }
     if (!session) return apiError(401, 'unauthorized')
+
+    // x-forwarded-for is trusted only behind a proxy; locally it is client-controlled.
+    const user = (session as { user?: { id?: string; email?: string } }).user
+    const limit = apiLimiter.check(`${user?.id ?? user?.email ?? 'anon'}|${clientIp(req.headers)}`)
+    if (!limit.ok) {
+      return NextResponse.json(
+        { error: 'rate_limited' },
+        {
+          status: 429,
+          headers: { 'Cache-Control': 'no-store', 'Retry-After': String(limit.retryAfterSec) },
+        },
+      )
+    }
 
     try {
       const body = await handler(req, ctx)

@@ -36,6 +36,16 @@ export function createAuth(opts: CreateAuthOptions) {
     // Database sessions, 7 days, refreshed once a day. The cookie cache stays off so every
     // session check hits the database and a sign-out takes effect at once.
     session: { expiresIn: 60 * 60 * 24 * 7, updateAge: 60 * 60 * 24 },
+    // Per-IP request limits on top of the 01-03 account lockout (5 failures -> 15 min), which
+    // lives on the auth route and stays untouched. X-Forwarded-For is trusted only behind a proxy.
+    // Off under Vitest so the lockout integration tests can make many sign-in calls from one address.
+    rateLimit: {
+      enabled: process.env.NODE_ENV !== 'test',
+      storage: 'memory',
+      window: 60,
+      max: 100,
+      customRules: { '/sign-in/email': { window: 60, max: 5 } },
+    },
     plugins: [nextCookies()],
   })
 }

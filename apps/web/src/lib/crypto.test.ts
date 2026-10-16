@@ -66,3 +66,10 @@ describe('crypto', () => {
     expect(decryptSecret(blob)).toBe('worker-vector-token-0123456789')
   })
 })
+
+describe('crypto hardening', () => {
+  it('rejects a key that is not 32 bytes after decoding', () => {
+    vi.stubEnv('CONFIG_ENCRYPTION_KEY', randomBytes(16).toString('base64'))
+    expect(() => encryptSecret('x')).toThrow(CredentialKeyError)
+  })
+})
