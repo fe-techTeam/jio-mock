@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { SEED_TOPICS } from './seed-topics'
 
-const INDIC = /[ऀ-ॿ઀-૿]/
+const INDIC = /[\u0900-\u097F\u0A80-\u0AFF]/
 
 describe('SEED_TOPICS', () => {
   it('has 12 topics with unique kebab slugs', () => {
