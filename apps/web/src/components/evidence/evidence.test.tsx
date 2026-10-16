@@ -133,7 +133,7 @@ describe('slice codec', () => {
 
 describe('EvidenceCard', () => {
   it('hides the author handle unless the API marks it visible', () => {
-    render(<EvidenceCard item={item()} />)
+    renderWithClient(<EvidenceCard item={item()} />)
     expect(screen.getByText('Reddit user')).toBeInTheDocument()
     // Scraped text is rendered as text, never as HTML.
     expect(screen.getByText('Jio IPO valuation looks stretched <b>imo</b>')).toBeInTheDocument()
@@ -145,7 +145,7 @@ describe('EvidenceCard', () => {
   })
 
   it('shows names for visible authors, glosses and low confidence', () => {
-    render(
+    renderWithClient(
       <EvidenceCard
         item={item({
           sourceKey: 'news_rss',
@@ -165,7 +165,7 @@ describe('EvidenceCard', () => {
   })
 
   it('never links a non-http url', () => {
-    render(<EvidenceCard item={item({ url: 'javascript:alert(1)' })} />)
+    renderWithClient(<EvidenceCard item={item({ url: 'javascript:alert(1)' })} />)
     expect(screen.queryByRole('link', { name: /Open original/ })).toBeNull()
   })
 
