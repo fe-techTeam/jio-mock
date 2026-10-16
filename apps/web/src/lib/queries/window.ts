@@ -7,6 +7,9 @@ export const HOUR_MS = 60 * 60_000
 export const DAY_MS = 24 * HOUR_MS
 export const WINDOW_BUCKETS = 96
 
+/** Origin for IST hours in SQL: date_bin('1 hour', ts, IST_HOUR_ORIGIN::timestamptz). */
+export const IST_HOUR_ORIGIN = '2000-01-01 00:30:00+00'
+
 export type Range = { from: Date; to: Date }
 
 export function floor15(d: Date): Date {
