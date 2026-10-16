@@ -44,9 +44,12 @@ export type Auth = ReturnType<typeof createAuth>
 
 let instance: Auth | undefined
 /** The app's auth, built on first use so importing this module never needs DATABASE_URL. */
+function real(): Auth {
+  instance ??= createAuth({ db: getDb().db })
+  return instance
+}
 export const auth: Auth = new Proxy({} as Auth, {
-  get(_t, prop) {
-    instance ??= createAuth({ db: getDb().db })
-    return Reflect.get(instance, prop) as unknown
-  },
+  get: (_t, prop) => Reflect.get(real(), prop) as unknown,
+  // toNextJsHandler checks `'handler' in auth`
+  has: (_t, prop) => Reflect.has(real(), prop),
 })

@@ -1,9 +1,11 @@
+import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { drizzle } from 'drizzle-orm/postgres-js'
 import { migrate } from 'drizzle-orm/postgres-js/migrator'
 import postgres from 'postgres'
 
-export const MIGRATIONS_FOLDER = fileURLToPath(new URL('../migrations', import.meta.url))
+// path.resolve (not `new URL('../migrations', ...)`) so webpack in the web app does not try to bundle the folder.
+export const MIGRATIONS_FOLDER = resolve(dirname(fileURLToPath(import.meta.url)), '../migrations')
 
 /**
  * Applies pending migrations from packages/db/migrations. A session advisory lock serialises
