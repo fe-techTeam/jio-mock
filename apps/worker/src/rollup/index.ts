@@ -7,12 +7,20 @@
 // rescore, recomputeReachColumns rewrites only the reach columns over the last 7 days so older
 // buckets match the new per-source p95.
 //
+// Coordination (06-02): after the reach refresh, near-duplicate coordination is detected
+// (trust/coordination.ts) and suspected_coordinated is refreshed in already rolled-up buckets that
+// hold newly flagged posts. Each recompute also counts flagged posts per slice and sets burst_flag
+// and top5_author_share (rollup/coordination.ts).
+//
 // Interfaces used by 06-01 and 07-01: runRollup, recomputeRange, bucketStart.
 import { getLatestConfig, type Db } from '@jio/db'
 import type { Sql } from '../triage/repo'
-import { resolveTrustConfig, TRUST_DEFAULTS } from '../trust/config'
+import { resolveTrustConfig, TRUST_DEFAULTS, type CoordinationConfig } from '../trust/config'
+import { detectNearDupCoordination } from '../trust/coordination'
 import { lastFullRescoreAt, refreshReachScores, shouldFullRescore } from '../trust/reach'
 import { ACTIVE_MIN_ITEMS_24H, refreshTopicStatus, type TopicStatusCounts } from './active'
+import { applyCoordinationColumns, refreshSuspectedCounts } from './coordination'
+import { fanned } from './fan'
 
 export { ACTIVE_MIN_ITEMS_24H, refreshTopicStatus, type TopicStatusCounts } from './active'
 
@@ -51,46 +59,19 @@ export function bucketRanges(buckets: Date[]): { from: Date; to: Date }[] {
   return out
 }
 
-/**
- * The src + fan CTEs shared by recomputeRange and recomputeReachColumns: classified posts published
- * in [from, to), bucketed, fanned out to entity ('all' plus each effective entity) x lane ('all'
- * plus the post's lane). A NULL reach_score counts as `unknown`.
- */
-function fanned(tx: Sql, from: Date, to: Date, unknown: number) {
-  return tx`
-      src as (
-        select date_bin('15 minutes', p.published_at, timestamptz '2000-01-01 00:00:00+00')
-                 as bucket_start,
-               ec.topic_id, p.lane, ec.entities, ec.sentiment, ec.confidence,
-               coalesce(p.reach_score, ${unknown}::real)::double precision as reach
-        from posts p
-        join effective_classifications ec on ec.post_id = p.id
-        where p.published_at >= ${from.toISOString()}::timestamptz
-          and p.published_at < ${to.toISOString()}::timestamptz
-      ),
-      fan as (
-        select s.bucket_start, s.topic_id, e.entity, l.lane, s.sentiment, s.confidence, s.reach
-        from src s
-        cross join lateral (
-          select 'all'::text as entity
-          union
-          select distinct x from unnest(s.entities) as x where x <> 'all'
-        ) e
-        cross join lateral (values ('all'::text), (s.lane)) as l(lane)
-      )`
-}
-
 export type RecomputeOptions = {
   /** Reach counted for a post whose reach_score is NULL (default TRUST_DEFAULTS.reach.unknownScore). */
   unknownScore?: number
+  /** Burst and top-5 thresholds (default TRUST_DEFAULTS.coordination). */
+  coordination?: CoordinationConfig
 }
 
 /**
- * Recomputes every bucket in [from, to) (widened to whole buckets) in one statement: upserts the
- * counts and reach sums produced from posts x effective_classifications, then deletes rows in the
- * range that are no longer produced (a relabel that empties a slice leaves nothing stale).
- * Coordination columns (suspected_coordinated, burst_flag, top5_author_share) are left as they
- * are for 06-02. Returns the number of rows written.
+ * Recomputes every bucket in [from, to) (widened to whole buckets) in one transaction: upserts the
+ * counts, reach sums and suspected_coordinated produced from posts x effective_classifications,
+ * deletes rows in the range that are no longer produced (a relabel that empties a slice leaves
+ * nothing stale), then sets burst_flag and top5_author_share on the rows in the range. Returns the
+ * number of rows written.
  */
 export async function recomputeRange(
   h: { sql: Sql },
@@ -101,6 +82,7 @@ export async function recomputeRange(
   const to = bucketCeil(range.to)
   if (to <= from) return { rows: 0 }
   const unknown = opts.unknownScore ?? TRUST_DEFAULTS.reach.unknownScore
+  const coordination = opts.coordination ?? TRUST_DEFAULTS.coordination
   const rows = await h.sql.begin(async (tx) => {
     const res = await tx<{ n: number }[]>`
       with ${fanned(tx as unknown as Sql, from, to, unknown)},
@@ -113,21 +95,24 @@ export async function recomputeRange(
                (count(*) filter (where confidence = 'low'))::int as low_conf,
                coalesce(sum(reach) filter (where sentiment = 'positive'), 0)::real as reach_pos,
                coalesce(sum(reach) filter (where sentiment = 'neutral'), 0)::real as reach_neu,
-               coalesce(sum(reach) filter (where sentiment = 'negative'), 0)::real as reach_neg
+               coalesce(sum(reach) filter (where sentiment = 'negative'), 0)::real as reach_neg,
+               (count(*) filter (where coord_suspected))::int as suspected_coordinated
         from fan
         group by bucket_start, topic_id, entity, lane
       ),
       up as (
         insert into topic_stats_15m as t
           (bucket_start, topic_id, entity, lane, items, pos, neu, neg, low_conf,
-           reach_pos, reach_neu, reach_neg, updated_at)
+           reach_pos, reach_neu, reach_neg, suspected_coordinated, updated_at)
         select bucket_start, topic_id, entity, lane, items, pos, neu, neg, low_conf,
-               reach_pos, reach_neu, reach_neg, now()
+               reach_pos, reach_neu, reach_neg, suspected_coordinated, now()
         from agg
         on conflict (bucket_start, topic_id, entity, lane) do update set
           items = excluded.items, pos = excluded.pos, neu = excluded.neu, neg = excluded.neg,
           low_conf = excluded.low_conf, reach_pos = excluded.reach_pos,
           reach_neu = excluded.reach_neu, reach_neg = excluded.reach_neg,
+          suspected_coordinated = excluded.suspected_coordinated,
+          burst_flag = false, top5_author_share = null,
           updated_at = excluded.updated_at
         returning t.bucket_start, t.topic_id, t.entity, t.lane
       ),
@@ -142,6 +127,7 @@ export async function recomputeRange(
         returning 1
       )
       select (select count(*) from up)::int as n, (select count(*) from del)::int as d`
+    await applyCoordinationColumns(tx as unknown as Sql, { from, to }, coordination, unknown)
     return res[0]?.n ?? 0
   })
   return { rows }
@@ -191,6 +177,8 @@ export type RollupResult = {
   status: TopicStatusCounts
   /** Reach scores written this run, and whether it was a full rescore. */
   reach: { updated: number; full: boolean }
+  /** Posts newly flagged as suspected coordinated, and older rows whose count was refreshed. */
+  coordination: { flagged: number; refreshedRows: number }
 }
 
 /**
@@ -203,6 +191,9 @@ export type RollupResult = {
  * `trust.reach.fullRescoreEveryMin` (and on the first run in a process), otherwise only unscored
  * posts. After a full rescore in a 'recent' run, the reach columns of the last 7 days are
  * rewritten (a 'full7d' run already recomputes that whole window).
+ *
+ * Then near-duplicate coordination is detected over the last 26h; when posts were newly flagged,
+ * suspected_coordinated is refreshed in the existing rows of their buckets (06-02).
  */
 export async function runRollup(
   h: RollupHandle,
@@ -215,6 +206,9 @@ export async function runRollup(
   const full = shouldFullRescore(lastFullRescoreAt(), now, trust.reach)
   const reach = await refreshReachScores(h, now, trust.reach, { full })
   const unknownScore = trust.reach.unknownScore
+  const coordination = trust.coordination
+  const { flagged } = await detectNearDupCoordination(h, now, coordination)
+  const refreshedRows = flagged > 0 ? await refreshSuspectedCounts(h, now) : 0
 
   const cur = bucketStart(now)
   const windowFrom = new Date(cur.getTime() - FULL_WINDOW_MS)
@@ -243,7 +237,7 @@ export async function runRollup(
   let rows = 0
   let buckets = 0
   for (const r of ranges) {
-    rows += (await recomputeRange(h, r, { unknownScore })).rows
+    rows += (await recomputeRange(h, r, { unknownScore, coordination })).rows
     buckets += Math.round((r.to.getTime() - r.from.getTime()) / BUCKET_MS)
   }
   if (full && mode !== 'full7d') {
@@ -252,5 +246,12 @@ export async function runRollup(
 
   const minItems = config.active_min_items_24h ?? ACTIVE_MIN_ITEMS_24H
   const status = await refreshTopicStatus(h, now, minItems)
-  return { mode, buckets, rows, status, reach: { updated: reach.updated, full } }
+  return {
+    mode,
+    buckets,
+    rows,
+    status,
+    reach: { updated: reach.updated, full },
+    coordination: { flagged, refreshedRows },
+  }
 }
