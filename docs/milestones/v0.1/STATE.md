@@ -9,7 +9,7 @@ Phase: 02 of 07 (Ingestion)
 Plan: 0 of 4 in this phase
 Status: Ready to execute
 Last activity: 2026-10-16 - Phase 01 data and login closed
-Progress: 6 / 23 (01-01 and 01-02 code done and green, SUMMARY files missing)
+Progress: 6 / 23
 
 ## Recent decisions
 
