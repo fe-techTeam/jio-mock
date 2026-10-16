@@ -3,7 +3,14 @@ import type { SourceFreshness } from '@jio/core'
 import { act, cleanup, render, renderHook, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { formatAge, formatCount, formatIst, formatIstRange, pctSplit } from './format'
+import {
+  formatAge,
+  formatCount,
+  formatIst,
+  formatIstRange,
+  pctSplit,
+  safeExternalUrl,
+} from './format'
 import { ApiError } from '@/lib/api'
 import { createQueryClient, expiredLoginUrl } from '../providers'
 import { FilterBar } from './filter-bar'
@@ -37,6 +44,13 @@ describe('format', () => {
     expect(pctSplit({ pos: 0, neu: 0, neg: 0 })).toEqual({ pos: 0, neu: 0, neg: 0 })
     const t = pctSplit({ pos: 7, neu: 7, neg: 1 })
     expect(t.pos + t.neu + t.neg).toBe(100)
+  })
+
+  it('only passes http(s) urls through', () => {
+    expect(safeExternalUrl('https://x.com/a/status/1')).toBe('https://x.com/a/status/1')
+    expect(safeExternalUrl('javascript:alert(1)')).toBeNull()
+    expect(safeExternalUrl('not a url')).toBeNull()
+    expect(safeExternalUrl(null)).toBeNull()
   })
 
   it('formats ages and counts', () => {

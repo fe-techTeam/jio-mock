@@ -1,7 +1,7 @@
 import type { EvidenceAuthor, EvidenceItem } from '@jio/core'
 import { ExternalLink } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
-import { formatIst } from '@/components/shell/format'
+import { formatIst, safeExternalUrl } from '@/components/shell/format'
 import { RelabelControls } from './relabel'
 import { SourceBadge } from './source-badge'
 
@@ -21,6 +21,7 @@ function reachText(score: number | null): string {
  * Author names appear only when the API marks the author visible (media outlets, public figures).
  */
 export function EvidenceCard({ item }: { item: EvidenceItem }) {
+  const href = safeExternalUrl(item.url)
   return (
     <article className="flex flex-col gap-2 rounded-lg border p-3 text-sm">
       <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
@@ -42,15 +43,17 @@ export function EvidenceCard({ item }: { item: EvidenceItem }) {
       ) : null}
       <div className="flex flex-wrap items-center justify-between gap-2 text-xs">
         <span className="text-muted-foreground">{authorText(item.author)}</span>
-        <a
-          href={item.url}
-          target="_blank"
-          rel="noopener noreferrer nofollow"
-          className="inline-flex items-center gap-1 font-medium underline-offset-4 hover:underline"
-        >
-          Open original
-          <ExternalLink className="size-3" aria-hidden />
-        </a>
+        {href ? (
+          <a
+            href={href}
+            target="_blank"
+            rel="noopener noreferrer nofollow"
+            className="inline-flex items-center gap-1 font-medium underline-offset-4 hover:underline"
+          >
+            Open original
+            <ExternalLink className="size-3" aria-hidden />
+          </a>
+        ) : null}
       </div>
       <RelabelControls item={item} />
     </article>

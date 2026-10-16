@@ -164,6 +164,11 @@ describe('EvidenceCard', () => {
     expect(screen.getByText('Reach -')).toBeInTheDocument()
   })
 
+  it('never links a non-http url', () => {
+    render(<EvidenceCard item={item({ url: 'javascript:alert(1)' })} />)
+    expect(screen.queryByRole('link', { name: /Open original/ })).toBeNull()
+  })
+
   it('labels sources, marking sampled ones', () => {
     render(<SourceBadge sourceKey="apify_instagram" />)
     expect(screen.getByText('Instagram (sampled)')).toBeInTheDocument()
