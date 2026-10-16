@@ -148,10 +148,10 @@ describe('StaleBanner', () => {
 })
 
 describe('FilterBar', () => {
-  it('labels the entity control Mentions and writes the entity param', async () => {
+  it('labels the entity control Entity and writes the entity param', async () => {
     resetNav('lane=media')
     render(<FilterBar />)
-    expect(screen.getByRole('radiogroup', { name: 'Mentions' })).toBeInTheDocument()
+    expect(screen.getByRole('radiogroup', { name: 'Entity' })).toBeInTheDocument()
     await userEvent.click(screen.getByRole('radio', { name: 'Isha' }))
     const p = replacedParams()
     expect(p.get('entity')).toBe('isha')

@@ -20,6 +20,7 @@ export function TrendArrow({ trend, deltaPct }: { trend: Trend; deltaPct: number
       title={`Volume ${trend} ${text} vs prior 24h`}
     >
       <Icon className="size-3.5" aria-hidden />
+      {trend === 'up' || trend === 'down' ? <span className="sr-only">{trend}</span> : null}
       <span>{text}</span>
     </span>
   )

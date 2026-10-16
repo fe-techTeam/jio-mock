@@ -24,14 +24,14 @@ export function FilterBar({ children }: { children?: ReactNode }) {
   return (
     <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
       <div className="flex items-center gap-2">
-        <span id="entity-filter-label" className="text-sm text-muted-foreground">
+        <span aria-hidden className="text-sm text-muted-foreground">
           Mentions
         </span>
         <ToggleGroup
           type="single"
           variant="outline"
           size="sm"
-          aria-labelledby="entity-filter-label"
+          aria-label="Entity"
           value={filters.entity}
           onValueChange={(v) => {
             // Radix sends '' when the active item is pressed again; keep the current choice.

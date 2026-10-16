@@ -195,13 +195,17 @@ function EmergingCard({
         ))}
       </ul>
       <div className="flex flex-wrap items-end gap-2">
-        <Input
-          aria-label={`Rename ${row.name} (optional)`}
-          className="w-52"
-          placeholder="Rename (optional)"
-          value={rename}
-          onChange={(e) => setRename(e.target.value)}
-        />
+        <div className="flex flex-col gap-1">
+          <label htmlFor={`${row.slug}-rename`} className="text-xs text-muted-foreground">
+            Rename (optional)
+          </label>
+          <Input
+            id={`${row.slug}-rename`}
+            className="w-52"
+            value={rename}
+            onChange={(e) => setRename(e.target.value)}
+          />
+        </div>
         <Button
           type="button"
           size="sm"

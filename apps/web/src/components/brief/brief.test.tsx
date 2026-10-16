@@ -148,7 +148,9 @@ describe('BriefView', () => {
     renderWithClient(<BriefView />)
     const link = await screen.findByRole('link', { name: 'Valuation and price band' })
     const row = link.closest('tr')!
-    await userEvent.click(within(row).getByRole('button', { name: 'Negative 42% (n=17)' }))
+    await userEvent.click(
+      within(row).getByRole('button', { name: 'Negative: 17 posts (42%), open evidence' }),
+    )
     const p = replacedParams()
     expect(p.get('lane')).toBe('social')
     expect(decodeSlice(p.get('evidence'))).toMatchObject({
@@ -290,7 +292,9 @@ describe('brief parts', () => {
       />,
     )
     expect(screen.queryByRole('button', { name: /Positive/ })).toBeNull()
-    await userEvent.click(screen.getByRole('button', { name: 'Neutral 50% (n=20)' }))
+    await userEvent.click(
+      screen.getByRole('button', { name: 'Neutral: 20 posts (50%), open evidence' }),
+    )
     expect(onOpen).toHaveBeenCalledWith('neutral')
   })
 

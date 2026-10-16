@@ -12,7 +12,9 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     <Providers>
       <div className="min-h-screen">
         <Header />
-        <main className="mx-auto max-w-7xl px-4 py-6">{children}</main>
+        <main id="main" className="mx-auto max-w-7xl px-4 py-6">
+          {children}
+        </main>
       </div>
       {/* One drawer for every (app) page: it opens from the `evidence` URL param. */}
       <Suspense>

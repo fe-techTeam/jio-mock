@@ -1,5 +1,6 @@
 'use client'
 
+import { SENTIMENT_COLORS } from '@/components/brief/sentiment-colors'
 import type { MarketSeries, TimelineResponse } from '@jio/core'
 import { useMemo, useState } from 'react'
 import { Bar, CartesianGrid, ComposedChart, Line, XAxis, YAxis } from 'recharts'
@@ -30,10 +31,16 @@ export const MARKET_OPTIONS: { key: MarketSeries; label: string; short: string }
   { key: 'sub_qib_x', label: 'QIB subscription (x)', short: 'QIB x' },
 ]
 
+const SENTIMENT_COLORS_BY_THEME = {
+  positive: { light: SENTIMENT_COLORS.light.positive, dark: SENTIMENT_COLORS.dark.positive },
+  neutral: { light: SENTIMENT_COLORS.light.neutral, dark: SENTIMENT_COLORS.dark.neutral },
+  negative: { light: SENTIMENT_COLORS.light.negative, dark: SENTIMENT_COLORS.dark.negative },
+}
+
 const config = {
-  pos: { label: 'Positive', color: '#16a34a' },
-  neu: { label: 'Neutral', color: '#94a3b8' },
-  neg: { label: 'Negative', color: '#dc2626' },
+  pos: { label: 'Positive', theme: SENTIMENT_COLORS_BY_THEME.positive },
+  neu: { label: 'Neutral', theme: SENTIMENT_COLORS_BY_THEME.neutral },
+  neg: { label: 'Negative', theme: SENTIMENT_COLORS_BY_THEME.negative },
   market: { label: 'Market', color: '#2563eb' },
 } satisfies ChartConfig
 
