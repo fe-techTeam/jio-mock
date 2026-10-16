@@ -101,7 +101,7 @@ Goal: the app holds up on first open: realistic demo data, error, empty and load
 | 07-01 | 1 | sonnet | 06-02 | apps/worker/src/demo.ts, packages/db/src/seed-demo.ts, root `pnpm demo` script, UI state components across apps/web/src/components/** (loading, empty, error) | `pnpm demo` runs every fixture adapter through triage, classification (stub or real) and rollups to fill a realistic board; audit and complete loading, empty and error states; accessibility pass (labels, focus, contrast) |
 | 07-02 | 2 | sonnet | 07-01 | apps/web/e2e/**, apps/web/next.config.ts (security headers), fixes under apps/web/src/lib/** | Playwright smoke test (login, brief, topic, evidence drawer, sources), security headers, rate-limit check, a retention-job test, and a README runbook |
 
-- [ ] 07-01  - [ ] 07-02
+- [x] 07-01  - [x] 07-02
 
 ## After the milestone (jump-start Phases 7-9)
 

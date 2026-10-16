@@ -57,3 +57,10 @@ Deviations: drizzle-orm added to worker; per-file worker test DBs; 02-01 fixture
   - 06-01 done: 06-02: the rollup upsert writes counts + reach_* only, so fill the coordination columns separately. TRUST_DEFAULTS.coordination is in apps/worker/src/trust/config.ts; read it with resolveTrustConfig(config).coordination.
 - Wave 2: gate green, fix rounds 0
   - 06-02 done: runRollup now returns `coordination: {flagged, refreshedRows}`, and recomputeRange takes an optional `coordination` config. The shared fan CTE is in apps/worker/src/rollup/fan.ts. posts.coord_suspected never resets to fa
+
+## 07-hardening
+
+- Wave 1: gate green, fix rounds 0
+  - 07-01 done: pnpm demo [-- --purge] [-- --seed=N] fills the dev DB (DATABASE_URL from .env); runDemo({db, sql?, now?, seed?, purge?, env?, log?}) is exported from apps/worker/src/demo.ts and returns a DemoSnapshot; it takes env for k
+- Wave 2: gate green, fix rounds 0
+  - 07-02 done: pnpm e2e uses port 3101 and DB jio_ipo_e2e, builds the app, about 30s once built; run it with COREPACK_INTEGRITY_KEYS=0. Rate limits: /api 120/min per user+IP (lib/rate-limit.ts apiLimiter); sign-in 5/min per IP (Better 

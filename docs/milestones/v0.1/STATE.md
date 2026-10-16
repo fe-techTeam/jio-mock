@@ -1,15 +1,15 @@
 # v0.1 State
 
 **Goal:** Locally running always-on Jio IPO sentiment board: every source ingested (fixtures until keys), classified, rolled up, served behind one login.
-**Current focus:** 07 of 07 (Hardening)
+**Current focus:** Milestone build complete; verification and review
 
 ## Position
 
-Phase: 07 of 07 (Hardening)
+Phase: Milestone build complete; verification and review
 Plan: 0 of 3 in this phase
 Status: Ready to execute
-Last activity: 2026-10-16 - 06-trust-layer closed green
-Progress: 21 / 23
+Last activity: 2026-10-16 - 07-hardening closed green
+Progress: 23 / 23
 
 ## Recent decisions
 
@@ -25,10 +25,10 @@ None.
 
 ## Deferred issues
 
-91 open - see ISSUES.md.
+101 open - see ISSUES.md.
 
 ## Session continuity
 
 Last session: 2026-10-16
-Stopped at: 06-trust-layer closed
-Next: execute Phase 07 wave 1 (PLAN-07-01)
+Stopped at: 07-hardening closed
+Next: full verification gate, then code/security/silent-failure review
