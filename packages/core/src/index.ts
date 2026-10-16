@@ -1,4 +1,6 @@
 export * from './types'
 export * from './adapter'
 export * from './api-types'
+export * from './config-schema'
+export * from './seed-topics'
 export * from './time'
