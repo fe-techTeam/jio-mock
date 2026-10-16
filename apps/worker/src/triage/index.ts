@@ -65,10 +65,15 @@ export async function triagePosts(
   }
   if (posts.length === 0) return stats
 
-  const rows: TriageRow[] = posts.map((p) => {
+  const relevantIdx: number[] = []
+  const rows: TriageRow[] = posts.map((p, i) => {
     const rel = assessRelevance(p.text, opts.terms)
-    if (rel.relevant) stats.relevant++
-    else stats.dropped++
+    if (rel.relevant) {
+      stats.relevant++
+      relevantIdx.push(i)
+    } else {
+      stats.dropped++
+    }
     return {
       id: p.id,
       lang: detectLang(p.text),
@@ -79,7 +84,6 @@ export async function triagePosts(
     }
   })
 
-  const relevantIdx = rows.flatMap((r, i) => (r.matchedTerms.length > 0 ? [i] : []))
   let neighborUpdates: { id: string; clusterId: string }[] = []
   if (relevantIdx.length > 0) {
     let vectors: number[][] | null = null
