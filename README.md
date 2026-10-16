@@ -32,19 +32,20 @@ pnpm dev
 
 ## Scripts
 
-| Script               | What it does                                           |
-| -------------------- | ------------------------------------------------------ |
-| `pnpm lint`          | ESLint 9 flat config for the whole repo                |
-| `pnpm typecheck`     | Type-check every package                               |
-| `pnpm test`          | Run every package's tests, then `scripts/tests`        |
-| `pnpm build`         | Build every package                                    |
-| `pnpm format`        | Format with Prettier                                   |
-| `pnpm format:check`  | Check formatting                                       |
-| `pnpm db:up`         | Start Postgres in Docker and wait until healthy        |
-| `pnpm db:migrate`    | Run Drizzle migrations (available from Phase 01)       |
-| `pnpm db:seed`       | Seed config, topics and the login user (from Phase 01) |
-| `pnpm db:test-setup` | Create `jio_ipo_test` (idempotent)                     |
-| `pnpm dev`           | Run web and worker in parallel                         |
+| Script               | What it does                                             |
+| -------------------- | -------------------------------------------------------- |
+| `pnpm lint`          | ESLint 9 flat config for the whole repo                  |
+| `pnpm typecheck`     | Type-check every package                                 |
+| `pnpm test`          | Run every package's tests, then `scripts/tests`          |
+| `pnpm build`         | Build every package                                      |
+| `pnpm format`        | Format with Prettier                                     |
+| `pnpm format:check`  | Check formatting                                         |
+| `pnpm db:up`         | Start Postgres in Docker and wait until healthy          |
+| `pnpm db:migrate`    | Run Drizzle migrations (available from Phase 01)         |
+| `pnpm db:seed`       | Seed config, topics and the login user (from Phase 01)   |
+| `pnpm db:test-setup` | Create `jio_ipo_test` (idempotent)                       |
+| `pnpm dev`           | Run web and worker in parallel                           |
+| `pnpm demo`          | Fill the board from fixtures (`-- --purge` removes them) |
 
 ## Layout
 
