@@ -1,8 +1,19 @@
 // Fetch scheduler. planTick is pure: given config, the latest fetch_run per source, source health
 // and each source's resolved mode, it decides which sources to enqueue this tick.
-import { SOURCE_KEYS, type AppConfig, type SourceConfig, type SourceKey } from '@jio/core'
+import { and, desc, eq, isNotNull } from 'drizzle-orm'
+import {
+  SOURCE_KEYS,
+  type AppConfig,
+  type SourceAdapter,
+  type SourceConfig,
+  type SourceKey,
+} from '@jio/core'
 import { isIndianMarketHours } from '@jio/core/time'
+import { getLatestConfig, schema, sourceHealth, type Db } from '@jio/db'
+import type { Logger } from 'pino'
+import { ADAPTERS } from './adapters'
 import { breakerState } from './breaker'
+import { parseSourcesMode, resolveCreds, resolveMode, type Env } from './runner'
 
 /**
  * How a source would run right now. `fixture` says why: SOURCES_MODE=fixture forces it, or auto
@@ -143,4 +154,116 @@ export function planTick(input: PlanTickInput): PlanTickResult {
     out.enqueue.push(key)
   }
   return out
+}
+
+// ------------------------------------------------------------------------------------------------
+// The loop: reads state from the database every tick, so it survives restarts.
+
+/** The latest fetch_run event per source (DISTINCT ON source_key). */
+export async function latestRuns(db: Db): Promise<LatestRun[]> {
+  const e = schema.eventLog
+  const rows = await db
+    .selectDistinctOn([e.sourceKey], {
+      sourceKey: e.sourceKey,
+      at: e.at,
+      status: e.status,
+      detail: e.detail,
+    })
+    .from(e)
+    .where(and(eq(e.kind, 'fetch_run'), isNotNull(e.sourceKey)))
+    .orderBy(e.sourceKey, desc(e.at), desc(e.id))
+  return rows.flatMap((r) =>
+    r.sourceKey ? [{ sourceKey: r.sourceKey, at: r.at, status: r.status, detail: r.detail }] : [],
+  )
+}
+
+/** How every source would run now, from SOURCES_MODE and the credentials in config and env. */
+export function resolveSourceModes(
+  config: AppConfig,
+  env: Env,
+  adapters: Record<SourceKey, SourceAdapter> = ADAPTERS,
+): Record<SourceKey, ResolvedMode> {
+  const sourcesMode = parseSourcesMode(env.SOURCES_MODE)
+  const out = {} as Record<SourceKey, ResolvedMode>
+  for (const key of SOURCE_KEYS) {
+    const adapter = adapters[key]
+    out[key] = resolveMode(sourcesMode, adapter, resolveCreds(adapter, config.sources[key], env))
+  }
+  return out
+}
+
+export interface SchedulerOptions {
+  db: Db
+  env: Env
+  /** Queues one fetch (index.ts sends a `fetch-source` job with singletonKey = sourceKey). */
+  enqueue: (key: SourceKey) => Promise<unknown>
+  log: Pick<Logger, 'debug' | 'info' | 'warn' | 'error'>
+  now?: () => Date
+  intervalMs?: number
+  adapters?: Record<SourceKey, SourceAdapter>
+  /** Tick once immediately (default true). */
+  immediate?: boolean
+  /** Called after every completed tick (tests, metrics). */
+  onTick?: (plan: PlanTickResult) => void
+}
+
+export interface SchedulerHandle {
+  /** Runs one tick; resolves null when a previous tick is still running or the tick failed. */
+  tick(): Promise<PlanTickResult | null>
+  stop(): void
+}
+
+export function startScheduler(opts: SchedulerOptions): SchedulerHandle {
+  const { db, env, enqueue, log, intervalMs = 60_000, adapters = ADAPTERS } = opts
+  const clock = opts.now ?? (() => new Date())
+  let running = false
+  let stopped = false
+
+  async function tick(): Promise<PlanTickResult | null> {
+    if (running) {
+      log.warn('scheduler tick skipped: previous tick still running')
+      return null
+    }
+    running = true
+    try {
+      const now = clock()
+      const [{ config }, runs, health] = await Promise.all([
+        getLatestConfig(db),
+        latestRuns(db),
+        sourceHealth(db, now),
+      ])
+      const modes = resolveSourceModes(config, env, adapters)
+      const plan = planTick({ now, config, runs, health, modes })
+      for (const s of plan.skipped)
+        log.debug({ sourceKey: s.key, reason: s.reason }, 'fetch skipped')
+      for (const key of plan.enqueue) {
+        try {
+          await enqueue(key)
+        } catch (err) {
+          log.error({ err, sourceKey: key }, 'enqueue failed')
+        }
+      }
+      if (plan.enqueue.length > 0) log.info({ enqueued: plan.enqueue }, 'fetches enqueued')
+      opts.onTick?.(plan)
+      return plan
+    } catch (err) {
+      log.error({ err }, 'scheduler tick failed')
+      return null
+    } finally {
+      running = false
+    }
+  }
+
+  const timer = setInterval(() => {
+    if (!stopped) void tick()
+  }, intervalMs)
+  if (opts.immediate ?? true) void tick()
+
+  return {
+    tick,
+    stop() {
+      stopped = true
+      clearInterval(timer)
+    },
+  }
 }

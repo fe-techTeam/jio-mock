@@ -1,9 +1,15 @@
-import { describe, expect, it } from 'vitest'
+import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest'
+import pino from 'pino'
 import { DEFAULT_CONFIG, SOURCE_KEYS, type AppConfig, type SourceKey } from '@jio/core'
+import { logEvent, saveConfigVersion, type Db } from '@jio/db'
+import { connectTestDb, prepareTestDb } from '@jio/db/testing'
+import { createFakeFetch } from './adapters/_fixture'
 import {
   effectiveIntervalMin,
   isDue,
+  latestRuns,
   planTick,
+  startScheduler,
   type LatestRun,
   type PlanTickInput,
   type ResolvedMode,
@@ -251,5 +257,148 @@ describe('planTick', () => {
     const out = planTick(input())
     const all = [...out.enqueue, ...out.skipped.map((s) => s.key)].sort()
     expect(all).toEqual([...SOURCE_KEYS].sort())
+  })
+})
+
+// ------------------------------------------------------------------------------------------------
+// Integration: the scheduler loop against a dedicated test database.
+
+describe('scheduler loop', () => {
+  let db: Db
+  let sql: ReturnType<typeof connectTestDb>['sql']
+  const log = pino({ level: 'silent' })
+  const env = { SOURCES_MODE: 'fixture' }
+
+  beforeAll(async () => {
+    vi.stubGlobal('fetch', createFakeFetch([]))
+    const url = await prepareTestDb('jio_ipo_test_worker_scheduler')
+    ;({ db, sql } = connectTestDb(url))
+  })
+
+  afterAll(async () => {
+    vi.unstubAllGlobals()
+    await sql?.end({ timeout: 5 })
+  })
+
+  beforeEach(async () => {
+    await sql.unsafe(
+      'truncate table posts, authors, event_log, market_points, config_versions restart identity cascade',
+    )
+    await saveConfigVersion(db, DEFAULT_CONFIG, 'test')
+  })
+
+  const seedOkRuns = async (at: Date) => {
+    for (const sourceKey of SOURCE_KEYS) {
+      await logEvent(db, {
+        kind: 'fetch_run',
+        at,
+        sourceKey,
+        status: 'ok',
+        itemsNew: 0,
+        detail: { mode: 'fixture' },
+      })
+    }
+  }
+
+  it('latestRuns returns the newest fetch_run per source', async () => {
+    const t1 = new Date(Date.now() - 600_000)
+    const t2 = new Date(Date.now() - 60_000)
+    await logEvent(db, { kind: 'fetch_run', at: t1, sourceKey: 'reddit', status: 'ok' })
+    await logEvent(db, {
+      kind: 'fetch_run',
+      at: t2,
+      sourceKey: 'reddit',
+      status: 'error',
+      detail: { mode: 'live' },
+    })
+    await logEvent(db, { kind: 'fetch_run', at: t1, sourceKey: 'youtube', status: 'ok' })
+    await logEvent(db, { kind: 'login', actor: 'a@b.c' })
+    const runs = await latestRuns(db)
+    expect(runs.map((r) => [r.sourceKey, r.status, r.at.getTime()]).sort()).toEqual(
+      [
+        ['reddit', 'error', t2.getTime()],
+        ['youtube', 'ok', t1.getTime()],
+      ].sort(),
+    )
+    expect(runs.find((r) => r.sourceKey === 'reddit')!.detail).toEqual({ mode: 'live' })
+  })
+
+  it('first tick enqueues every enabled source except x_apify; a second tick after fresh runs enqueues nothing', async () => {
+    const enqueue = vi.fn(async (_key: SourceKey) => {})
+    const sched = startScheduler({ db, env, enqueue, log, immediate: false })
+    try {
+      const first = await sched.tick()
+      const expected = SOURCE_KEYS.filter((k) => k !== 'x_apify')
+      expect(first?.enqueue.sort()).toEqual([...expected].sort())
+      expect(enqueue.mock.calls.map(([k]) => k).sort()).toEqual([...expected].sort())
+      expect(first?.skipped).toEqual([{ key: 'x_apify', reason: 'x_primary_active' }])
+
+      await seedOkRuns(new Date())
+      enqueue.mockClear()
+      const second = await sched.tick()
+      expect(second?.enqueue).toEqual([])
+      expect(enqueue).not.toHaveBeenCalled()
+    } finally {
+      sched.stop()
+    }
+  })
+
+  it('skips disabled sources from the saved config', async () => {
+    const cfg = structuredClone(DEFAULT_CONFIG)
+    cfg.sources.reddit.enabled = false
+    await saveConfigVersion(db, cfg, 'test')
+    const enqueue = vi.fn(async () => {})
+    const sched = startScheduler({ db, env, enqueue, log, immediate: false })
+    const plan = await sched.tick()
+    sched.stop()
+    expect(plan?.enqueue).not.toContain('reddit')
+    expect(plan?.skipped).toContainEqual({ key: 'reddit', reason: 'disabled' })
+  })
+
+  it('never overlaps ticks: a slow tick makes the next one skip', async () => {
+    let release!: () => void
+    const gate = new Promise<void>((r) => (release = r))
+    const enqueue = vi.fn(async () => gate)
+    const sched = startScheduler({ db, env, enqueue, log, immediate: false })
+    try {
+      const slow = sched.tick()
+      await vi.waitFor(() => expect(enqueue).toHaveBeenCalled())
+      await expect(sched.tick()).resolves.toBeNull()
+      release()
+      const plan = await slow
+      expect(plan?.enqueue.length).toBe(10)
+      expect(enqueue).toHaveBeenCalledTimes(10)
+    } finally {
+      sched.stop()
+    }
+  })
+
+  it('keeps enqueuing after one enqueue fails', async () => {
+    const enqueue = vi.fn(async (key: SourceKey) => {
+      if (key === 'x_api') throw new Error('queue down')
+    })
+    const sched = startScheduler({ db, env, enqueue, log, immediate: false })
+    const plan = await sched.tick()
+    sched.stop()
+    expect(plan?.enqueue.length).toBe(10)
+    expect(enqueue).toHaveBeenCalledTimes(10)
+  })
+
+  it('ticks once at start and then every intervalMs until stopped', async () => {
+    const enqueue = vi.fn(async () => {})
+    const ticks: number[] = []
+    const sched = startScheduler({
+      db,
+      env,
+      enqueue,
+      log,
+      intervalMs: 40,
+      onTick: () => ticks.push(Date.now()),
+    })
+    await vi.waitFor(() => expect(ticks.length).toBeGreaterThanOrEqual(3), { timeout: 5000 })
+    sched.stop()
+    const n = ticks.length
+    await new Promise((r) => setTimeout(r, 120))
+    expect(ticks.length).toBeLessThanOrEqual(n + 1)
   })
 })
