@@ -1,0 +1,15 @@
+{
+  "_synthetic": true,
+  "data": [
+    { "id": "1000", "text": "Is Jio IPO worth applying? subscription opens soon", "created_at": "2026-10-14T20:00:00.000Z", "lang": "en", "author_id": "u2", "conversation_id": "1000",
+      "public_metrics": { "retweet_count": 1, "reply_count": 0, "like_count": 9, "quote_count": 0, "impression_count": 400 } },
+    { "id": "999", "text": "Jio IPO anchor investors list", "created_at": "2026-10-14T18:00:00.000Z", "lang": "en", "author_id": "u9",
+      "public_metrics": { "retweet_count": 0, "reply_count": 0, "like_count": 1, "quote_count": 0, "impression_count": 50 } }
+  ],
+  "includes": {
+    "users": [
+      { "id": "u2", "username": "retail_rohan", "name": "Rohan", "verified": false, "public_metrics": { "followers_count": 310 } }
+    ]
+  },
+  "meta": { "newest_id": "1000", "oldest_id": "999", "result_count": 2 }
+}
