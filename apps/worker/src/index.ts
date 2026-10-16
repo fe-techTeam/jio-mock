@@ -7,6 +7,7 @@ import { createDb, getLatestConfig, pingDb, type Db } from '@jio/db'
 import { ADAPTERS } from './adapters'
 import { loadWorkerEnv } from './env'
 import { createLogger } from './log'
+import { createPipelineDeps, registerPipelineJobs } from './jobs'
 import { ensureQueues } from './queues'
 import { runFetch, type Env, type RunOutcome, type RunnerDeps } from './runner'
 import { startScheduler } from './scheduler'
@@ -119,7 +120,11 @@ export async function main(argv: string[], env: Env = process.env): Promise<numb
   for (let i = 0; i < FETCH_CONCURRENCY; i++) {
     await boss.work(FETCH_QUEUE, { batchSize: 1 }, handler)
   }
-  // Phase 03: registerJobs(boss, db)
+  await registerPipelineJobs(
+    boss,
+    { db, sql },
+    await createPipelineDeps({ db, sql }, env, { log: logger }),
+  )
 
   const scheduler = startScheduler({
     db,
