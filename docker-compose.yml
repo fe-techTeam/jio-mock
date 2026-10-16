@@ -1,0 +1,23 @@
+name: jio-ipo
+
+services:
+  db:
+    image: pgvector/pgvector:pg16
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_USER: jio
+      POSTGRES_PASSWORD: jio
+      POSTGRES_DB: jio_ipo
+    volumes:
+      - jio_pgdata:/var/lib/postgresql/data
+      - ./scripts/db-init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U jio -d jio_ipo"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+    restart: unless-stopped
+
+volumes:
+  jio_pgdata:
