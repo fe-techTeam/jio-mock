@@ -33,10 +33,17 @@ test('topic page', async ({ page }) => {
   await audit(page)
 })
 
-for (const path of ['/sources', '/settings', '/accuracy']) {
+const HEADINGS: Record<string, string> = {
+  '/sources': 'Sources',
+  '/settings': 'Settings',
+  '/accuracy': 'Accuracy',
+}
+for (const path of Object.keys(HEADINGS)) {
   test(path, async ({ page }) => {
     await page.goto(path)
     await expect(page.getByRole('main')).toBeVisible()
+    // An error boundary is also accessible, so prove the real page rendered.
+    await expect(page.getByRole('heading', { level: 1 })).toContainText(HEADINGS[path]!)
     await page.waitForLoadState('networkidle')
     await audit(page)
   })

@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
-import { SettingsTabs, parseTab } from '@/components/settings/settings-tabs'
+import { SettingsTabs } from '@/components/settings/settings-tabs'
+import { parseTab } from '@/components/settings/tab-ids'
 
 export const metadata: Metadata = { title: 'Settings' }
 export const dynamic = 'force-dynamic'

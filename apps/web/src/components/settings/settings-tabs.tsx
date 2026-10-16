@@ -5,17 +5,11 @@ import { KeywordsTab } from './keywords-tab'
 import { TopicsTab } from './topics-tab'
 import { AccessTab } from './access-tab'
 
-export const SETTINGS_TABS = [
-  { id: 'keywords', label: 'Keywords' },
-  { id: 'topics', label: 'Topics' },
-  { id: 'access', label: 'Access and retention' },
-] as const
-export type SettingsTabId = (typeof SETTINGS_TABS)[number]['id']
+import { SETTINGS_TABS, type SettingsTabId } from './tab-ids'
 
-export function parseTab(v: string | string[] | undefined): SettingsTabId {
-  const s = Array.isArray(v) ? v[0] : v
-  return SETTINGS_TABS.some((t) => t.id === s) ? (s as SettingsTabId) : 'keywords'
-}
+// Re-exported for existing importers; server code must import from './tab-ids' instead, because a
+// function exported from a 'use client' module cannot be called on the server.
+export { SETTINGS_TABS, parseTab, type SettingsTabId } from './tab-ids'
 
 /** Three links driven by ?tab=, so each tab is deep-linkable. */
 export function SettingsTabs({ tab }: { tab: SettingsTabId }) {
