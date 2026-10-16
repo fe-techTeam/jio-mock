@@ -67,7 +67,7 @@ Goal: the family and strategy team see the one-screen brief and can drill from a
 | 04-02 | 2 | opus | 04-01 | apps/web/src/app/(app)/layout.tsx, apps/web/src/app/(app)/page.tsx, apps/web/src/components/{providers.tsx,shell/**,brief/**,evidence/**} | app shell (header, freshness pill, nav), TanStack Query 30s polling, KPI row, ranked topics with sentiment bars and trend arrows, entity filter, Emerging/Unclassified counts, market strip, evidence drawer (Sheet) opened from any number |
 | 04-03 | 3 | sonnet | 04-02 | apps/web/src/app/(app)/topics/**, apps/web/src/components/topic/** | topic detail: 7-day hourly sentiment chart with GMP overlay, by-source and by-entity breakdowns, top posts, back link keeping filters, buckets that open the evidence drawer |
 
-- [ ] 04-01  - [ ] 04-02  - [ ] 04-03
+- [x] 04-01  - [x] 04-02  - [x] 04-03
 
 ## Phase 05: Operator pages
 

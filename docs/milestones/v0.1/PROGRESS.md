@@ -34,3 +34,12 @@ Deviations: drizzle-orm added to worker; per-file worker test DBs; 02-01 fixture
   - 03-02 done: 03-03: import createClassifier from './classify/anthropic' and call createClassifier({apiKey: env.ANTHROPIC_API_KEY, model: env.CLASSIFIER_MODEL, terms, getFewShot, onUsage, log}), then classifyInBatches(items, topics, {
 - Wave 2: gate green, fix rounds 0
   - 03-03 done: 04-01: topic_stats_15m rows are sparse raw counts (apply the 30-item rule at read time); summary_2line holds two lines separated by '\n'; emerging topics have kind 'emerging' and slugs starting 'emerging-' (exclude the g
+
+## 04-dashboard
+
+- Wave 1: gate green, fix rounds 0
+  - 04-01 done: 04-02/04-03: import types from @jio/core (BriefResponse, TimelineResponse, EvidencePage, TopicRow...) and fetch with getBrief/getTimeline/getEvidence and queryKeys from '@/lib/api' (browser-safe). The brief's pos/neu/neg
+- Wave 2: gate green, fix rounds 1
+  - 04-02 done: Open evidence: useOpenEvidence()({topic, topicName, sentiment, entity, from, to, source, confidence, window?, sort?}); the drawer is already mounted once in (app)/layout.tsx. Reuse: EvidenceCard (evidence/evidence-card.t
+- Wave 3: gate green, fix rounds 0
+  - 04-03 done: Topic page: apps/web/src/app/(app)/topics/[slug]/page.tsx renders TopicView (apps/web/src/components/topic/topic-view.tsx) under Suspense. 06-01 lane toggle: pass it as children of the FilterBar in topic-view.tsx (curren
