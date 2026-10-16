@@ -1,3 +1,5 @@
+import { Suspense } from 'react'
+import { EvidenceDrawer } from '@/components/evidence/evidence-drawer'
 import { Providers } from '@/components/providers'
 import { Header } from '@/components/shell/header'
 import { requireSession } from '@/lib/session'
@@ -12,6 +14,10 @@ export default async function AppLayout({ children }: { children: React.ReactNod
         <Header />
         <main className="mx-auto max-w-7xl px-4 py-6">{children}</main>
       </div>
+      {/* One drawer for every (app) page: it opens from the `evidence` URL param. */}
+      <Suspense>
+        <EvidenceDrawer />
+      </Suspense>
     </Providers>
   )
 }
