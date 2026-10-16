@@ -14,6 +14,7 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.135.0",
     "@jio/core": "workspace:*",
     "@jio/db": "workspace:*",
     "apify-client": "^2",
