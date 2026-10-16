@@ -1,0 +1,149 @@
+{
+  "_synthetic": true,
+  "actor": "apify/instagram-hashtag-scraper",
+  "items": [
+    {
+      "id": "ig0",
+      "shortCode": "Sc0Abc",
+      "caption": "Jio IPO is coming! GMP looks strong",
+      "hashtags": [
+        "JioIPO",
+        "GMP"
+      ],
+      "timestamp": "2026-10-15T08:00:00.000Z",
+      "ownerId": "o0",
+      "ownerUsername": "owner_0",
+      "likesCount": 10,
+      "commentsCount": 0,
+      "videoViewCount": 0
+    },
+    {
+      "id": "ig1",
+      "shortCode": "Sc1Abc",
+      "caption": "जियो आईपीओ के बारे में सब कुछ",
+      "hashtags": [
+        "JioIPO"
+      ],
+      "timestamp": "2026-10-15T09:00:00.000Z",
+      "ownerId": "o1",
+      "ownerUsername": "owner_1",
+      "likesCount": 20,
+      "commentsCount": 1,
+      "videoViewCount": 100
+    },
+    {
+      "id": "ig2",
+      "shortCode": "Sc2Abc",
+      "caption": "Reliance Jio listing day plan",
+      "hashtags": [
+        "RelianceJioIPO"
+      ],
+      "timestamp": "2026-10-15T10:00:00.000Z",
+      "ownerId": "o2",
+      "ownerUsername": "owner_2",
+      "likesCount": 30,
+      "commentsCount": 2,
+      "videoViewCount": 200
+    },
+    {
+      "id": "ig3",
+      "shortCode": "Sc3Abc",
+      "caption": "Mukesh Ambani at AGM, Jio IPO next",
+      "hashtags": [
+        "MukeshAmbani"
+      ],
+      "timestamp": "2026-10-15T11:00:00.000Z",
+      "ownerId": "o3",
+      "ownerUsername": "owner_3",
+      "likesCount": 40,
+      "commentsCount": 3,
+      "videoViewCount": 300
+    },
+    {
+      "id": "ig4",
+      "shortCode": "Sc4Abc",
+      "caption": "Should retail apply for Jio IPO?",
+      "hashtags": [
+        "JioIPO2026"
+      ],
+      "timestamp": "2026-10-15T12:00:00.000Z",
+      "ownerId": "o4",
+      "ownerUsername": "owner_4",
+      "likesCount": 50,
+      "commentsCount": 4,
+      "videoViewCount": 400
+    },
+    {
+      "id": "ig5",
+      "shortCode": "Sc5Abc",
+      "caption": "Jio IPO allotment status kaise check kare",
+      "hashtags": [
+        "JioAllotment"
+      ],
+      "timestamp": "2026-10-15T13:00:00.000Z",
+      "ownerId": "o5",
+      "ownerUsername": "owner_5",
+      "likesCount": 60,
+      "commentsCount": 5,
+      "videoViewCount": 500
+    },
+    {
+      "id": "ig6",
+      "shortCode": "Sc6Abc",
+      "caption": "જિયો આઈપીઓ વિશે બધું",
+      "hashtags": [
+        "JioIPO"
+      ],
+      "timestamp": "2026-10-15T14:00:00.000Z",
+      "ownerId": "o6",
+      "ownerUsername": "owner_6",
+      "likesCount": 70,
+      "commentsCount": 6,
+      "videoViewCount": 600
+    },
+    {
+      "id": "ig7",
+      "shortCode": "Sc7Abc",
+      "caption": "Isha Ambani on Jio's retail pivot",
+      "hashtags": [
+        "IshaAmbani"
+      ],
+      "timestamp": "2026-10-15T15:00:00.000Z",
+      "ownerId": "o7",
+      "ownerUsername": "owner_7",
+      "likesCount": 80,
+      "commentsCount": 7,
+      "videoViewCount": 700
+    },
+    {
+      "id": "ig-old",
+      "shortCode": "OldOne1",
+      "caption": "Old Jio IPO post",
+      "hashtags": [
+        "JioIPO"
+      ],
+      "timestamp": "2026-10-01T08:00:00.000Z",
+      "ownerId": "o9",
+      "ownerUsername": "owner_9",
+      "likesCount": 1,
+      "commentsCount": 0
+    },
+    {
+      "id": "ig-bad1",
+      "caption": "missing shortcode",
+      "timestamp": "2026-10-15T08:00:00.000Z"
+    },
+    {
+      "id": "ig-bad2",
+      "shortCode": "NoText1",
+      "timestamp": "2026-10-15T08:00:00.000Z",
+      "ownerId": "o8"
+    },
+    {
+      "id": "ig-bad3",
+      "shortCode": "BadTs1",
+      "caption": "bad timestamp",
+      "timestamp": "not a date"
+    }
+  ]
+}

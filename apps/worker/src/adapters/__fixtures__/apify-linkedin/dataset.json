@@ -1,0 +1,133 @@
+{
+  "_synthetic": true,
+  "actor": "harvestapi/linkedin-post-search",
+  "items": [
+    {
+      "id": "li1",
+      "url": "https://www.linkedin.com/posts/economic-times_jio-ipo-1",
+      "text": "Jio Platforms IPO: key dates",
+      "postedAt": "2026-10-15T08:00:00.000Z",
+      "author": {
+        "name": "The Economic Times",
+        "publicIdentifier": "economic-times",
+        "type": "company",
+        "followersCount": 4000000
+      },
+      "likes": 300,
+      "comments": 20,
+      "shares": 15
+    },
+    {
+      "urn": "urn:li:activity:2002",
+      "postUrl": "https://www.linkedin.com/posts/groww_jio-2",
+      "content": "Groww explains how to apply for Jio IPO",
+      "postedAt": 1792051200000,
+      "author": {
+        "name": "Groww",
+        "universalName": "groww",
+        "type": "company",
+        "followersCount": 900000
+      },
+      "numLikes": 80,
+      "numComments": 5,
+      "numShares": 3
+    },
+    {
+      "id": "li3",
+      "linkedinUrl": "https://www.linkedin.com/posts/anita_jio-3",
+      "commentary": "My take on the Jio IPO valuation",
+      "postedAt": {
+        "date": "2026-10-15T10:00:00.000Z"
+      },
+      "author": {
+        "name": "Anita Rao",
+        "publicIdentifier": "anita-rao",
+        "type": "person",
+        "followersCount": 12000
+      },
+      "likes": 40,
+      "comments": 6,
+      "shares": 1
+    },
+    {
+      "id": "li4",
+      "url": "https://www.linkedin.com/posts/mintmehta_jio-4",
+      "text": "Mint Mehta on Mukesh Ambani and Jio",
+      "postedAt": "2026-10-15T11:00:00.000Z",
+      "author": {
+        "name": "Mint Mehta",
+        "publicIdentifier": "mint-mehta",
+        "type": "person",
+        "followersCount": 300
+      },
+      "likes": 2
+    },
+    {
+      "id": "li5",
+      "url": "https://www.linkedin.com/posts/acme_jio-5",
+      "text": "Acme Capital note on Jio IPO",
+      "postedAt": "2026-10-15T12:00:00.000Z",
+      "author": {
+        "name": "Acme Capital",
+        "publicIdentifier": "acme-capital",
+        "type": "company",
+        "followersCount": 500
+      },
+      "likes": 1,
+      "comments": 0,
+      "shares": 0
+    },
+    {
+      "id": "li6",
+      "url": "https://www.linkedin.com/posts/cnbc_jio-6",
+      "text": "CNBC-TV18: Jio IPO subscription opens",
+      "postedAt": "2026-10-15T13:00:00.000Z",
+      "author": {
+        "name": "CNBC-TV18",
+        "publicIdentifier": "cnbctv18",
+        "type": "company",
+        "followersCount": 1000000
+      },
+      "likes": 55
+    },
+    {
+      "id": "li7",
+      "url": "https://www.linkedin.com/posts/anon_jio-7",
+      "text": "Anonymous Jio IPO post",
+      "postedAt": "2026-10-15T14:00:00.000Z"
+    },
+    {
+      "id": "li8",
+      "url": "https://www.linkedin.com/posts/ndtv_jio-8",
+      "text": "NDTV Profit: Jio listing plans",
+      "postedAt": "2026-10-15T15:00:00.000Z",
+      "author": {
+        "name": "NDTV Profit",
+        "publicIdentifier": "ndtvprofit",
+        "type": "company",
+        "followersCount": 700000
+      },
+      "likes": 9
+    },
+    {
+      "id": "li-old",
+      "url": "https://www.linkedin.com/posts/old_jio",
+      "text": "Old Jio post",
+      "postedAt": "2026-10-01T08:00:00.000Z",
+      "author": {
+        "name": "Old",
+        "type": "person"
+      }
+    },
+    {
+      "id": "li-bad1",
+      "text": "no url",
+      "postedAt": "2026-10-15T08:00:00.000Z"
+    },
+    {
+      "id": "li-bad2",
+      "url": "https://www.linkedin.com/posts/nodate",
+      "text": "no date"
+    }
+  ]
+}
