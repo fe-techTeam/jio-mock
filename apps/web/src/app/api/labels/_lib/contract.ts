@@ -42,7 +42,14 @@ export type QueueItem = {
   url: string
 }
 
-export type QueueResponse = { item: QueueItem | null; progress: GoldProgress }
+export type QueueTopic = { slug: string; name: string }
+
+/** `topics` (non-dismissed) is additive: it feeds the labelling form's topic select. */
+export type QueueResponse = {
+  item: QueueItem | null
+  progress: GoldProgress
+  topics: QueueTopic[]
+}
 
 export const QueueParams = z.object({
   exclude: z

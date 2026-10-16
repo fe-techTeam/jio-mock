@@ -9,7 +9,8 @@ import {
   UNDO_WINDOW_MS,
   type GoldProgress,
   type LabelRequest,
-  type QueueItem,
+  type QueueResponse,
+  type QueueTopic,
 } from './contract'
 
 type Label = { sentiment: Sentiment; topicSlug: string; entities: EntityKey[] }
@@ -134,12 +135,11 @@ type QueueRow = {
  * are excluded. The language with the fewest gold labels among those that still have candidates
  * (under the 50 per language target) goes first; within it, md5(id) gives a stable spread.
  */
-export async function nextQueueItem(
-  sql: Sql,
-  exclude: string[],
-): Promise<{ item: QueueItem | null; progress: GoldProgress }> {
+export async function nextQueueItem(sql: Sql, exclude: string[]): Promise<QueueResponse> {
   const progress = await goldProgress(sql)
-  if (progress.labelled >= GOLD_TARGET) return { item: null, progress }
+  const topics = await sql<QueueTopic[]>`
+    select slug, name from topics where status <> 'dismissed' order by (kind <> 'seed'), name`
+  if (progress.labelled >= GOLD_TARGET) return { item: null, progress, topics: [...topics] }
 
   const counts = await sql<{ lang: Lang; n: number }[]>`
     select p.lang, count(*)::int as n
@@ -151,7 +151,7 @@ export async function nextQueueItem(
       and p.id <> all(${exclude}::uuid[])
     group by p.lang`
   const open = counts.map((c) => c.lang)
-  if (open.length === 0) return { item: null, progress }
+  if (open.length === 0) return { item: null, progress, topics: [...topics] }
   // Prefer languages under their target; once all are met, any language with candidates.
   const under = open.filter((l) => progress.byLang[l] < GOLD_PER_LANG)
   const pool = under.length > 0 ? under : open
@@ -171,7 +171,7 @@ export async function nextQueueItem(
       and p.id <> all(${exclude}::uuid[])
     order by md5(p.id::text)
     limit 1`
-  if (!row) return { item: null, progress }
+  if (!row) return { item: null, progress, topics: [...topics] }
   return {
     item: {
       postId: row.id,
@@ -183,5 +183,6 @@ export async function nextQueueItem(
       url: row.url,
     },
     progress,
+    topics: [...topics],
   }
 }

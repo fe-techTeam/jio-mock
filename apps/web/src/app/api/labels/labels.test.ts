@@ -263,6 +263,7 @@ describe('GET /api/labels/queue', () => {
     }
     expect(json.item).toMatchObject({ lang: 'gu', text: 'gu candidate' })
     expect(json.progress.labelled).toBe(3)
+    expect((json as unknown as { topics: { slug: string }[] }).topics.length).toBeGreaterThan(5)
     expect(json.progress.byLang).toMatchObject({ hi: 3, gu: 0, en: 0, hinglish: 0 })
   })
 
