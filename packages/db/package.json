@@ -14,11 +14,15 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "@jio/core": "workspace:*",
     "drizzle-orm": "^0.45.4",
-    "postgres": "^3.4"
+    "postgres": "^3.4",
+    "zod": "^3"
   },
   "devDependencies": {
+    "@types/node": "^22",
     "drizzle-kit": "^0.31.11",
+    "tsx": "^4",
     "typescript": "^5.7",
     "vitest": "^2.1"
   }
