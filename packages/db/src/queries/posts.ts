@@ -190,7 +190,11 @@ export async function upsertPosts(
 
   return db.transaction(async (tx) => {
     const authorIds = new Map<string, string>()
-    for (const chunk of chunks([...batchAuthors.values()], CHUNK)) {
+    // A stable key order keeps concurrent fetchers (x_api, x_apify) from deadlocking on authors.
+    const sortedAuthors = [...batchAuthors.entries()]
+      .sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0))
+      .map(([, a]) => a)
+    for (const chunk of chunks(sortedAuthors, CHUNK)) {
       const upserted = await tx
         .insert(authors)
         .values(

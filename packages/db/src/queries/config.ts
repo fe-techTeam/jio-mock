@@ -34,7 +34,7 @@ export async function getLatestConfig(db: DbLike): Promise<LatestConfig> {
     .from(configVersions)
     .orderBy(desc(configVersions.version))
     .limit(1)
-  if (!row) return { version: 0, savedAt: null, config: DEFAULT_CONFIG }
+  if (!row) return { version: 0, savedAt: null, config: structuredClone(DEFAULT_CONFIG) }
   const parsed = AppConfig.safeParse(row.config)
   if (!parsed.success) throw new ConfigParseError(row.version, parsed.error)
   return { version: row.version, savedAt: row.savedAt, config: parsed.data }
