@@ -2,44 +2,37 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Live IPO GMP | IPO Subscription Live (fixture)</title>
+<title>Live IPO GMP and Subscription (fixture)</title>
 </head>
 <body>
-<!-- Fixture page modelled on a GMP aggregator. Numbers are invented. -->
+<!-- Fixture page modelled on a report-table tracker: header cells are td, not th. Numbers are invented. -->
 <div class="container">
   <h1>Live IPO GMP</h1>
-  <div class="table-responsive">
-    <table class="table" id="mainTable">
-      <thead>
-        <tr><th>IPO</th><th>Price</th><th>GMP</th><th>Rating</th><th>Sub</th><th>Est Listing</th><th>IPO Size</th><th>Lot</th><th>Open</th><th>Close</th><th>Updated-On</th></tr>
-      </thead>
-      <tbody>
-        <tr data-ipo="jio-platforms"><td><a href="/gmp/jio-platforms-ipo-gmp/fx/">Jio Platforms IPO</a> <span class="badge">Open</span></td><td>1100</td><td>₹125</td><td>🔥🔥🔥🔥</td><td>5.20x</td><td>1225 (11.36%)</td><td>₹40,000 Cr</td><td>13</td><td>14-Oct</td><td>16-Oct</td><td>16-Oct 13:45</td></tr>
-        <tr data-ipo="arunodaya-cables"><td><a href="/gmp/arunodaya-cables-ipo-gmp/fx/">Arunodaya Cables IPO</a></td><td>222</td><td>₹38</td><td>🔥🔥🔥</td><td>2.90x</td><td>260 (17.12%)</td><td>₹650 Cr</td><td>67</td><td>15-Oct</td><td>17-Oct</td><td>16-Oct 13:40</td></tr>
-        <tr data-ipo="sitara-renewables"><td><a href="/gmp/sitara-renewables-ipo-gmp/fx/">Sitara Renewables IPO</a></td><td>104</td><td>₹-5</td><td>🔥</td><td>0.85x</td><td>99 (-4.81%)</td><td>₹320 Cr</td><td>144</td><td>13-Oct</td><td>15-Oct</td><td>15-Oct 18:00</td></tr>
-        <tr data-ipo="meghdoot-logistics"><td><a href="/gmp/meghdoot-logistics-ipo-gmp/fx/">Meghdoot Logistics IPO</a> <span class="badge">Upcoming</span></td><td>434</td><td>₹0</td><td>-</td><td>-</td><td>434 (0%)</td><td>₹1,100 Cr</td><td>34</td><td>20-Oct</td><td>22-Oct</td><td>16-Oct 10:00</td></tr>
-      </tbody>
-    </table>
-  </div>
+  <div class="small">Last Updated: 16-Oct-2026 14:20</div>
 
-  <h2>IPO Subscription Live</h2>
-  <table class="table" id="subscriptionTable">
-    <thead>
-      <tr><th>IPO</th><th>QIB</th><th>NII</th><th>bNII</th><th>sNII</th><th>Retail</th><th>Employee</th><th>Total</th></tr>
-    </thead>
-    <tbody>
-      <tr><td>Jio Platforms</td><td>6.70x</td><td>8.90x</td><td>10.20x</td><td>6.30x</td><td>2.35x</td><td>1.80x</td><td>5.20x</td></tr>
-      <tr><td>Arunodaya Cables</td><td>1.15x</td><td>3.30x</td><td>3.90x</td><td>2.10x</td><td>3.95x</td><td>-</td><td>2.90x</td></tr>
-      <tr><td>Sitara Renewables</td><td>0.80x</td><td>0.38x</td><td>0.30x</td><td>0.55x</td><td>1.10x</td><td>-</td><td>0.85x</td></tr>
-      <tr><td>Meghdoot Logistics</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
-    </tbody>
+  <table class="table table-bordered table-hover" id="reportTable">
+    <tr><td>Current IPO</td><td>Price</td><td>GMP(₹)</td><td>Est Listing</td><td>IPO Size</td><td>Lot</td><td>Open</td><td>Close</td></tr>
+    <tr><td>Jio Platforms Ltd. IPO</td><td>1100</td><td>82 (7.45%)</td><td>1182</td><td>₹ 48,000 Cr</td><td>13</td><td>14-Oct</td><td>16-Oct</td></tr>
+    <tr><td>Jio Financial Services IPO</td><td>320</td><td>777 (242.8%)</td><td>1097</td><td>₹ 900 Cr</td><td>46</td><td>14-Oct</td><td>16-Oct</td></tr>
+    <tr><td>Arunodaya Cables IPO</td><td>222</td><td>33</td><td>255</td><td>₹ 410 Cr</td><td>67</td><td>15-Oct</td><td>17-Oct</td></tr>
+    <tr><td>Meghdoot Logistics IPO</td><td>434</td><td>--</td><td>--</td><td>₹ 220 Cr</td><td>34</td><td>20-Oct</td><td>22-Oct</td></tr>
   </table>
 
-  <div class="news-list">
+  <h2>Live IPO Subscription</h2>
+  <table class="table table-bordered" id="subTable">
+    <tr><td>Current IPO</td><td>QIB</td><td>NII</td><td>RII</td><td>Total</td></tr>
+    <tr><td>Jio Platforms Ltd. IPO</td><td>6.9</td><td>9.4</td><td>2.5</td><td>5.4</td></tr>
+    <tr><td>Jio Financial Services IPO</td><td>40.5</td><td>38.1</td><td>9.9</td><td>27.7</td></tr>
+    <tr><td>Arunodaya Cables IPO</td><td>1.3</td><td>3.4</td><td>4.0</td><td>3.1</td></tr>
+    <tr><td>Meghdoot Logistics IPO</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+  </table>
+
+  <div class="news">
     <h3>IPO News</h3>
-    <a href="/news/jio-platforms-ipo-gmp-falls-fx/">Jio Platforms IPO GMP slips to ₹125 on day 3</a>
-    <a href="/news/jio-platforms-allotment-date-fx/">Jio Platforms IPO allotment date and how to check status</a>
-    <a href="/news/meghdoot-logistics-price-band-fx/">Meghdoot Logistics IPO price band announced</a>
+    <a href="/news/jio-ipo-gmp-falls-fx" title="InvestorGain news">Jio IPO GMP slips as the issue enters its final day</a>
+    <a href="/news/jio-platforms-ipo-anchor-fx">Jio Platforms IPO anchor book: who put in the money</a>
+    <a href="/news/mainboard-ipo-calendar-fx">Mainboard IPO calendar for the coming week</a>
+    <a href="/about">About</a>
   </div>
 </div>
 </body>

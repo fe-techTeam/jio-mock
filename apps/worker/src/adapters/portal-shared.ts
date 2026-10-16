@@ -101,9 +101,9 @@ const COLUMN_EXCLUDE: Partial<Record<ColumnKind, RegExp>> = {
   gmp: /%|est|listing|kostak|sauda|percent/,
 }
 
-/** Index of the header for `kind` (best tier first), or -1. `override` replaces the default patterns. */
+/** Index of the header for `kind` (best tier first), or -1. `override` is tried before the defaults. */
 export function pickColumn(headers: string[], kind: ColumnKind, override?: RegExp): number {
-  const tiers = override ? [override] : COLUMN_TIERS[kind]
+  const tiers = override ? [override, ...COLUMN_TIERS[kind]] : COLUMN_TIERS[kind]
   const exclude = COLUMN_EXCLUDE[kind]
   for (const re of tiers) {
     const idx = headers.findIndex((h) => re.test(h) && !(exclude && exclude.test(h)))
@@ -154,7 +154,7 @@ export interface ExtractCtx {
 }
 
 export interface PortalOverrides {
-  /** Replacement header patterns for portals with unusual labels. */
+  /** Header patterns tried before the defaults, for portals with unusual labels. */
   name?: RegExp
   gmp?: RegExp
 }

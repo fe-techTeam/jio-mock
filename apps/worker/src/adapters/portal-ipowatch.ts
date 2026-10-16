@@ -1,4 +1,13 @@
-// Fixture-only stub (02-01). A wave-2 plan replaces this body with the live adapter.
-import { createFixtureOnlyAdapter } from './_fixture'
+// IPOWatch portal adapter (02-04). Parsing lives in portal-shared.ts; this file only holds the URLs and quirks.
+import { createPortalAdapter, type PortalSpec } from './portal-shared'
 
-export default createFixtureOnlyAdapter('portal_ipowatch', 'media', [])
+export const spec: PortalSpec = {
+  key: 'portal_ipowatch',
+  name: 'IPOWatch',
+  domain: 'ipowatch.in',
+  gmpUrl: 'https://ipowatch.in/ipo-grey-market-premium-latest-ipo-gmp/',
+  subscriptionUrl: 'https://ipowatch.in/ipo-subscription-status-today/',
+  fixtureFile: 'portal_ipowatch.html',
+}
+
+export default createPortalAdapter(spec)
