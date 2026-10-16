@@ -1,5 +1,6 @@
 // GET /api/topics/:slug/timeline reader: topic meta, 168 IST-hour points, 7 days of market
-// series (last value per IST hour), and 24h splits by source and by entity.
+// series (last value per IST hour), 24h splits by source and by entity, and suspected
+// coordination (06-02, coordination.ts).
 import {
   ENTITY_KEYS,
   MARKET_SERIES,
@@ -13,6 +14,7 @@ import {
   type TopicKind,
 } from '@jio/core'
 import { getLatestConfig } from '@jio/db'
+import { getTimelineCoordination } from './coordination'
 import { iso, msToIso, type ReadCtx, type SliceFilter } from './ctx'
 import { splitShown } from './ranking'
 import { HOUR_MS, IST_HOUR_ORIGIN, istHours, windowRanges } from './window'
@@ -93,7 +95,7 @@ export async function getTimeline(
   const from = hours[0]!
   const to = new Date(hours[hours.length - 1]!.getTime() + HOUR_MS)
 
-  const [seriesRows, marketRows, sourceRows, entityRows, latest] = await Promise.all([
+  const [seriesRows, marketRows, sourceRows, entityRows, latest, coordination] = await Promise.all([
     sql<{ h_ms: number; items: number; pos: number; neu: number; neg: number; low_conf: number }[]>`
       select (extract(epoch from date_bin('1 hour', s.bucket_start, ${IST_HOUR_ORIGIN}::timestamptz)) * 1000)::float8 as h_ms,
              sum(s.items)::int as items, sum(s.pos)::int as pos, sum(s.neu)::int as neu,
@@ -137,6 +139,7 @@ export async function getTimeline(
         and s.bucket_start < ${iso(cur.to)}::timestamptz
       group by s.entity`,
     getLatestConfig(ctx.db),
+    getTimelineCoordination(ctx, topicId, f),
   ])
 
   const { config } = latest
@@ -195,5 +198,6 @@ export async function getTimeline(
     market,
     bySource,
     byEntity,
+    coordination,
   }
 }

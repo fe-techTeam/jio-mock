@@ -17,7 +17,7 @@ import { iso, msToIso, type ReadCtx } from './ctx'
 import { decodeCursor, encodeCursor, type Cursor } from './cursor'
 import type { EvidenceParams } from './params'
 import { toEvidenceAuthor } from './privacy'
-import { range7d, windowRanges, type Range } from './window'
+import { BUCKET_MS, range7d, windowRanges, type Range } from './window'
 
 type EvidenceRow = {
   id: string
@@ -40,6 +40,7 @@ type EvidenceRow = {
   author_kind: string | null
   author_handle: string | null
   author_display_name: string | null
+  coord_suspected: boolean
 }
 
 function timeRange(p: EvidenceParams, now: Date): Range {
@@ -80,7 +81,15 @@ export async function getEvidence(ctx: ReadCtx, p: EvidenceParams): Promise<Evid
     ${p.entity !== 'all' ? sql`and ${p.entity}::text = any(ec.entities)` : none}
     ${p.lane !== 'all' ? sql`and p.lane = ${p.lane}` : none}
     ${p.source ? sql`and p.source_key = ${p.source}` : none}
-    ${p.confidence === 'low' ? sql`and ec.confidence = 'low'` : none}`
+    ${p.confidence === 'low' ? sql`and ec.confidence = 'low'` : none}
+    ${p.coordinated ? sql`and p.coord_suspected` : none}
+    ${p.cluster ? sql`and p.near_dup_cluster_id = ${p.cluster}` : none}
+    ${
+      p.bucket
+        ? sql`and p.published_at >= ${iso(p.bucket)}::timestamptz
+              and p.published_at < ${iso(new Date(p.bucket.getTime() + BUCKET_MS))}::timestamptz`
+        : none
+    }`
 
   const reachKey = sql`coalesce(p.reach_score, 0)::float8`
   const after: Fragment = !cursor
@@ -103,7 +112,7 @@ export async function getEvidence(ctx: ReadCtx, p: EvidenceParams): Promise<Evid
                as published_key,
              ${reachKey} as reach_key,
              ec.sentiment, ec.entities, ec.confidence, ec.gloss_en, ec.origin,
-             t.slug as topic_slug,
+             t.slug as topic_slug, p.coord_suspected,
              a.kind as author_kind,
              case when a.kind in ('media_outlet', 'public_figure') then a.handle end
                as author_handle,
@@ -157,6 +166,7 @@ export async function getEvidence(ctx: ReadCtx, p: EvidenceParams): Promise<Evid
         : null,
       r.source_key,
     ),
+    suspectedCoordinated: r.coord_suspected === true,
   }))
 
   return { items, nextCursor, total: totals[0]?.n ?? 0 }

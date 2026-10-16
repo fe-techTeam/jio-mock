@@ -6,6 +6,7 @@ import type { Sql } from 'postgres'
 import { getBrief } from './brief'
 import type { ReadCtx } from './ctx'
 import { NOW, hoursAgo, many, minutesAgo, resetAndSeed, type PostSpec } from './test-fixtures'
+import { floor15 } from './window'
 
 let db: Db
 let sql: Sql
@@ -359,5 +360,82 @@ describe('getBrief freshness and market', () => {
     await seedRuns(morning)
     const am = await getBrief(ctx(morning), ALL)
     expect(am.market.items.every((x) => x.stale)).toBe(true)
+  })
+})
+
+describe('getBrief coordination', () => {
+  const G = 'gmp-grey-market'
+  const bucket = (m: number) => floor15(minutesAgo(m))
+
+  it('kpis.suspectedCoordinated sums the 24h buckets of the lane and entity rows', async () => {
+    await resetAndSeed(sql, {
+      posts: [
+        ...posts(4, G, { coordSuspected: true, sourceKey: 'reddit' }),
+        ...posts(6, G, { sourceKey: 'reddit' }),
+        ...posts(2, G, { coordSuspected: true, sourceKey: 'reddit' }, hoursAgo(30)),
+      ],
+      stats: [
+        {
+          topic: G,
+          bucketStart: bucket(60),
+          entity: 'isha',
+          lane: 'social',
+          items: 1,
+          suspectedCoordinated: 5,
+        },
+        {
+          topic: G,
+          bucketStart: bucket(60 * 25),
+          entity: 'isha',
+          lane: 'social',
+          items: 1,
+          suspectedCoordinated: 9,
+        },
+      ],
+    })
+    expect((await getBrief(ctx(), ALL)).kpis.suspectedCoordinated).toBe(4)
+    expect(
+      (await getBrief(ctx(), { entity: 'all', lane: 'social' })).kpis.suspectedCoordinated,
+    ).toBe(4)
+    expect(
+      (await getBrief(ctx(), { entity: 'all', lane: 'media' })).kpis.suspectedCoordinated,
+    ).toBe(0)
+    expect(
+      (await getBrief(ctx(), { entity: 'isha', lane: 'social' })).kpis.suspectedCoordinated,
+    ).toBe(5)
+  })
+
+  it('burst24h is true when any 24h bucket of the slice has burst_flag', async () => {
+    await resetAndSeed(sql, {
+      posts: [...posts(10, G), ...posts(10, 'valuation-price-band')],
+      stats: [
+        { topic: G, bucketStart: bucket(600), items: 0, burstFlag: true },
+        // Outside the 24h window: never counts.
+        { topic: 'valuation-price-band', bucketStart: bucket(60 * 25), items: 0, burstFlag: true },
+      ],
+    })
+    const brief = await getBrief(ctx(), ALL)
+    const row = (slug: string) => brief.topics.find((t) => t.slug === slug)!
+    expect(row(G).burst24h).toBe(true)
+    expect(row('valuation-price-band').burst24h).toBe(false)
+    // The lane rows carry no flag.
+    const social = await getBrief(ctx(), { entity: 'all', lane: 'social' })
+    expect(social.topics.find((t) => t.slug === G)!.burst24h).toBe(false)
+  })
+
+  it('top5AuthorShare comes from the latest bucket row of the slice, null when none', async () => {
+    await resetAndSeed(sql, {
+      posts: [...posts(10, G), ...posts(10, 'valuation-price-band')],
+      stats: [
+        { topic: G, bucketStart: bucket(240), items: 1, top5AuthorShare: 0.8 },
+        { topic: G, bucketStart: bucket(30), items: 0, top5AuthorShare: 0.52 },
+        { topic: G, bucketStart: bucket(30), lane: 'social', items: 0, top5AuthorShare: 0.61 },
+      ],
+    })
+    const brief = await getBrief(ctx(), ALL)
+    expect(brief.topics.find((t) => t.slug === G)!.top5AuthorShare).toBeCloseTo(0.52, 5)
+    expect(brief.topics.find((t) => t.slug === 'valuation-price-band')!.top5AuthorShare).toBeNull()
+    const social = await getBrief(ctx(), { entity: 'all', lane: 'social' })
+    expect(social.topics.find((t) => t.slug === G)!.top5AuthorShare).toBeCloseTo(0.61, 5)
   })
 })

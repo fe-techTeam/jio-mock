@@ -91,6 +91,7 @@ describe('getEvidence privacy', () => {
         'reachScore',
         'sentiment',
         'sourceKey',
+        'suspectedCoordinated',
         'text',
         'topicSlug',
         'url',
@@ -266,5 +267,143 @@ describe('getEvidence filters', () => {
   it('returns an empty page when nothing matches', async () => {
     await resetAndSeed(sql)
     expect(await getEvidence(ctx(), params())).toEqual({ items: [], nextCursor: null, total: 0 })
+  })
+})
+
+describe('getEvidence coordination filters', () => {
+  const B = new Date('2026-10-16T07:30:00Z') // a bucket 30 min before NOW
+  const seedCoord = () =>
+    resetAndSeed(sql, {
+      authors: [
+        { key: 'person', kind: 'other', handle: 'private_coord_handle', displayName: 'Hidden' },
+        { key: 'fig', kind: 'public_figure', handle: 'famous_coord', displayName: 'Famous' },
+      ],
+      posts: [
+        // Cluster nd_a: three flagged posts in bucket B, one flagged an hour earlier.
+        ...many(3, (i) => ({
+          sourceKey: 'x_api' as const,
+          author: i === 0 ? 'person' : i === 1 ? 'fig' : null,
+          publishedAt: new Date(B.getTime() + (i + 1) * 60_000),
+          coordSuspected: true,
+          cluster: 'nd_a',
+          text: `a${i}`,
+          labels: [
+            {
+              topic: SLUG,
+              sentiment: i === 2 ? ('negative' as const) : ('neutral' as const),
+              entities: ['jio' as const],
+            },
+          ],
+        })),
+        {
+          sourceKey: 'x_api',
+          publishedAt: minutesAgo(95),
+          coordSuspected: true,
+          cluster: 'nd_a',
+          text: 'a-early',
+          labels: [{ topic: SLUG }],
+        },
+        // Cluster nd_b: flagged, other topic.
+        {
+          sourceKey: 'reddit',
+          publishedAt: new Date(B.getTime() + 5 * 60_000),
+          coordSuspected: true,
+          cluster: 'nd_b',
+          text: 'b0',
+          labels: [{ topic: 'gmp-grey-market' }],
+        },
+        // Unflagged posts, one in cluster nd_a and one in bucket B.
+        {
+          sourceKey: 'x_api',
+          publishedAt: new Date(B.getTime() + 6 * 60_000),
+          cluster: 'nd_a',
+          text: 'a-plain',
+          labels: [{ topic: SLUG }],
+        },
+        {
+          sourceKey: 'news_rss',
+          publishedAt: new Date(B.getTime() + 7 * 60_000),
+          text: 'plain',
+          labels: [{ topic: SLUG }],
+        },
+        // Flagged but 25h old: only in the 7d window.
+        {
+          sourceKey: 'x_api',
+          publishedAt: hoursAgo(25),
+          coordSuspected: true,
+          cluster: 'nd_c',
+          text: 'old',
+          labels: [{ topic: SLUG }],
+        },
+      ],
+    })
+  const texts = async (q: string) =>
+    (await getEvidence(ctx(), params(`sort=newest&${q}`))).items.map((i) => i.text)
+
+  it('coordinated=true returns only flagged posts and tags every item', async () => {
+    await seedCoord()
+    expect(await texts('coordinated=true')).toEqual(['b0', 'a2', 'a1', 'a0', 'a-early'])
+    expect(await texts('coordinated=true&window=7d')).toContain('old')
+    expect(await texts('coordinated=false')).toHaveLength(7)
+    const page = await getEvidence(ctx(), params('sort=newest'))
+    const flag = Object.fromEntries(page.items.map((i) => [i.text, i.suspectedCoordinated]))
+    expect(flag).toMatchObject({ a0: true, 'a-plain': false, plain: false, b0: true })
+  })
+
+  it('cluster limits to that cluster and bucket to [bucket, bucket + 15m)', async () => {
+    await seedCoord()
+    expect(await texts('cluster=nd_a')).toEqual(['a-plain', 'a2', 'a1', 'a0', 'a-early'])
+    expect(await texts('cluster=nd_a&coordinated=true')).toEqual(['a2', 'a1', 'a0', 'a-early'])
+    expect(await texts(`bucket=${B.toISOString()}`)).toEqual([
+      'plain',
+      'a-plain',
+      'b0',
+      'a2',
+      'a1',
+      'a0',
+    ])
+    expect(await texts('cluster=nd_none')).toEqual([])
+  })
+
+  it('combines with topic, sentiment, entity, lane and window', async () => {
+    await seedCoord()
+    const b = B.toISOString()
+    expect(await texts(`coordinated=true&topic=${SLUG}&bucket=${b}`)).toEqual(['a2', 'a1', 'a0'])
+    expect(await texts(`coordinated=true&sentiment=negative`)).toEqual(['a2'])
+    expect(await texts(`coordinated=true&entity=jio`)).toEqual(['a2', 'a1', 'a0'])
+    expect(await texts(`coordinated=true&lane=media`)).toEqual([])
+    expect(await texts(`cluster=nd_c`)).toEqual([])
+    expect(await texts(`cluster=nd_c&window=7d`)).toEqual(['old'])
+    const one = await getEvidence(ctx(), params(`coordinated=true&cluster=nd_a&bucket=${b}`))
+    expect(one.total).toBe(3)
+  })
+
+  it('pages through coordinated posts with the cursor', async () => {
+    await seedCoord()
+    const first = await getEvidence(ctx(), params('coordinated=true&sort=newest&limit=2'))
+    expect(first.items.map((i) => i.text)).toEqual(['b0', 'a2'])
+    expect(first.total).toBe(5)
+    const second = await getEvidence(
+      ctx(),
+      params(`coordinated=true&sort=newest&limit=2&cursor=${first.nextCursor}`),
+    )
+    expect(second.items.map((i) => i.text)).toEqual(['a1', 'a0'])
+    const third = await getEvidence(
+      ctx(),
+      params(`coordinated=true&sort=newest&limit=2&cursor=${second.nextCursor}`),
+    )
+    expect(third.items.map((i) => i.text)).toEqual(['a-early'])
+    expect(third.nextCursor).toBeNull()
+  })
+
+  it('keeps the author privacy rule under the new filters', async () => {
+    await seedCoord()
+    for (const q of ['coordinated=true', 'cluster=nd_a', `bucket=${B.toISOString()}`]) {
+      const page = await getEvidence(ctx(), params(`sort=newest&${q}`))
+      const json = JSON.stringify(page)
+      expect(json).not.toContain('private_coord_handle')
+      expect(json).not.toContain('Hidden')
+      expect(json).toContain('famous_coord')
+    }
   })
 })

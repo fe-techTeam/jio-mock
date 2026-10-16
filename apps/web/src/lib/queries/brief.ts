@@ -48,6 +48,8 @@ type TopicSumRow = {
   reach_pos: number
   reach_neu: number
   reach_neg: number
+  burst: boolean
+  top5: number | null
 }
 
 const round2 = (n: number) => Math.round(n * 100) / 100
@@ -105,7 +107,10 @@ export async function getBrief(ctx: ReadCtx, f: SliceFilter): Promise<BriefRespo
              coalesce(sum(s.reach_pos) filter (where s.bucket_start >= ${iso(cur.from)}::timestamptz), 0)::float8 as reach_pos,
              coalesce(sum(s.reach_neu) filter (where s.bucket_start >= ${iso(cur.from)}::timestamptz), 0)::float8 as reach_neu,
              coalesce(sum(s.reach_neg) filter (where s.bucket_start >= ${iso(cur.from)}::timestamptz), 0)::float8 as reach_neg,
-             coalesce(sum(s.items) filter (where s.bucket_start < ${iso(cur.from)}::timestamptz), 0)::int as items_prev
+             coalesce(sum(s.items) filter (where s.bucket_start < ${iso(cur.from)}::timestamptz), 0)::int as items_prev,
+             coalesce(bool_or(s.burst_flag) filter (where s.bucket_start >= ${iso(cur.from)}::timestamptz), false) as burst,
+             (array_agg(s.top5_author_share order by s.bucket_start desc)
+                filter (where s.bucket_start >= ${iso(cur.from)}::timestamptz))[1]::float8 as top5
       from topics t
       left join topic_stats_15m s
         on s.topic_id = t.id and s.entity = ${f.entity} and s.lane = ${f.lane}
@@ -222,6 +227,8 @@ export async function getBrief(ctx: ReadCtx, f: SliceFilter): Promise<BriefRespo
       deltaPct,
       lowConfPct: lowConfPct(r.low_conf, r.items),
       suspectedCoordinated: r.suspected,
+      burst24h: r.burst === true,
+      top5AuthorShare: r.top5 == null ? null : round2(Number(r.top5)),
       spark: spark.get(r.id) ?? new Array<number>(hours.length).fill(0),
       reach: reachSplit(reach, r.items, minSplit),
     })

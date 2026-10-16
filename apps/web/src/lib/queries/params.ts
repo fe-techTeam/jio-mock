@@ -40,6 +40,12 @@ export const EvidenceParams = BriefParams.extend({
   sort: q(z.enum(EVIDENCE_SORTS).default('reach')),
   cursor: q(z.string().max(512).optional()),
   limit: q(z.coerce.number().int().min(1).max(50).default(20)),
+  // 06-02 coordination filters. `coordinated` is a strict string boolean (z.coerce.boolean would
+  // read "false" as true); false means no filter.
+  coordinated: q(z.stringbool().optional()),
+  cluster: q(z.string().max(64).optional()),
+  /** Limits to [bucket, bucket + 15m). */
+  bucket: q(isoDate.optional()),
 }).superRefine((p, ctx) => {
   if ((p.from === undefined) !== (p.to === undefined)) {
     ctx.addIssue({ code: 'custom', path: ['from'], message: 'from and to go together' })

@@ -88,6 +88,13 @@ export type TopicRow = SplitCounts & {
   spark: number[]
   /** Reach-weighted split over the same 24h slice; null under the split minimum. */
   reach: ReachSplit | null
+  /**
+   * Suspected coordination (06-02): true when any 24h bucket of the slice is a suspected burst.
+   * Optional so older fixtures stay valid; /api/brief always sets it.
+   */
+  burst24h?: boolean
+  /** Top-5 authors' share of the slice's 24h posts (0-1, 2 dp) from the latest bucket; null under 30 posts. */
+  top5AuthorShare?: number | null
 }
 
 /** pos/neu/neg are counts; the UI turns them into percentages. */
@@ -168,6 +175,37 @@ export type TimelineTopic = {
   lastItemAt: string | null
 }
 
+/**
+ * A suspected near-duplicate cluster (06-02): 5+ distinct social authors posting near-identical
+ * text within 60 minutes. `posts` counts the cluster's flagged posts in this topic slice and
+ * `authors` is a count only: no author handle, id or name is ever part of these types.
+ */
+export type CoordinationCluster = {
+  clusterId: string
+  posts: number
+  authors: number
+  firstAt: string
+  lastAt: string
+  /** First 140 characters of the earliest post's text. */
+  sample: string
+}
+
+/** A suspected burst bucket: items above 4x the median of the 96 prior buckets. */
+export type CoordinationBurst = {
+  bucketStart: string
+  items: number
+  trailingMedian: number
+}
+
+export type TimelineCoordination = {
+  /** Suspected clusters touching the topic in the last 7 days; at most 10. */
+  clusters: CoordinationCluster[]
+  /** Suspected burst buckets in the last 7 days, newest first. */
+  bursts: CoordinationBurst[]
+  /** Top-5 authors' share of the 24h posts (latest bucket); null under 30 posts. */
+  top5AuthorShare: number | null
+}
+
 export type TimelineResponse = {
   topic: TimelineTopic
   asOf: string
@@ -179,6 +217,8 @@ export type TimelineResponse = {
   market: MarketSeriesPoints
   bySource: (SplitCounts & { sourceKey: SourceKey; coverageLabel: string })[]
   byEntity: (SplitCounts & { entity: EntityKey })[]
+  /** Suspected coordination (06-02). Optional so older fixtures stay valid; the API always sets it. */
+  coordination?: TimelineCoordination
 }
 
 // ---------------------------------------------------------------------------------------------
@@ -210,6 +250,8 @@ export type EvidenceItem = {
   confidence: Confidence
   origin: ClassificationOrigin
   author: EvidenceAuthor
+  /** posts.coord_suspected (06-02). Optional so older fixtures stay valid; the API always sets it. */
+  suspectedCoordinated?: boolean
 }
 
 export type EvidencePage = { items: EvidenceItem[]; nextCursor: string | null; total: number }

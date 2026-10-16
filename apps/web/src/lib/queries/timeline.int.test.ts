@@ -6,6 +6,7 @@ import type { Sql } from 'postgres'
 import type { ReadCtx } from './ctx'
 import { NOW, hoursAgo, many, minutesAgo, resetAndSeed } from './test-fixtures'
 import { getTimeline, getTopicMeta } from './timeline'
+import { floor15 } from './window'
 
 let db: Db
 let sql: Sql
@@ -189,5 +190,154 @@ describe('getTimeline', () => {
     await resetAndSeed(sql, { posts: [{ publishedAt: minutesAgo(50), labels: [{ topic: SLUG }] }] })
     expect((await getTimeline(ctx(), SLUG, ALL))!.lane).toBe('all')
     expect((await getTimeline(ctx(), SLUG, { entity: 'all', lane: 'media' }))!.lane).toBe('media')
+  })
+})
+
+describe('getTimeline coordination', () => {
+  const longText = 'Jio IPO allotment is rigged '.repeat(10)
+
+  it('summarises suspected clusters touching the topic over 7 days', async () => {
+    await resetAndSeed(sql, {
+      authors: [
+        { key: 'u1', handle: 'secret_u1' },
+        { key: 'u2', handle: 'secret_u2' },
+        { key: 'u3', handle: 'secret_u3' },
+      ],
+      posts: [
+        {
+          sourceKey: 'x_api',
+          author: 'u1',
+          publishedAt: hoursAgo(50),
+          coordSuspected: true,
+          cluster: 'nd_a',
+          text: longText,
+          labels: [{ topic: SLUG }],
+        },
+        {
+          sourceKey: 'x_api',
+          author: 'u2',
+          publishedAt: hoursAgo(49.5),
+          coordSuspected: true,
+          cluster: 'nd_a',
+          text: 'later copy',
+          labels: [{ topic: SLUG }],
+        },
+        {
+          sourceKey: 'x_api',
+          author: null,
+          publishedAt: hoursAgo(49.4),
+          coordSuspected: true,
+          cluster: 'nd_a',
+          labels: [{ topic: SLUG }],
+        },
+        // Same cluster, unflagged: not counted.
+        {
+          sourceKey: 'x_api',
+          author: 'u3',
+          publishedAt: hoursAgo(49),
+          cluster: 'nd_a',
+          labels: [{ topic: SLUG }],
+        },
+        {
+          sourceKey: 'x_api',
+          author: 'u3',
+          publishedAt: hoursAgo(2),
+          coordSuspected: true,
+          cluster: 'nd_b',
+          text: 'b',
+          labels: [{ topic: SLUG, entities: ['isha'] }],
+        },
+        // Other topic, and older than 7 days.
+        {
+          sourceKey: 'x_api',
+          publishedAt: hoursAgo(3),
+          coordSuspected: true,
+          cluster: 'nd_other',
+          labels: [{ topic: 'gmp-grey-market' }],
+        },
+        {
+          sourceKey: 'x_api',
+          publishedAt: hoursAgo(8 * 24),
+          coordSuspected: true,
+          cluster: 'nd_old',
+          labels: [{ topic: SLUG }],
+        },
+      ],
+    })
+    const tl = (await getTimeline(ctx(), SLUG, ALL))!
+    expect(tl.coordination!.clusters).toEqual([
+      {
+        clusterId: 'nd_a',
+        posts: 3,
+        authors: 2,
+        firstAt: hoursAgo(50).toISOString(),
+        lastAt: hoursAgo(49.4).toISOString(),
+        sample: longText.slice(0, 140),
+      },
+      {
+        clusterId: 'nd_b',
+        posts: 1,
+        authors: 1,
+        firstAt: hoursAgo(2).toISOString(),
+        lastAt: hoursAgo(2).toISOString(),
+        sample: 'b',
+      },
+    ])
+    expect(JSON.stringify(tl.coordination)).not.toMatch(/secret_u|uid-/)
+    const isha = (await getTimeline(ctx(), SLUG, { entity: 'isha', lane: 'all' }))!
+    expect(isha.coordination!.clusters.map((c) => c.clusterId)).toEqual(['nd_b'])
+    const media = (await getTimeline(ctx(), SLUG, { entity: 'all', lane: 'media' }))!
+    expect(media.coordination!.clusters).toEqual([])
+  })
+
+  it('caps clusters at 10', async () => {
+    await resetAndSeed(sql, {
+      posts: many(12, (i) => ({
+        sourceKey: 'x_api',
+        publishedAt: hoursAgo(i + 1),
+        coordSuspected: true,
+        cluster: `nd_${i}`,
+        labels: [{ topic: SLUG }],
+      })),
+    })
+    expect((await getTimeline(ctx(), SLUG, ALL))!.coordination!.clusters).toHaveLength(10)
+  })
+
+  it('lists 7d burst buckets with the trailing median and the latest top-5 share', async () => {
+    const burstAt = floor15(hoursAgo(5))
+    const stats = Array.from({ length: 96 }, (_, i) => ({
+      topic: SLUG,
+      bucketStart: new Date(burstAt.getTime() - (i + 1) * 15 * 60_000),
+      items: i < 60 ? 2 : 0,
+    }))
+    await resetAndSeed(sql, {
+      stats: [
+        ...stats,
+        { topic: SLUG, bucketStart: burstAt, items: 15, burstFlag: true, top5AuthorShare: 0.3 },
+        { topic: SLUG, bucketStart: floor15(hoursAgo(1)), items: 3, top5AuthorShare: 0.45 },
+        // Older than 7 days, and a lane row: neither listed under lane=all.
+        { topic: SLUG, bucketStart: floor15(hoursAgo(8 * 24)), items: 20, burstFlag: true },
+        { topic: SLUG, bucketStart: burstAt, lane: 'social', items: 15, burstFlag: true },
+      ],
+    })
+    const tl = (await getTimeline(ctx(), SLUG, ALL))!
+    expect(tl.coordination!.bursts).toEqual([
+      { bucketStart: burstAt.toISOString(), items: 15, trailingMedian: 2 },
+    ])
+    expect(tl.coordination!.top5AuthorShare).toBeCloseTo(0.45, 5)
+    const social = (await getTimeline(ctx(), SLUG, { entity: 'all', lane: 'social' }))!
+    expect(social.coordination!.bursts).toEqual([
+      { bucketStart: burstAt.toISOString(), items: 15, trailingMedian: 0 },
+    ])
+    expect(social.coordination!.top5AuthorShare).toBeNull()
+  })
+
+  it('is empty with no suspected coordination', async () => {
+    await resetAndSeed(sql, { posts: [{ publishedAt: hoursAgo(1), labels: [{ topic: SLUG }] }] })
+    expect((await getTimeline(ctx(), SLUG, ALL))!.coordination).toEqual({
+      clusters: [],
+      bursts: [],
+      top5AuthorShare: null,
+    })
   })
 })

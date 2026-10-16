@@ -71,6 +71,10 @@ export type PostSpec = {
   reachScore?: number | null
   reachRaw?: Record<string, number>
   rawJson?: unknown
+  /** posts.coord_suspected (06-02); also counted into the derived rollup rows. */
+  coordSuspected?: boolean
+  /** posts.near_dup_cluster_id. */
+  cluster?: string | null
   labels: LabelSpec[]
 }
 
@@ -85,6 +89,8 @@ export type StatSpec = {
   neg?: number
   lowConf?: number
   suspectedCoordinated?: number
+  burstFlag?: boolean
+  top5AuthorShare?: number | null
   reachPos?: number
   reachNeu?: number
   reachNeg?: number
@@ -148,6 +154,8 @@ type Agg = {
   rPos: number
   rNeu: number
   rNeg: number
+  burst?: boolean
+  top5?: number | null
 }
 
 function effectiveLabel(labels: LabelSpec[], createdAt: (i: number) => Date): LabelSpec | null {
@@ -222,6 +230,8 @@ export async function resetAndSeed(sql: Sql, spec: SeedSpec = {}): Promise<Seede
     cur.rPos += d.rPos ?? 0
     cur.rNeu += d.rNeu ?? 0
     cur.rNeg += d.rNeg ?? 0
+    if (d.burst) cur.burst = true
+    if (d.top5 !== undefined) cur.top5 = d.top5
     agg.set(k, cur)
   }
 
@@ -233,11 +243,13 @@ export async function resetAndSeed(sql: Sql, spec: SeedSpec = {}): Promise<Seede
     if (p.author && !authorId) throw new Error(`unknown author key ${p.author}`)
     const [row] = await sql<{ id: string }[]>`
       insert into posts (source_key, external_id, url, author_id, lane, text, lang, published_at,
-                         reach_raw, reach_score, raw_json, content_hash)
+                         reach_raw, reach_score, raw_json, content_hash, coord_suspected,
+                         near_dup_cluster_id)
       values (${sourceKey}, ${'ext-' + i}, ${p.url ?? `https://example.test/${i}`}, ${authorId},
               ${lane}, ${p.text ?? `post ${i}`}, ${p.lang ?? 'en'}, ${ts(p.publishedAt)}::timestamptz,
               ${JSON.stringify(p.reachRaw ?? {})}::jsonb, ${p.reachScore ?? null},
-              ${JSON.stringify(p.rawJson ?? { secret: 'raw-json-marker' })}::jsonb, ${'hash-' + i})
+              ${JSON.stringify(p.rawJson ?? { secret: 'raw-json-marker' })}::jsonb, ${'hash-' + i},
+              ${p.coordSuspected ?? false}, ${p.cluster ?? null})
       returning id`
     const postId = row!.id
     postIds.push(postId)
@@ -264,6 +276,7 @@ export async function resetAndSeed(sql: Sql, spec: SeedSpec = {}): Promise<Seede
       neu: s === 'neutral' ? 1 : 0,
       neg: s === 'negative' ? 1 : 0,
       lowConf: eff.confidence === 'low' ? 1 : 0,
+      sc: p.coordSuspected ? 1 : 0,
       rPos: s === 'positive' ? reach : 0,
       rNeu: s === 'neutral' ? reach : 0,
       rNeg: s === 'negative' ? reach : 0,
@@ -284,6 +297,8 @@ export async function resetAndSeed(sql: Sql, spec: SeedSpec = {}): Promise<Seede
       rPos: s.reachPos ?? 0,
       rNeu: s.reachNeu ?? 0,
       rNeg: s.reachNeg ?? 0,
+      burst: s.burstFlag,
+      top5: s.top5AuthorShare,
     })
   }
   for (const r of agg.values()) {
@@ -291,9 +306,11 @@ export async function resetAndSeed(sql: Sql, spec: SeedSpec = {}): Promise<Seede
     if (!topicId) throw new Error(`unknown topic ${r.topic}`)
     await sql`
       insert into topic_stats_15m (bucket_start, topic_id, entity, lane, items, pos, neu, neg,
-                                   low_conf, suspected_coordinated, reach_pos, reach_neu, reach_neg)
+                                   low_conf, suspected_coordinated, reach_pos, reach_neu, reach_neg,
+                                   burst_flag, top5_author_share)
       values (${ts(r.bucket)}::timestamptz, ${topicId}, ${r.entity}, ${r.lane}, ${r.items}, ${r.pos},
-              ${r.neu}, ${r.neg}, ${r.lowConf}, ${r.sc}, ${r.rPos}, ${r.rNeu}, ${r.rNeg})`
+              ${r.neu}, ${r.neg}, ${r.lowConf}, ${r.sc}, ${r.rPos}, ${r.rNeu}, ${r.rNeg},
+              ${r.burst ?? false}, ${r.top5 ?? null})`
   }
 
   for (const m of spec.market ?? []) {
