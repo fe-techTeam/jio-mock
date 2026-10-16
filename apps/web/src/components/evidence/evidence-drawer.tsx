@@ -4,6 +4,7 @@ import type { EvidenceSort } from '@jio/core'
 import { useInfiniteQuery } from '@tanstack/react-query'
 import { Loader2 } from 'lucide-react'
 import { useSearchParams } from 'next/navigation'
+import { useRef } from 'react'
 import { Button } from '@/components/ui/button'
 import {
   Select,
@@ -34,6 +35,9 @@ export function EvidenceDrawer() {
   const filters = parseFilters(params)
   const slice = useEvidenceSlice()
   const close = useCloseEvidence()
+  // The drawer is opened through the URL, so Radix has no Trigger to hand focus back to. Remember
+  // the element that had focus when it opened and restore it on close.
+  const returnFocus = useRef<HTMLElement | null>(null)
 
   return (
     <Sheet
@@ -42,7 +46,22 @@ export function EvidenceDrawer() {
         if (!open) close()
       }}
     >
-      <SheetContent side="right" className="w-full gap-0 sm:max-w-xl">
+      <SheetContent
+        side="right"
+        className="w-full gap-0 sm:max-w-xl"
+        onOpenAutoFocus={() => {
+          returnFocus.current =
+            document.activeElement instanceof HTMLElement ? document.activeElement : null
+        }}
+        onCloseAutoFocus={(e) => {
+          const el = returnFocus.current
+          returnFocus.current = null
+          if (el?.isConnected && el !== document.body) {
+            e.preventDefault()
+            el.focus()
+          }
+        }}
+      >
         {slice ? <EvidencePanel slice={slice} filters={filters} /> : null}
       </SheetContent>
     </Sheet>
