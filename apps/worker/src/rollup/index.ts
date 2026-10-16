@@ -1,0 +1,182 @@
+// 15-minute rollups into topic_stats_15m, the table the board reads. Buckets are aligned to UTC
+// quarter-hours, which are also IST quarter-hours (IST = UTC+05:30). Rows are sparse (items > 0)
+// and store raw counts only; the 30-item split rule is applied at read time (04-01).
+//
+// Interfaces used by 06-01 and 07-01: runRollup, recomputeRange, bucketStart.
+import { getLatestConfig, type Db } from '@jio/db'
+import type { Sql } from '../triage/repo'
+import { ACTIVE_MIN_ITEMS_24H, refreshTopicStatus, type TopicStatusCounts } from './active'
+
+export { ACTIVE_MIN_ITEMS_24H, refreshTopicStatus, type TopicStatusCounts } from './active'
+
+export type RollupHandle = { db: Db; sql: Sql }
+export type RollupMode = 'recent' | 'full7d'
+
+export const BUCKET_MS = 15 * 60_000
+export const FULL_WINDOW_MS = 7 * 24 * 3_600_000
+/** A 'recent' run also recomputes buckets of posts labelled (or corrected) within this window. */
+export const RECENT_LABEL_WINDOW_MS = 3 * 60_000
+/** UTC minute of the hour at which an unspecified run widens to 'full7d'. */
+export const FULL_RUN_MINUTE = 7
+
+export function bucketStart(d: Date): Date {
+  return new Date(Math.floor(d.getTime() / BUCKET_MS) * BUCKET_MS)
+}
+
+function bucketCeil(d: Date): Date {
+  return new Date(Math.ceil(d.getTime() / BUCKET_MS) * BUCKET_MS)
+}
+
+export function resolveRollupMode(now: Date, mode?: RollupMode): RollupMode {
+  if (mode) return mode
+  return now.getUTCMinutes() === FULL_RUN_MINUTE ? 'full7d' : 'recent'
+}
+
+/** Distinct bucket starts merged into contiguous half-open [from, to) ranges, ascending. */
+export function bucketRanges(buckets: Date[]): { from: Date; to: Date }[] {
+  const starts = [...new Set(buckets.map((b) => bucketStart(b).getTime()))].sort((a, b) => a - b)
+  const out: { from: Date; to: Date }[] = []
+  for (const s of starts) {
+    const last = out[out.length - 1]
+    if (last && last.to.getTime() === s) last.to = new Date(s + BUCKET_MS)
+    else out.push({ from: new Date(s), to: new Date(s + BUCKET_MS) })
+  }
+  return out
+}
+
+/**
+ * Recomputes every bucket in [from, to) (widened to whole buckets) in one statement: upserts the
+ * counts produced from posts x effective_classifications, then deletes rows in the range that are
+ * no longer produced (a relabel that empties a slice leaves nothing stale). Coordination columns
+ * (suspected_coordinated, burst_flag, top5_author_share) are left as they are for 06-01/06-02.
+ * Returns the number of rows written.
+ */
+export async function recomputeRange(
+  h: { sql: Sql },
+  range: { from: Date; to: Date },
+): Promise<{ rows: number }> {
+  const from = bucketStart(range.from)
+  const to = bucketCeil(range.to)
+  if (to <= from) return { rows: 0 }
+  const rows = await h.sql.begin(async (tx) => {
+    const res = await tx<{ n: number }[]>`
+      with src as (
+        select date_bin('15 minutes', p.published_at, timestamptz '2000-01-01 00:00:00+00')
+                 as bucket_start,
+               ec.topic_id, p.lane, ec.entities, ec.sentiment, ec.confidence,
+               coalesce(p.reach_score, 0)::double precision as reach
+        from posts p
+        join effective_classifications ec on ec.post_id = p.id
+        where p.published_at >= ${from.toISOString()}::timestamptz
+          and p.published_at < ${to.toISOString()}::timestamptz
+      ),
+      fan as (
+        select s.bucket_start, s.topic_id, e.entity, l.lane, s.sentiment, s.confidence, s.reach
+        from src s
+        cross join lateral (
+          select 'all'::text as entity
+          union
+          select distinct x from unnest(s.entities) as x where x <> 'all'
+        ) e
+        cross join lateral (values ('all'::text), (s.lane)) as l(lane)
+      ),
+      agg as (
+        select bucket_start, topic_id, entity, lane,
+               count(*)::int as items,
+               (count(*) filter (where sentiment = 'positive'))::int as pos,
+               (count(*) filter (where sentiment = 'neutral'))::int as neu,
+               (count(*) filter (where sentiment = 'negative'))::int as neg,
+               (count(*) filter (where confidence = 'low'))::int as low_conf,
+               coalesce(sum(reach) filter (where sentiment = 'positive'), 0)::real as reach_pos,
+               coalesce(sum(reach) filter (where sentiment = 'neutral'), 0)::real as reach_neu,
+               coalesce(sum(reach) filter (where sentiment = 'negative'), 0)::real as reach_neg
+        from fan
+        group by bucket_start, topic_id, entity, lane
+      ),
+      up as (
+        insert into topic_stats_15m as t
+          (bucket_start, topic_id, entity, lane, items, pos, neu, neg, low_conf,
+           reach_pos, reach_neu, reach_neg, updated_at)
+        select bucket_start, topic_id, entity, lane, items, pos, neu, neg, low_conf,
+               reach_pos, reach_neu, reach_neg, now()
+        from agg
+        on conflict (bucket_start, topic_id, entity, lane) do update set
+          items = excluded.items, pos = excluded.pos, neu = excluded.neu, neg = excluded.neg,
+          low_conf = excluded.low_conf, reach_pos = excluded.reach_pos,
+          reach_neu = excluded.reach_neu, reach_neg = excluded.reach_neg,
+          updated_at = excluded.updated_at
+        returning t.bucket_start, t.topic_id, t.entity, t.lane
+      ),
+      del as (
+        delete from topic_stats_15m t
+        where t.bucket_start >= ${from.toISOString()}::timestamptz
+          and t.bucket_start < ${to.toISOString()}::timestamptz
+          and not exists (
+            select 1 from up u
+            where u.bucket_start = t.bucket_start and u.topic_id = t.topic_id
+              and u.entity = t.entity and u.lane = t.lane)
+        returning 1
+      )
+      select (select count(*) from up)::int as n, (select count(*) from del)::int as d`
+    return res[0]?.n ?? 0
+  })
+  return { rows }
+}
+
+export type RollupResult = {
+  mode: RollupMode
+  /** Buckets recomputed. */
+  buckets: number
+  /** Rows upserted. */
+  rows: number
+  status: TopicStatusCounts
+}
+
+/**
+ * 'full7d' recomputes [bucketStart(now) - 7d, bucketStart(now) + 15m). 'recent' recomputes the
+ * current and previous buckets plus the buckets of posts whose classification rows were created
+ * in the last 3 minutes (new labels and corrections), limited to the last 7 days so rollups whose
+ * posts retention may have removed are never rewritten. Then refreshes active/dormant status.
+ */
+export async function runRollup(
+  h: RollupHandle,
+  now: Date = new Date(),
+  opts: { mode?: RollupMode } = {},
+): Promise<RollupResult> {
+  const mode = resolveRollupMode(now, opts.mode)
+  const cur = bucketStart(now)
+  const windowFrom = new Date(cur.getTime() - FULL_WINDOW_MS)
+  const windowTo = new Date(cur.getTime() + BUCKET_MS)
+
+  let ranges: { from: Date; to: Date }[]
+  if (mode === 'full7d') {
+    ranges = [{ from: windowFrom, to: windowTo }]
+  } else {
+    const since = new Date(now.getTime() - RECENT_LABEL_WINDOW_MS)
+    const touched = await h.sql<{ b: string | Date }[]>`
+      select distinct date_bin('15 minutes', p.published_at, timestamptz '2000-01-01 00:00:00+00')
+               as b
+      from classifications c
+      join posts p on p.id = c.post_id
+      where c.created_at >= ${since.toISOString()}::timestamptz
+        and p.published_at >= ${windowFrom.toISOString()}::timestamptz
+        and p.published_at < ${windowTo.toISOString()}::timestamptz`
+    ranges = bucketRanges([
+      cur,
+      new Date(cur.getTime() - BUCKET_MS),
+      ...touched.map((r) => new Date(r.b)),
+    ])
+  }
+
+  let rows = 0
+  let buckets = 0
+  for (const r of ranges) {
+    rows += (await recomputeRange(h, r)).rows
+    buckets += Math.round((r.to.getTime() - r.from.getTime()) / BUCKET_MS)
+  }
+
+  const { config } = await getLatestConfig(h.db)
+  const minItems = config.active_min_items_24h ?? ACTIVE_MIN_ITEMS_24H
+  const status = await refreshTopicStatus(h, now, minItems)
+  return { mode, buckets, rows, status }
+}
