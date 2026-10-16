@@ -18,7 +18,7 @@ Goal: green tooling and runnable skeletons for web, worker, db and core, with th
 | 00-02 | 2 | sonnet | 00-01 | apps/web/** | create-next-app (15, TS, Tailwind, src, App Router), shadcn init, Vitest and Playwright config, `/api/health` checking the db |
 | 00-03 | 2 | sonnet | 00-01 | packages/db/**, packages/core/**, apps/worker/** | @jio/db `createDb` and a connection test, @jio/core skeleton with time helpers (`isIndianMarketHours`) and tests, @jio/worker boot that connects pg-boss and logs ready |
 
-- [ ] 00-01  - [ ] 00-02  - [ ] 00-03
+- [x] 00-01  - [x] 00-02  - [x] 00-03
 
 ## Phase 01: Data model and single login
 
