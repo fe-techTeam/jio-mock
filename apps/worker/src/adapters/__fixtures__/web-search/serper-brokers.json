@@ -1,0 +1,8 @@
+{
+  "searchParameters": { "q": "\"Jio IPO\" Groww", "gl": "in", "hl": "en", "num": 20 },
+  "organic": [
+    { "title": "Jio Platforms IPO review | Groww", "link": "https://groww.in/blog/jio-platforms-ipo-review?ref=x#top", "snippet": "Groww's take on the IPO.", "date": "15 Oct 2026", "position": 1 },
+    { "title": "Emkay on Jio Platforms: valuation", "link": "https://www.emkayglobal.com/research/jio-valuation", "snippet": "Emkay valuation note.", "position": 2 },
+    { "title": "A small blog about the Jio IPO", "link": "https://smallblog.example.com/jio-ipo", "snippet": "Personal blog post.", "date": "5 hours ago", "position": 3 }
+  ]
+}

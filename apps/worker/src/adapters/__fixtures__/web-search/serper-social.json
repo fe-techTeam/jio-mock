@@ -1,0 +1,9 @@
+{
+  "searchParameters": { "q": "site:instagram.com \"Jio IPO\"", "gl": "in", "hl": "en", "num": 20 },
+  "organic": [
+    { "title": "Jio IPO explained | finance_guru on Instagram", "link": "https://www.instagram.com/finance_guru/?hl=en", "snippet": "Everything about the Jio IPO in 60 seconds.", "date": "3 hours ago", "position": 1 },
+    { "title": "Reel: Jio IPO GMP", "link": "https://www.instagram.com/p/CxYz123AbC/?utm_source=ig", "snippet": "Jio IPO GMP update today.", "date": "2 days ago", "position": 2 },
+    { "title": "Jio IPO - should you apply? | Asha Rao | LinkedIn", "link": "https://www.linkedin.com/posts/asha-rao-123_jio-ipo-apply-activity-7001-xyz?trk=public", "snippet": "My view on the Jio Platforms IPO.", "date": "Oct 15, 2026", "position": 3 },
+    { "title": "Old Jio IPO post | Ravi | LinkedIn", "link": "https://www.linkedin.com/posts/ravi-k_old-post-activity-1-abc", "snippet": "Very old.", "date": "1 week ago", "position": 4 }
+  ]
+}
