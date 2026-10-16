@@ -17,6 +17,7 @@ export default tseslint.config(
       '**/test-results',
       '**/next-env.d.ts',
       'apps/worker/fixtures',
+      'mock-version',
     ],
   },
   js.configs.recommended,

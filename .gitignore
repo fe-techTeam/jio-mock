@@ -11,3 +11,6 @@ blob-report
 *.tsbuildinfo
 .DS_Store
 .pnpm-exec.lock
+
+# Local out-of-band prototype, not part of the workspace
+mock-version/
