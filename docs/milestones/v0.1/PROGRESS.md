@@ -50,3 +50,10 @@ Deviations: drizzle-orm added to worker; per-file worker test DBs; 02-01 fixture
   - 05-01 done: GET/PATCH /api/sources and GET /api/sources/[key]/runs are session-guarded via withApi; nothing returns credential values (explicit field allowlist in _lib/build.ts). Web crypto: encryptSecret/decryptSecret/isEncrypted/C
   - 05-02 done: Settings API: GET/PATCH /api/config (terms, retentionDays, minItemsForSplit, activeMinItems24h; baseVersion required), POST /api/config/test-terms, GET/PATCH /api/config/topics, GET /api/config/audit?cursor=, POST /api/t
   - 05-03 done: POST /api/labels returns {ok, classificationId}; DELETE /api/labels/[id] undoes correction or gold rows younger than 10 minutes; each call writes exactly one 'relabel' event (undo has detail.undo true). GET /api/accuracy
+
+## 06-trust-layer
+
+- Wave 1: gate green, fix rounds 0
+  - 06-01 done: 06-02: the rollup upsert writes counts + reach_* only, so fill the coordination columns separately. TRUST_DEFAULTS.coordination is in apps/worker/src/trust/config.ts; read it with resolveTrustConfig(config).coordination.
+- Wave 2: gate green, fix rounds 0
+  - 06-02 done: runRollup now returns `coordination: {flagged, refreshedRows}`, and recomputeRange takes an optional `coordination` config. The shared fan CTE is in apps/worker/src/rollup/fan.ts. posts.coord_suspected never resets to fa

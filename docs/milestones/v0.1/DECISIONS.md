@@ -135,3 +135,21 @@ developer would otherwise have been asked.
 | 2026-10-16 | 05-03: Sarcasm is read from the latest gold relabel event per post (detail.sarcastic), since there is no column. | - | see SUMMARY-05-03 | yes |
 | 2026-10-16 | 05-03: Accuracy page keeps scope state (default or latest) so Re-score refreshes the displayed figures, with refetchInterval false (worksheet, not a poll). | - | see SUMMARY-05-03 | yes |
 | 2026-10-16 | 05-03: usedAsFewShot = min(20, corrections count); 03-02's few-shot cap is 20. | - | see SUMMARY-05-03 | yes |
+| 2026-10-16 | 06-01: refreshReachScores takes the rollup handle `{sql}` (as recomputeRange does) rather than a drizzle db, because it is raw postgres-js SQL | - | see SUMMARY-06-01 | yes |
+| 2026-10-16 | 06-01: A full reach pass also scores NULL rows older than lookbackDays; p95 still comes only from rows inside the window | - | see SUMMARY-06-01 | yes |
+| 2026-10-16 | 06-01: The reach write skips unchanged rows (`is distinct from`), so `updated` counts rows actually changed | - | see SUMMARY-06-01 | yes |
+| 2026-10-16 | 06-01: runRollup skips recomputeReachColumns after a full rescore when the mode is full7d, because that run already recomputes the same 7-day window | - | see SUMMARY-06-01 | yes |
+| 2026-10-16 | 06-01: recomputeRange and recomputeReachColumns take {unknownScore}, default TRUST_DEFAULTS.reach.unknownScore; NULL reach_score is coalesced in SQL | - | see SUMMARY-06-01 | yes |
+| 2026-10-16 | 06-01: The ReachSplit helpers (percentSplit and reachSplit with largest remainder) live in lib/queries/ranking.ts; lib/queries had no percent helper, and the UI's pctSplit lives in components | - | see SUMMARY-06-01 | yes |
+| 2026-10-16 | 06-01: LaneToggle is mounted inside the shared FilterBar (components/shell/filter-bar.tsx, the real 04-02 filter bar). The brief (app/(app)/page.tsx) and the topic page (topic-view.tsx) both get it without either file being edited | - | see SUMMARY-06-01 | yes |
+| 2026-10-16 | 06-01: The KPI Sentiment cell now shows ReachSplitView. The reach percents are the evidence buttons, and the raw split shows as text: Raw a / b / c, n = N | - | see SUMMARY-06-01 | yes |
+| 2026-10-16 | 06-01: The topics table gains a Reach-weighted column (the formatSplit text, or '-' with sr-only Not enough data); its min-width goes from 760 to 860px | - | see SUMMARY-06-01 | yes |
+| 2026-10-16 | 06-01: LaneToggle is both a named and a default export | - | see SUMMARY-06-01 | yes |
+| 2026-10-16 | 06-02: 06-02: new api-types fields are optional (`?`) to stay additive without editing fixture files other plans own; the API always sets them | - | see SUMMARY-06-02 | yes |
+| 2026-10-16 | 06-02: 06-02: evidence `coordinated` uses z.stringbool() rather than z.coerce.boolean(), which reads 'false' as true. coordinated=false means no filter, and 'maybe' returns 400 | - | see SUMMARY-06-02 | yes |
+| 2026-10-16 | 06-02: 06-02: evidence params live in lib/queries/params.ts (EvidenceParams), not route.ts, so route.ts did not change. The route test is in lib/queries/evidence-route.test.ts to stay inside owned paths | - | see SUMMARY-06-02 | yes |
+| 2026-10-16 | 06-02: 06-02: detectNearDupCoordination takes `{sql}` (like refreshReachScores), not `db`. Windows are inclusive (a span of 60 min or less qualifies). Null-author posts inside a qualifying window are flagged but never counted | - | see SUMMARY-06-02 | yes |
+| 2026-10-16 | 06-02: 06-02: burst_flag and top5_author_share are computed inside recomputeRange's transaction after the upsert, so every caller of recomputeRange gets them. The upsert resets both before recomputing, and the shared src/fan CTE moved to rollup/fan.ts | - | see SUMMARY-06-02 | yes |
+| 2026-10-16 | 06-02: 06-02: suspected_coordinated is refreshed in already rolled-up buckets with one targeted UPDATE (refreshSuspectedCounts) when a run flags new posts | - | see SUMMARY-06-02 | yes |
+| 2026-10-16 | 06-02: 06-02: timeline clusters respect the entity and lane filters and count only flagged posts. A cluster click opens evidence with cluster plus coordinated=true and window=7d. A burst click opens bucket plus window=7d | - | see SUMMARY-06-02 | yes |
+| 2026-10-16 | 06-02: 06-02: the topic page component is topic-view.tsx (SUMMARY-04-03), not the topic-detail.tsx the plan named | - | see SUMMARY-06-02 | yes |

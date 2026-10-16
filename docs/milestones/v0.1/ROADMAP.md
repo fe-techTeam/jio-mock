@@ -90,7 +90,7 @@ Goal: noise and manipulation stop reading as public opinion, through reach weigh
 | 06-01 | 1 | opus | 05-01, 05-02, 05-03 | apps/worker/src/trust/reach.ts, apps/worker/src/rollup/** (reach columns), apps/web/src/components/brief/lane-toggle.tsx, reach-related query changes in apps/web/src/lib/queries/** | per-source reach_score normalization, reach-weighted sentiment in rollups, a media and social lane toggle on the brief and topic pages |
 | 06-02 | 2 | opus | 06-01 | apps/worker/src/trust/coordination.ts, apps/worker/src/rollup/** (coordination columns), apps/web/src/components/{brief,topic}/coordination*.tsx | suspected-coordination counts (near-duplicate clusters with 5 or more authors in 60 min, bursts, top-5 author share), shown as 'suspected' counts that open evidence |
 
-- [ ] 06-01  - [ ] 06-02
+- [x] 06-01  - [x] 06-02
 
 ## Phase 07: Hardening
 
